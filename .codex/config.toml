@@ -1,0 +1,38 @@
+# .codex/config.toml （Proxmox 書籍リポジトリ直下）
+
+# デフォルト：書籍執筆用のバランス型設定
+model = "gpt-5.1-codex"
+model_reasoning_effort = "medium"
+
+# コマンド実行の承認ポリシー
+# - on-request: 通常の操作は自動、危険そうな操作は確認要求
+approval_policy = "on-request"
+
+# サンドボックス設定
+# - workspace-write: リポジトリ内は読み書き可、それ以外や OS への書き込みは制限
+sandbox_mode = "workspace-write"
+
+[features]
+# Proxmox 公式ドキュメントなどを引くため Web 検索を許可
+web_search_request = true
+
+[sandbox_workspace_write]
+# Web 検索機能を使うので network_access は true
+network_access = true
+
+# 必要に応じて、図版生成などのために書き込みルートを絞りたい場合は以下のように指定
+# writable_roots = ["./", "/tmp"]
+
+# --- プロファイル ---
+
+# 深い構成検討やレビューのとき
+[profiles.proxmox-book-deep]
+model = "gpt-5.1-codex"
+model_reasoning_effort = "high"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+
+# 設計レビュー専用：ファイルを一切さわらせたくないとき
+[profiles.proxmox-book-readonly]
+approval_policy = "untrusted"
+sandbox_mode = "read-only"
