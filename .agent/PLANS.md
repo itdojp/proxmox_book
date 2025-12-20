@@ -23,7 +23,7 @@ Simple English: An ExecPlan is a work plan for contributors/agents. It records g
 
 ### バージョン方針（Proxmox VE）
 
-- 本書のスクリーンショット・UI 前提は **Proxmox VE 9.0（9.x）** をターゲットとします。
+- 本書のスクリーンショット・UI 前提は **Proxmox VE 9.1（9.x）** をターゲットとします。
 - メジャーバージョンを更新する場合は、少なくとも以下を見直してください（不明な箇所は「要確認」として残す）:
   - `plans/` 配下の ExecPlan に書かれたバージョン前提と Validation
   - スクリーンショット取得 Issue（UI ラベルや画面遷移が変わりやすい）
@@ -35,7 +35,7 @@ Simple English: An ExecPlan is a work plan for contributors/agents. It records g
 
 - `Status: text-draft`（本文の初回ドラフトは完成）
 - `Status: assets-pending`（図・スクショ・実機検証が未完）
-- `Status: live-validated`（Proxmox 9.0 実機で確認済み）
+- `Status: live-validated`（Proxmox 9.1 実機で確認済み）
 - `Status: build-validated`（`make build-ja` で生成物を確認済み）
 
 
