@@ -100,8 +100,11 @@ Files:
 ## 11. Outcomes & retrospective
 
 
+- Status: text-draft
+- Status: assets-pending (UI 手順・スクリーンショット未完)
+- Status: build-validated (`build/ja/book.md` に含まれることを確認済み)
 - Initial draft of Chapter 8 exists at `manuscript/ja/part3/chapter8-backup.md`, explaining backup/restore and replication concepts tied to the book's lab patterns.
-- Detailed command-level procedures and screenshots are intentionally left for a later pass, to be validated against Proxmox 8.x behavior and the chosen backup stack.
+- Detailed command-level procedures and screenshots are intentionally left for a later pass, to be validated against Proxmox 9.x behavior and the chosen backup stack.
 - For future reliability-related chapters, centering the narrative on “recoverability” rather than individual features keeps guidance aligned with real-world needs.
 
 

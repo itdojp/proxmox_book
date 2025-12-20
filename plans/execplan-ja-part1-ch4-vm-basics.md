@@ -72,7 +72,7 @@ Files:
 
 
 - [x] A new reader can follow the chapter and successfully create and operate a VM in a typical lab environment, based on the written steps.
-- [ ] Screenshots and text match Proxmox 8.x UI (to be fully confirmed after capturing screenshots and validating against a live environment).
+- [ ] Screenshots and text match Proxmox 9.x UI (to be fully confirmed after capturing screenshots and validating against a live environment).
 
 
 
@@ -97,7 +97,7 @@ Files:
 ## 10. Decision log
 
 
-- Decision: Use a generic Linux server distribution as the primary example guest OS, so that most readers can follow along with freely入手可能な ISO イメージ.
+- Decision: Use a generic Linux server distribution as the primary example guest OS, so that most readers can follow along with a freely available ISO image.
 
 
 
@@ -105,8 +105,11 @@ Files:
 ## 11. Outcomes & retrospective
 
 
+- Status: text-draft
+- Status: assets-pending (スクリーンショット未取得)
+- Status: build-validated (`build/ja/book.md` に含まれることを確認済み)
 - Initial draft of Chapter 4 exists at `manuscript/ja/part1/chapter4-vm-basics.md`, covering core VM lifecycle operations and basic snapshot/template concepts.
-- Screenshots are not yet captured, but the directory structure for them is prepared; a later pass with access to a reference environment will align the visuals with Proxmox 8.x UI.
+- Screenshots are not yet captured, but the directory structure for them is prepared; a later pass with access to a reference environment will align the visuals with Proxmox 9.x UI.
 - For future hands-on chapters, this pattern of “text-complete first, assets later” keeps momentum while clearly recording remaining work in the ExecPlan.
 
 

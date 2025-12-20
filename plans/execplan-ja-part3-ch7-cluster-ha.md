@@ -70,7 +70,7 @@ Files:
 
 
 - [x] A 3-node lab can be conceptually configured as a cluster following this chapter and the earlier environment/storage/network chapters.
-- [ ] HA works as described in test scenarios, confirmed against a live Proxmox 8.x environment in a later validation pass.
+- [ ] HA works as described in test scenarios, confirmed against a live Proxmox 9.x environment in a later validation pass.
 
 
 
@@ -103,6 +103,9 @@ Files:
 ## 11. Outcomes & retrospective
 
 
+- Status: text-draft
+- Status: assets-pending (図はプレースホルダ / UI 手順は未記述)
+- Status: build-validated (`build/ja/book.md` に含まれることを確認済み)
 - Initial draft of Chapter 7 exists at `manuscript/ja/part3/chapter7-cluster-ha.md`, tying cluster concepts and HA behavior back to the previously defined lab setup.
 - The cluster/HA diagram is present as a placeholder; a later pass can enrich it with node names, networks, and storage specifics without changing the narrative.
 - For similar advanced topics, anchoring explanations in a concrete lab pattern proved effective for keeping the text practical.

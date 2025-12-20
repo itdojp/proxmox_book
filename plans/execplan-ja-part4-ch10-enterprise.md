@@ -100,6 +100,8 @@ Files:
 ## 11. Outcomes & retrospective
 
 
+- Status: text-draft
+- Status: build-validated (`build/ja/book.md` に含まれることを確認済み)
 - Initial draft of Chapter 10 exists at `manuscript/ja/part4/chapter10-enterprise.md`, summarizing key enterprise integration touchpoints and anonymized patterns.
 - The chapter avoids naming specific products or customers, making it safer to maintain and adapt as new experiences accumulate.
 - For future pattern-based chapters, this structure (touchpoints → scenarios → do/don't) appears effective at keeping content both concrete and reusable.

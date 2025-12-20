@@ -106,6 +106,9 @@ Files:
 ## 11. Outcomes & retrospective
 
 
+- Status: text-draft
+- Status: assets-pending (図はプレースホルダ)
+- Status: build-validated (`build/ja/book.md` に含まれることを確認済み)
 - Initial draft of Chapter 5 exists at `manuscript/ja/part2/chapter5-storage.md`, explaining LVM, ZFS, Ceph, and how to choose between them for the book's lab scenarios.
 - The storage layout diagram is present as a placeholder SVG; a later pass can enrich it with more detail without changing the textual guidance.
 - For future infra-choice chapters, basing explanations on a small set of concrete lab patterns helps keep the content practical and avoids overwhelming readers with options.
