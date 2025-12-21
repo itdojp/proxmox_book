@@ -28,4 +28,4 @@ $(JA_BUILD_DIR):
 	mkdir -p $(JA_BUILD_DIR)
 
 $(JA_BUILD_DIR)/book.md: $(JA_CHAPTERS) | $(JA_BUILD_DIR)
-	cat $(JA_CHAPTERS) > $(JA_BUILD_DIR)/book.md
+	cat $(JA_CHAPTERS) | sed -e 's|../../../images/|../../images/|g' -e 's|../../../diagrams/|../../diagrams/|g' > $(JA_BUILD_DIR)/book.md
