@@ -8,7 +8,7 @@
 - Title: JA Part IV / Chapter 9 – 運用・監視・トラブルシュート
 - Author: AuthorExecAgent (with human reviewer)
 - Date created: 2025-11-16
-- Last updated: 2025-11-16
+- Last updated: 2025-12-21
 - Related issues/PRs: [TBD]
 
 
@@ -39,6 +39,7 @@ Files:
 
 - Focus on recurring tasks and common issues; deep debugging is out of scope.
 - Use examples that are realistic for small to medium Proxmox deployments and the lab patterns defined earlier.
+- Target Proxmox VE version for this book: 9.1 (9.x).
 
 
 
@@ -49,6 +50,7 @@ Files:
 - Phase 1: List routine operational tasks.
 - Phase 2: Describe monitoring options and tools.
 - Phase 3: Provide troubleshooting playbook examples.
+- Phase 4: Beginner pass (goals, terminology, diagram readability).
 
 
 
@@ -59,6 +61,9 @@ Files:
 - [x] Draft a checklist-style section for daily/weekly/monthly operations.
 - [x] Document how to read Proxmox logs and basic metrics at a conceptual level.
 - [x] Provide 2–3 troubleshooting scenarios with step-by-step guidance.
+- [x] Add beginner-friendly framing (“分かること/分からないこと”, “最初に見る場所” checklist) and a minimal terminology memo.
+- [x] Add a minimal triage flow diagram under `diagrams/part4/ch9/`.
+- [x] Reference Issue #2 screenshot checklist and mark insertion points as TODO in the manuscript.
 
 
 
@@ -67,6 +72,7 @@ Files:
 
 
 - [x] Chapter conveys a realistic picture of ongoing operational work for the target lab-sized environments.
+- [x] Diagram exists and is no longer a placeholder.
 
 
 
@@ -76,6 +82,8 @@ Files:
 
 - [2025-11-16 12:05] Plan created.
 - [2025-11-16 15:20] Drafted `manuscript/ja/part4/chapter9-operations.md` with checklists, basic monitoring/log-reading guidance, and representative troubleshooting scenarios.
+- [2025-12-21] Updated plan for a beginner-focused revision pass aligned to Proxmox VE 9.1.
+- [2025-12-21] Added beginner framing/checklists to `chapter9-operations.md`, added `diagrams/part4/ch9/triage-flow.svg`, and referenced Issue #2 for future screenshots.
 
 
 
@@ -102,6 +110,7 @@ Files:
 - Status: text-draft
 - Status: build-validated (`build/ja/book.md` に含まれることを確認済み)
 - Initial draft of Chapter 9 exists at `manuscript/ja/part4/chapter9-operations.md`, covering routine operations, monitoring/log basics, and a few typical troubleshooting scenarios.
+- A minimal troubleshooting “triage” diagram is now available at `diagrams/part4/ch9/triage-flow.svg`; screenshots for Syslog/Tasks/graphs remain TODO via Issue #2.
 - The checklist format appears suitable for runbook-style documentation; future passes can link or adapt content into operational runbooks if desired.
 - For similar chapters, anchoring guidance in concrete time horizons (daily/weekly/monthly) helps prioritize what operators should actually do.
 
