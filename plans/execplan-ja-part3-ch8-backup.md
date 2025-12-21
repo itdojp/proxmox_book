@@ -8,7 +8,7 @@
 - Title: JA Part III / Chapter 8 – バックアップ・リストアとレプリケーション
 - Author: AuthorExecAgent (with human reviewer)
 - Date created: 2025-11-16
-- Last updated: 2025-11-16
+- Last updated: 2025-12-21
 - Related issues/PRs: [TBD]
 
 
@@ -39,6 +39,7 @@ Files:
 
 - Focus on backup strategies suitable for small to medium deployments.
 - Align examples with the lab patterns and storage choices defined earlier (LVM/ZFS/Ceph; single-node vs 3-node cluster).
+- Target Proxmox VE version for this book: 9.1 (9.x).
 
 
 
@@ -49,6 +50,7 @@ Files:
 - Phase 1: Describe backup concepts and options.
 - Phase 2: Provide example backup/restore workflows.
 - Phase 3: Cover basic replication patterns.
+- Phase 4: Beginner pass (goals, terminology, diagram readability).
 
 
 
@@ -59,6 +61,9 @@ Files:
 - [x] Draft sections for backup concepts and strategies.
 - [ ] Document step-by-step backup job creation and restore (to be detailed in a later pass when a reference environment is available).
 - [x] Add example of replication between nodes at a conceptual level.
+- [x] Add beginner-friendly framing (“分かること/分からないこと”, prerequisites checklist) and a minimal terminology memo.
+- [x] Add a minimal diagram under `diagrams/part3/ch8/` to visualize backup → restore → test flow.
+- [x] Reference Issue #2 screenshot checklist and mark screenshot insertion points as TODO in the manuscript.
 
 
 
@@ -68,6 +73,7 @@ Files:
 
 - [x] Readers can understand how to configure a backup job, perform backup, and restore in principle, based on the chapter.
 - [ ] Practical validation of backup/restore workflows is performed against a live environment and recorded in a later pass.
+- [x] Diagram exists and is no longer a placeholder.
 
 
 
@@ -77,6 +83,8 @@ Files:
 
 - [2025-11-16 12:02] Plan created.
 - [2025-11-16 15:10] Drafted `manuscript/ja/part3/chapter8-backup.md` covering backup concepts, job creation ideas, restore considerations, replication overview, and lab practice patterns.
+- [2025-12-21] Updated plan for a beginner-focused revision pass aligned to Proxmox VE 9.1.
+- [2025-12-21] Added beginner framing/terminology to `chapter8-backup.md`, added `diagrams/part3/ch8/backup-restore-flow.svg`, and referenced Issue #2 for future screenshots/UI walkthrough.
 
 
 
@@ -104,7 +112,7 @@ Files:
 - Status: assets-pending (UI 手順・スクリーンショット未完)
 - Status: build-validated (`build/ja/book.md` に含まれることを確認済み)
 - Initial draft of Chapter 8 exists at `manuscript/ja/part3/chapter8-backup.md`, explaining backup/restore and replication concepts tied to the book's lab patterns.
-- Detailed command-level procedures and screenshots are intentionally left for a later pass, to be validated against Proxmox 9.x behavior and the chosen backup stack.
+- A minimal backup→restore→test flow diagram is now available at `diagrams/part3/ch8/backup-restore-flow.svg`; detailed UI walkthroughs and screenshots are still pending and should be aligned to Proxmox VE 9.1 in a later pass.
 - For future reliability-related chapters, centering the narrative on “recoverability” rather than individual features keeps guidance aligned with real-world needs.
 
 
