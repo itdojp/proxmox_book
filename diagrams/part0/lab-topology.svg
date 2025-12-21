@@ -1,4 +1,64 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="800" height="400" viewBox="0 0 800 400">
-<!-- TODO: Replace with detailed lab topology diagram for Proxmox VE book -->
-<text x="20" y="40" font-family="sans-serif" font-size="20">Proxmox VE Lab Topology (placeholder)</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="560" viewBox="0 0 1000 560">
+  <style>
+    .title { font: 20px sans-serif; font-weight: 600; fill: #0f172a; }
+    .subtitle { font: 16px sans-serif; font-weight: 600; fill: #0f172a; }
+    .label { font: 14px sans-serif; fill: #0f172a; }
+    .small { font: 12px sans-serif; fill: #334155; }
+    .box { fill: #f8fafc; stroke: #334155; stroke-width: 1.5; rx: 10; }
+    .net { fill: #ecfeff; stroke: #0e7490; stroke-width: 1.5; rx: 10; }
+    .note { fill: #fff7ed; stroke: #9a3412; stroke-width: 1.5; rx: 10; }
+    .line { stroke: #334155; stroke-width: 2; }
+  </style>
+
+  <rect x="0" y="0" width="1000" height="560" fill="#ffffff"/>
+
+  <text class="title" x="20" y="36">Proxmox VE Lab Topology（例）</text>
+  <text class="small" x="20" y="58">本書のラボ構成のイメージ図（Proxmox VE 9.1 想定）。ホスト名・IP・VLAN は環境に合わせて置き換えてください。</text>
+
+  <!-- Pattern A -->
+  <text class="subtitle" x="20" y="98">パターン A: 単一ノードラボ（基本）</text>
+
+  <rect class="box" x="20" y="115" width="300" height="60"/>
+  <text class="label" x="35" y="150">管理用 PC（Web UI）</text>
+
+  <rect class="net" x="20" y="195" width="300" height="70"/>
+  <text class="label" x="35" y="225">管理 + VM ネットワーク（共用）</text>
+  <text class="small" x="35" y="245">例: 192.168.10.0/24</text>
+
+  <rect class="box" x="20" y="285" width="300" height="90"/>
+  <text class="label" x="35" y="315">Proxmox VE ノード</text>
+  <text class="small" x="35" y="338">pve1（例: 192.168.10.11）</text>
+
+  <line class="line" x1="170" y1="175" x2="170" y2="195"/>
+  <line class="line" x1="170" y1="265" x2="170" y2="285"/>
+
+  <!-- Pattern B -->
+  <text class="subtitle" x="360" y="98">パターン B: 3 ノードクラスタラボ（発展）</text>
+
+  <rect class="box" x="360" y="115" width="300" height="60"/>
+  <text class="label" x="375" y="150">管理用 PC（Web UI）</text>
+
+  <rect class="net" x="360" y="195" width="300" height="70"/>
+  <text class="label" x="375" y="225">管理ネットワーク（例: VLAN 10）</text>
+  <text class="small" x="375" y="245">例: 192.168.10.0/24</text>
+
+  <rect class="net" x="360" y="285" width="300" height="90"/>
+  <text class="label" x="375" y="315">VM/ストレージ用ネットワーク（例: VLAN 20/30）</text>
+  <text class="small" x="375" y="338">性能・トラブル切り分けのため分離できると良い</text>
+
+  <rect class="box" x="700" y="195" width="280" height="180"/>
+  <text class="label" x="715" y="225">Proxmox VE クラスタ</text>
+  <text class="small" x="715" y="250">pve1（192.168.10.11）</text>
+  <text class="small" x="715" y="270">pve2（192.168.10.12）</text>
+  <text class="small" x="715" y="290">pve3（192.168.10.13）</text>
+  <text class="small" x="715" y="322">（必要に応じて Ceph / HA / レプリケーション）</text>
+
+  <line class="line" x1="510" y1="175" x2="510" y2="195"/>
+  <line class="line" x1="660" y1="230" x2="700" y2="230"/>
+  <line class="line" x1="660" y1="330" x2="700" y2="330"/>
+
+  <rect class="note" x="360" y="395" width="620" height="90"/>
+  <text class="label" x="375" y="425">補足（ネスト構成）</text>
+  <text class="small" x="375" y="448">物理サーバが 1 台しかない場合でも、既存ハイパーバイザ上に PVE ノードを 3 台 VM として構築できます。</text>
+  <text class="small" x="375" y="468">ただし性能・I/O・ネットワークは本番と異なるため、性能評価の結果をそのまま本番に当てはめないでください。</text>
 </svg>
