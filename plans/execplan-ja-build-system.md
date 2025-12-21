@@ -8,7 +8,7 @@
 - Title: JA Build System – `make build-ja`
 - Author: AuthorExecAgent (with human reviewer)
 - Date created: 2025-11-16
-- Last updated: 2025-11-16
+- Last updated: 2025-12-21
 - Related issues/PRs: [TBD]
 
 
@@ -93,6 +93,7 @@ The build system is considered acceptable for this pass when:
 
 - [2025-11-16 15:50] Plan created; TOC at `manuscript/ja/SUMMARY.md` reflects all current JA chapters.
 - [2025-11-16 15:55] Implemented `Makefile` with `build-ja` target, generated `build/ja/book.md`, and confirmed that `make build-ja` succeeds; PDF generation is skipped when `pandoc` is not installed.
+- [2025-12-21] Fixed a Makefile dependency issue so `build/ja/book.md` is rebuilt when chapter files change; reran `make build-ja` (Markdown ok / `pandoc` not installed).
 
 
 
@@ -101,6 +102,7 @@ The build system is considered acceptable for this pass when:
 
 
 - `make build-ja` can provide useful value (combined manuscript) even without PDF tooling, and clearly messaging the optional `pandoc` step avoids confusing failures.
+- The initial `build/ja/book.md` rule did not depend on chapter files, so `make build-ja` could leave stale output; adding `$(JA_CHAPTERS)` as a dependency fixes this.
 
 
 

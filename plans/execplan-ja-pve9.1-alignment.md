@@ -8,7 +8,7 @@
 - Title: JA – Proxmox VE 9.1 実機検証・スクリーンショット・本文反映
 - Author: AuthorExecAgent (with human reviewer)
 - Date created: 2025-12-20
-- Last updated: 2025-12-20
+- Last updated: 2025-12-21
 - Related issues/PRs: Issue #2（スクリーンショット取得タスクリスト）
 
 
@@ -75,7 +75,8 @@
 
 ### 6.1 共通（方針・管理）
 
-- [ ] ターゲットを「Proxmox VE 9.1」としてドキュメント方針を統一（`.agent/PLANS.md`、Issue #2、関連 ExecPlan の表記）
+- [x] ターゲットを「Proxmox VE 9.1」としてドキュメント方針を統一（`.agent/PLANS.md`、Issue #2、関連 ExecPlan の表記）
+- [x] 9.1 リリースノート（Roadmap）から、本書に影響しそうな変更点を章ごとに整理（インストーラ/UI/ネットワーク/クラスタ/バックアップ）
 - [ ] スクリーンショットの共通ルールを決める（例: 解像度、UI 言語、マスク方針、ファイル命名規則）
 - [ ] Issue #2 のチェックリストを「章 → 画面 → 保存先パス」まで確定させる
 
@@ -139,6 +140,9 @@
 
 - [2025-12-20] Plan created.
 - [2025-12-20] Confirmed Proxmox VE 9.1 is current stable (ISO is 9.1-1 on proxmox.com downloads; package versions listed on pve.proxmox.com/Downloads) and updated policies/issues accordingly.
+- [2025-12-21] Reviewed Roadmap “Proxmox VE 9.1” section and extracted book-relevant deltas (installer/UI/kernel known issues/SDN status).
+- [2025-12-21] Added “Proxmox VE 9.1 前提” notes to JA manuscript (preface/env-setup and key UI-heavy chapters) and linked Roadmap known issues as a caution for kernel/driver compatibility.
+- [2025-12-21] Ran `make build-ja` successfully and refreshed `build/ja/book.md` after fixing the Makefile dependency rule.
 
 
 
@@ -146,7 +150,12 @@
 ## 9. Surprises & discoveries
 
 
-- [placeholder]
+- Roadmap “Proxmox VE 9.1” より（2025-11-19 リリース）:
+  - ベース OS は Debian Trixie (13.2)、デフォルトカーネルは 6.17.2-1。
+  - GUI: グローバル検索バーの位置変更、Tag View の一括操作など（スクショ差分が出やすい）。
+  - インストーラ: NIC 名の pin（GUI/TUI/auto installer）、Debian mirror 選択をしない（CDN 利用）など。
+  - SDN: GUI のステータス表示が詳細化（Fabrics がリソースツリーに追加、学習 IP/MAC 等）。
+  - Known issues: kernel 6.17 と NVIDIA vGPU、LINSTOR/DRBD、特定 Dell PowerEdge の起動問題（必要なら 6.14 kernel pin が推奨されるケースがある）。
 
 
 
@@ -154,7 +163,8 @@
 ## 10. Decision log
 
 
-- [placeholder]
+- Decision: 本文は “Proxmox VE 9.1（9.x）” を前提にしつつ、UI 変更・既知の互換性問題が絡む箇所は「古くなりやすい」「要確認」を明示する。
+- Decision: Part 0 / 第3章に「Proxmox VE 9.1 前提」と「カーネル 6.17 周りの既知の注意点（該当者のみ）」を短いノートとして追加する（詳細は運用章に回す）。
 
 
 
