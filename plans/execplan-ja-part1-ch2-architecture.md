@@ -8,7 +8,7 @@
 - Title: JA Part I / Chapter 2 – アーキテクチャと主要コンポーネント
 - Author: AuthorExecAgent (with human reviewer)
 - Date created: 2025-11-16
-- Last updated: 2025-11-16
+- Last updated: 2025-12-21
 - Related issues/PRs: [TBD]
 
 
@@ -41,6 +41,7 @@ Relevant files:
 
 - Focus on conceptual clarity rather than every low-level daemon.
 - Align terminology with official docs.
+- Target Proxmox VE version for this book: 9.1 (9.x).
 - This pass produces an initial draft of the architecture chapter; later review passes should record their context and changes in Progress and Decision log.
 
 
@@ -53,6 +54,7 @@ Relevant files:
 - Phase 2: Draft architecture diagrams.
 - Phase 3: Write explanatory text.
 - Phase 4: Cross-check with later chapters (cluster, storage).
+- Phase 5: Beginner pass (learning goals, terminology hints, diagram readability).
 
 
 
@@ -64,6 +66,8 @@ Relevant files:
 - [x] Design `architecture.svg` showing relationships.
 - [x] Draft sections describing components and data flow.
 - [x] Ensure diagrams are referenced from the text.
+- [x] Add beginner-friendly framing (“章のゴール”, “分かること/分からないこと”) and a short terminology memo for key words (`/etc/pve`, quorum, etc.).
+- [x] Replace `diagrams/part1/ch2/architecture.svg` placeholder with a minimal-but-real diagram consistent with the manuscript.
 
 
 
@@ -73,6 +77,7 @@ Relevant files:
 
 - [x] Architecture diagram exists and is technically accurate at a conceptual level suitable for an initial draft.
 - [x] Manuscript explains each component clearly enough for later chapters to reference.
+- [x] Diagram is no longer a placeholder and is consistent with the text.
 
 
 
@@ -82,6 +87,8 @@ Relevant files:
 
 - [2025-11-16 11:45] Plan created.
 - [2025-11-16 14:05] Drafted `manuscript/ja/part1/chapter2-architecture.md` covering main components, layers, and relationships; created placeholder `diagrams/part1/ch2/architecture.svg` and referenced it from the text.
+- [2025-12-21] Updated plan for a beginner-focused revision pass aligned to Proxmox VE 9.1.
+- [2025-12-21] Added beginner framing to `chapter2-architecture.md` and replaced the placeholder architecture diagram with a minimal real SVG.
 
 
 
@@ -106,10 +113,9 @@ Relevant files:
 
 
 - Status: text-draft
-- Status: assets-pending (図はプレースホルダ)
 - Status: build-validated (`build/ja/book.md` に含まれることを確認済み)
 - Initial draft of Chapter 2 exists at `manuscript/ja/part1/chapter2-architecture.md`, explaining core components and their relationships with references to the lab and later chapters.
-- The current architecture diagram is a placeholder SVG; a more detailed version can be added without changing the textual structure.
+- The architecture diagram at `diagrams/part1/ch2/architecture.svg` is now a minimal-but-real diagram consistent with the text; future refinements can add detail without changing the textual structure.
 - For similar chapters, explicitly mapping components to later chapters (cluster, storage, backup) helps maintain consistency across the book.
 
 
