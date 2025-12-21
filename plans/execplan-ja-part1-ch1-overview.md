@@ -1,6 +1,4 @@
 # ExecPlan: JA Part I / Chapter 1 – Proxmox VE の概要とポジショニング
-- Last updated: 2025-11-16
-- Related issues/PRs: [TBD]
 
 
 
@@ -74,11 +72,11 @@ Relevant files:
 
 - [x] Define the main questions this chapter should answer ("What is Proxmox VE?", "Who is it for?", etc.) as bullets in the ExecPlan or manuscript.
 - [x] Draft an outline with sections such as:
-- Proxmox VE の概要
-- 想定する利用シーン
-- 特徴と利点
-- 制約・注意点
-- 本書における扱い
+  - Proxmox VE の概要
+  - 想定する利用シーン
+  - 特徴と利点
+  - 制約・注意点
+  - 本書における扱い
 - [x] Fill in the manuscript with neutral, technically accurate descriptions.
 - [x] If needed, create a simple diagram showing logical architecture or solution position.
 
@@ -124,6 +122,9 @@ Relevant files:
 ## 11. Outcomes & retrospective
 
 
+- Status: text-draft
+- Status: assets-pending (図はプレースホルダ)
+- Status: build-validated (`build/ja/book.md` に含まれることを確認済み)
 - Initial draft of Chapter 1 exists at `manuscript/ja/part1/chapter1-overview.md`, covering overview, use cases, strengths, limitations, and how the book will treat Proxmox VE.
 - The chapter intentionally avoids detailed vendor comparisons, instead helping readers decide whether Proxmox VE matches their scale and operational model.
 - For similar chapters, starting from “who is it for / what scale” made it easier to keep the tone practical and avoid marketing language.

@@ -70,7 +70,7 @@ Files:
 
 
 - [x] Readers can design and reason about a basic VLAN-aware network pattern in their lab, based on the chapter.
-- [ ] Examples match Proxmox 8.x behavior (to be confirmed once concrete UI steps and screenshots are added and cross-checked).
+- [ ] Examples match Proxmox 9.x behavior (to be confirmed once concrete UI steps and screenshots are added and cross-checked).
 
 
 
@@ -103,6 +103,9 @@ Files:
 ## 11. Outcomes & retrospective
 
 
+- Status: text-draft
+- Status: assets-pending (図はプレースホルダ / UI 手順は未記述)
+- Status: build-validated (`build/ja/book.md` に含まれることを確認済み)
 - Initial draft of Chapter 6 exists at `manuscript/ja/part2/chapter6-network.md`, covering Linux bridges, bonding, VLANs, and lab-oriented topology patterns.
 - The network topology diagram is present as a placeholder SVG; more detailed interface names and VLAN tags can be added later without restructuring the text.
 - For future networking chapters, starting from simple, repeatable patterns helps keep the content adaptable to different physical environments.

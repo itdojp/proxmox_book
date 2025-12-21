@@ -105,6 +105,9 @@ Relevant files:
 ## 11. Outcomes & retrospective
 
 
+- Status: text-draft
+- Status: assets-pending (図はプレースホルダ)
+- Status: build-validated (`build/ja/book.md` に含まれることを確認済み)
 - Initial draft of Chapter 2 exists at `manuscript/ja/part1/chapter2-architecture.md`, explaining core components and their relationships with references to the lab and later chapters.
 - The current architecture diagram is a placeholder SVG; a more detailed version can be added without changing the textual structure.
 - For similar chapters, explicitly mapping components to later chapters (cluster, storage, backup) helps maintain consistency across the book.

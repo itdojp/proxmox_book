@@ -8,7 +8,7 @@ Prerequisites:
 
 Relevant files:
 - `manuscript/ja/part0/preface.md` (to be created or updated)
-- (Future) `manuscript/ja/TOC.md` or `SUMMARY.md` once introduced (overall structure)
+- `manuscript/ja/SUMMARY.md` (overall structure)
 
 
 This chapter should:
@@ -26,7 +26,7 @@ This chapter should:
 - Tone: neutral, professional, and encouraging for learners.
 - Must not assume prior Proxmox experience.
 - Avoid vendor comparison in detail here; reserve for later chapters.
-- At the time of writing, no TOC/summary file exists; assume the planned chapter list from existing ExecPlans and document this assumption.
+- The canonical TOC lives in `manuscript/ja/SUMMARY.md`; keep this chapter consistent with it.
 - This ExecPlan assumes an initial draft from scratch; later passes (review-based rewrites) should record their own context in Progress and Decision log.
 
 
@@ -46,14 +46,14 @@ This chapter should:
 ## 6. Concrete steps
 
 
-- [x] Collect or confirm the latest planned TOC from existing ExecPlans; if/when `SUMMARY.md` (or similar) is added, align this chapter accordingly.
+- [x] Collect or confirm the latest planned TOC and align this chapter with `manuscript/ja/SUMMARY.md`.
 - [x] Define target audience segments and learning outcomes as bullet points.
 - [x] Draft the following sections into `manuscript/ja/part0/preface.md`:
-- 本書の目的
-- 想定読者と前提知識
-- 本書の構成
-- 学習の進め方（個人学習とチーム学習の両方）
-- Proxmox VE の位置づけ（簡単な概要）
+  - 本書の目的
+  - 想定読者と前提知識
+  - 本書の構成
+  - 学習の進め方（個人学習とチーム学習の両方）
+  - Proxmox VE の位置づけ（簡単な概要）
 - [x] Ensure that references to later chapters match their current titles and numbers.
 - [x] Run a quick style check (terminology consistency, Japanese tone).
 
@@ -105,6 +105,8 @@ The plan is complete when:
 ## 11. Outcomes & retrospective
 
 
+- Status: text-draft (章本文の初回ドラフトは完了)
+- Status: build-validated (結合原稿 `build/ja/book.md` に含まれることを確認済み)
 - Initial preface draft exists at `manuscript/ja/part0/preface.md` and covers all planned sections with a neutral, practical tone suitable for infrastructure engineers.
 - The preface now aligns with an explicit TOC in `manuscript/ja/SUMMARY.md`; future structural changes should update both the TOC and this chapter.
 - For future similar ExecPlans, explicitly recording whether the pass is an initial draft or a revision proved helpful for understanding context in Progress and Decision log.

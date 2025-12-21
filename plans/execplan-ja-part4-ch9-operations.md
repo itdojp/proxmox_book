@@ -99,6 +99,8 @@ Files:
 ## 11. Outcomes & retrospective
 
 
+- Status: text-draft
+- Status: build-validated (`build/ja/book.md` に含まれることを確認済み)
 - Initial draft of Chapter 9 exists at `manuscript/ja/part4/chapter9-operations.md`, covering routine operations, monitoring/log basics, and a few typical troubleshooting scenarios.
 - The checklist format appears suitable for runbook-style documentation; future passes can link or adapt content into operational runbooks if desired.
 - For similar chapters, anchoring guidance in concrete time horizons (daily/weekly/monthly) helps prioritize what operators should actually do.

@@ -36,7 +36,7 @@ Relevant files:
 
 
 - Do not prescribe a single vendor; show a few feasible options.
-- Proxmox VE version: 8.x.
+- Proxmox VE version: 9.x.
 - Avoid over-detailed tuning; keep focus on "getting a usable lab".
 - At the time of writing, later chapters (cluster/HA, storage, network) are planned via ExecPlans but not yet fully drafted; lab patterns should be defined so that those plans are realistically achievable in a nested or small on-prem lab.
 
@@ -61,10 +61,10 @@ Relevant files:
 - [x] Describe hardware and network requirements for each pattern.
 - [x] Create `diagrams/part0/lab-topology.svg` illustrating the main lab.
 - [x] Draft `env-setup.md` covering:
-- 準備する PC / サーバのスペック
-- 仮想化環境の選択肢
-- 本書で想定するラボ構成
-- 注意点（ストレージ・バックアップ）
+  - 準備する PC / サーバのスペック
+  - 仮想化環境の選択肢
+  - 本書で想定するラボ構成
+  - 注意点（ストレージ・バックアップ）
 - [x] Cross-check with cluster/HA chapters to ensure the lab is sufficient.
 
 
@@ -108,6 +108,9 @@ Relevant files:
 ## 11. Outcomes & retrospective
 
 
+- Status: text-draft
+- Status: assets-pending (図はプレースホルダ)
+- Status: build-validated (`build/ja/book.md` に含まれることを確認済み)
 - Initial environment setup chapter draft exists at `manuscript/ja/part0/env-setup.md`, covering hardware requirements, virtualization options, lab patterns, and key caveats.
 - The current lab topology diagram is a placeholder SVG; a more detailed diagram can be added in a later visual refinement pass without affecting the textual guidance.
 - For future environment-related chapters, clearly distinguishing between "minimum" and "recommended" setups helped keep expectations realistic for readers with limited hardware.

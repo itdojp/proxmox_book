@@ -29,7 +29,7 @@ Provide a simple, reproducible build entry point (`make build-ja`) that:
 
 - Manuscript files live under `manuscript/ja/`.
 - A high-level TOC exists at `manuscript/ja/SUMMARY.md`.
-- The `build/` directory is available for outputs, currently empty.
+- The `build/` directory is available for outputs.
 
 
 Relevant files:
@@ -116,6 +116,8 @@ The build system is considered acceptable for this pass when:
 ## 11. Outcomes & retrospective
 
 
+- Status: build-validated (`make build-ja` は成功 / `build/ja/book.md` 生成済み)
+- Status: assets-pending (`pandoc` がある環境での PDF 生成は未確認)
 - A working `build-ja` entry point now exists via the project `Makefile`, producing `build/ja/book.md` in chapter order based on the JA manuscript.
 - The pipeline is intentionally simple and safe to rerun; future improvements can layer on top without breaking the current behavior.
 
