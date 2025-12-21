@@ -46,6 +46,7 @@ Relevant files:
 - Do not introduce heavy new dependencies in this pass; rely on external tools (e.g., `pandoc`) only if they are already installed.
 - `make build-ja` must succeed even if `pandoc` is not present (e.g., by generating Markdown only and emitting a clear message).
 - Keep the build logic simple and transparent; avoid complex scripting.
+- The combined manuscript (`build/ja/book.md`) should keep image/diagram links resolvable after concatenation.
 
 
 
@@ -84,6 +85,7 @@ The build system is considered acceptable for this pass when:
 - [x] `build/ja/book.md` exists and contains all chapters in the order defined by `manuscript/ja/SUMMARY.md`.
 - [ ] When `pandoc` is installed, `build/ja/book-ja.pdf` is generated without errors.
 - [x] ExecPlans that reference `make build-ja` as a validation step explicitly note any remaining limitations (e.g., layout checks or reviewer confirmation).
+- [x] The combined manuscript rewrites relative image/diagram links so screenshots/diagrams can be referenced consistently across chapters and in the combined output.
 
 
 
@@ -94,6 +96,7 @@ The build system is considered acceptable for this pass when:
 - [2025-11-16 15:50] Plan created; TOC at `manuscript/ja/SUMMARY.md` reflects all current JA chapters.
 - [2025-11-16 15:55] Implemented `Makefile` with `build-ja` target, generated `build/ja/book.md`, and confirmed that `make build-ja` succeeds; PDF generation is skipped when `pandoc` is not installed.
 - [2025-12-21] Fixed a Makefile dependency issue so `build/ja/book.md` is rebuilt when chapter files change; reran `make build-ja` (Markdown ok / `pandoc` not installed).
+- [2025-12-21] Updated the concatenation step to rewrite `../../../images/` and `../../../diagrams/` to `../../...` so image/diagram links can work both in per-chapter previews and the combined `build/ja/book.md`.
 
 
 
