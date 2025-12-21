@@ -1,4 +1,81 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="800" height="400" viewBox="0 0 800 400">
-<!-- TODO: Replace with detailed install flow diagram for Proxmox VE installer -->
-<text x="20" y="40" font-family="sans-serif" font-size="20">Proxmox VE Install Flow (placeholder)</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="420" viewBox="0 0 980 420">
+  <style>
+    .title { font: 20px sans-serif; font-weight: 600; fill: #0f172a; }
+    .label { font: 14px sans-serif; fill: #0f172a; }
+    .small { font: 12px sans-serif; fill: #334155; }
+    .box { fill: #f8fafc; stroke: #334155; stroke-width: 1.5; rx: 10; }
+    .accent { fill: #eef2ff; stroke: #3730a3; stroke-width: 1.5; rx: 10; }
+    .line { stroke: #334155; stroke-width: 2; }
+  </style>
+
+  <rect x="0" y="0" width="980" height="420" fill="#ffffff"/>
+
+  <text class="title" x="20" y="36">インストールの流れ（概略）</text>
+  <text class="small" x="20" y="58">画面の細部はバージョンで変わることがあります。ここでは「どこで何を決めるか」を押さえます。</text>
+
+  <!-- Row 1 -->
+  <rect class="accent" x="20" y="90" width="210" height="64"/>
+  <text class="label" x="40" y="118">1. メディア起動</text>
+  <text class="small" x="40" y="140">起動メニュー</text>
+
+  <rect class="box" x="260" y="90" width="210" height="64"/>
+  <text class="label" x="280" y="118">2. ライセンス</text>
+  <text class="small" x="280" y="140">同意して進む</text>
+
+  <rect class="box" x="500" y="90" width="210" height="64"/>
+  <text class="label" x="520" y="118">3. インストール先</text>
+  <text class="small" x="520" y="140">ディスク/方式を選択</text>
+
+  <rect class="box" x="740" y="90" width="210" height="64"/>
+  <text class="label" x="760" y="118">4. ロケール/時刻</text>
+  <text class="small" x="760" y="140">タイムゾーン等</text>
+
+  <!-- Row 2 -->
+  <rect class="box" x="20" y="190" width="210" height="64"/>
+  <text class="label" x="40" y="218">5. 管理者情報</text>
+  <text class="small" x="40" y="240">パスワード/メール</text>
+
+  <rect class="accent" x="260" y="190" width="210" height="64"/>
+  <text class="label" x="280" y="218">6. ネットワーク</text>
+  <text class="small" x="280" y="240">ホスト名/IP</text>
+
+  <rect class="box" x="500" y="190" width="210" height="64"/>
+  <text class="label" x="520" y="218">7. 確認/開始</text>
+  <text class="small" x="520" y="240">設定を確定</text>
+
+  <rect class="box" x="740" y="190" width="210" height="64"/>
+  <text class="label" x="760" y="218">8. インストール</text>
+  <text class="small" x="760" y="240">進行状況表示</text>
+
+  <!-- Row 3 -->
+  <rect class="box" x="20" y="290" width="210" height="64"/>
+  <text class="label" x="40" y="318">9. 再起動</text>
+  <text class="small" x="40" y="340">完了後に再起動</text>
+
+  <rect class="box" x="260" y="290" width="210" height="64"/>
+  <text class="label" x="280" y="318">10. URL 確認</text>
+  <text class="small" x="280" y="340">コンソールに表示</text>
+
+  <rect class="accent" x="500" y="290" width="210" height="64"/>
+  <text class="label" x="520" y="318">11. Web UI ログイン</text>
+  <text class="small" x="520" y="340">証明書警告に注意</text>
+
+  <rect class="box" x="740" y="290" width="210" height="64"/>
+  <text class="label" x="760" y="318">12. 初期確認</text>
+  <text class="small" x="760" y="340">ノード/ストレージ/時刻</text>
+
+  <!-- Arrows -->
+  <line class="line" x1="230" y1="122" x2="260" y2="122"/>
+  <line class="line" x1="470" y1="122" x2="500" y2="122"/>
+  <line class="line" x1="710" y1="122" x2="740" y2="122"/>
+
+  <line class="line" x1="845" y1="154" x2="845" y2="190"/>
+  <line class="line" x1="740" y1="222" x2="710" y2="222"/>
+  <line class="line" x1="500" y1="222" x2="470" y2="222"/>
+  <line class="line" x1="260" y1="222" x2="230" y2="222"/>
+
+  <line class="line" x1="125" y1="254" x2="125" y2="290"/>
+  <line class="line" x1="230" y1="322" x2="260" y2="322"/>
+  <line class="line" x1="470" y1="322" x2="500" y2="322"/>
+  <line class="line" x1="710" y1="322" x2="740" y2="322"/>
 </svg>
