@@ -36,9 +36,10 @@ Relevant files:
 
 
 - Do not prescribe a single vendor; show a few feasible options.
-- Proxmox VE version: 9.x.
+- Proxmox VE version: 9.1 (9.x).
 - Avoid over-detailed tuning; keep focus on "getting a usable lab".
 - At the time of writing, later chapters (cluster/HA, storage, network) are planned via ExecPlans but not yet fully drafted; lab patterns should be defined so that those plans are realistically achievable in a nested or small on-prem lab.
+- This revision pass prioritizes beginner-friendliness (short checklists, concrete example values, and common pitfalls).
 
 
 
@@ -50,6 +51,7 @@ Relevant files:
 - Phase 2: Draft text explaining options and trade-offs.
 - Phase 3: Create lab topology diagram.
 - Phase 4: Consistency check with later chapters.
+- Phase 5: Beginner pass (checklists, example values, terminology).
 
 
 
@@ -66,6 +68,9 @@ Relevant files:
   - 本書で想定するラボ構成
   - 注意点（ストレージ・バックアップ）
 - [x] Cross-check with cluster/HA chapters to ensure the lab is sufficient.
+- [x] Update wording to explicitly target Proxmox VE 9.1 (9.x) and add a short caution about kernel/driver compatibility (link to Roadmap known issues).
+- [x] Add “最初に決めること” checklists (naming/IP plan, management vs VM vs storage network, DNS/NTP) and concrete example values.
+- [x] Replace placeholder `diagrams/part0/lab-topology.svg` with a minimal-but-real diagram matching the chapter text.
 
 
 
@@ -75,6 +80,8 @@ Relevant files:
 
 - [x] `env-setup.md` explains at least one complete lab pattern that can support all examples in the book.
 - [x] Lab topology diagram exists and is referenced from the text.
+- [x] The diagram is no longer a placeholder and matches the two lab patterns (single-node / 3-node).
+- [x] The chapter clearly states the target version (Proxmox VE 9.1) and flags version-sensitive areas as such.
 
 
 
@@ -85,6 +92,8 @@ Relevant files:
 - [2025-11-16 11:35] Plan created.
 - [2025-11-16 13:40] Drafted `manuscript/ja/part0/env-setup.md` with minimum and recommended lab specs, virtualization options, and two lab patterns; created placeholder `diagrams/part0/lab-topology.svg` and referenced it from the text.
 - [2025-11-16 13:45] Reviewed cluster/HA ExecPlan (Chapter 7) to confirm that a 3-node nested lab pattern defined here is sufficient for the planned scenarios.
+- [2025-12-21] Updated plan for a beginner-focused revision pass aligned to Proxmox VE 9.1.
+- [2025-12-21] Added “最初に決めること” checklists and example values to `env-setup.md`, updated 9.1 notes, and replaced the lab topology SVG placeholder with a minimal real diagram.
 
 
 
@@ -109,10 +118,9 @@ Relevant files:
 
 
 - Status: text-draft
-- Status: assets-pending (図はプレースホルダ)
 - Status: build-validated (`build/ja/book.md` に含まれることを確認済み)
 - Initial environment setup chapter draft exists at `manuscript/ja/part0/env-setup.md`, covering hardware requirements, virtualization options, lab patterns, and key caveats.
-- The current lab topology diagram is a placeholder SVG; a more detailed diagram can be added in a later visual refinement pass without affecting the textual guidance.
+- The lab topology diagram at `diagrams/part0/lab-topology.svg` is now a minimal-but-real diagram that matches the two lab patterns; it can be refined later without changing the textual guidance.
 - For future environment-related chapters, clearly distinguishing between "minimum" and "recommended" setups helped keep expectations realistic for readers with limited hardware.
 
 
