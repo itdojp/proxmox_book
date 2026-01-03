@@ -1,0 +1,27 @@
+introduction:
+  - title: はじめに
+    path: /introduction/
+  - title: 執筆環境・検証環境の準備
+    path: /introduction/env-setup/
+
+chapters:
+  - title: 第1章　Proxmox VE の概要とポジショニング
+    path: /chapters/chapter-01-overview/
+  - title: 第2章　アーキテクチャと主要コンポーネント
+    path: /chapters/chapter-02-architecture/
+  - title: 第3章　Proxmox VE のインストール
+    path: /chapters/chapter-03-proxmox-install/
+  - title: 第4章　仮想マシンの作成と基本操作
+    path: /chapters/chapter-04-vm-basics/
+  - title: 第5章　ストレージ構成（ZFS / LVM / Ceph の基礎）
+    path: /chapters/chapter-05-storage/
+  - title: 第6章　ネットワーク設計と VLAN
+    path: /chapters/chapter-06-network/
+  - title: 第7章　クラスタ構成と HA
+    path: /chapters/chapter-07-cluster-ha/
+  - title: 第8章　バックアップ・リストアとレプリケーション
+    path: /chapters/chapter-08-backup/
+  - title: 第9章　運用・監視・トラブルシュート
+    path: /chapters/chapter-09-operations/
+  - title: 第10章　エンタープライズ連携・事例ベースの設計指針
+    path: /chapters/chapter-10-enterprise/
