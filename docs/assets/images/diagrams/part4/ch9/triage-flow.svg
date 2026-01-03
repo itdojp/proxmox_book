@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="420" viewBox="0 0 980 420">
+  <style>
+    .title { font: 20px sans-serif; font-weight: 600; fill: #0f172a; }
+    .label { font: 14px sans-serif; fill: #0f172a; }
+    .small { font: 12px sans-serif; fill: #334155; }
+    .box { fill: #f8fafc; stroke: #334155; stroke-width: 1.5; rx: 10; }
+    .accent { fill: #eef2ff; stroke: #3730a3; stroke-width: 1.5; rx: 10; }
+    .note { fill: #fff7ed; stroke: #9a3412; stroke-width: 1.5; rx: 10; }
+    .line { stroke: #334155; stroke-width: 2; }
+  </style>
+
+  <rect x="0" y="0" width="980" height="420" fill="#ffffff"/>
+
+  <text class="title" x="20" y="36">トラブルシュートの入口（概略）</text>
+  <text class="small" x="20" y="58">まず “何がいつから” を押さえ、UI のタスク/ログ → リソース → OS ログの順で確認します。</text>
+
+  <rect class="accent" x="20" y="90" width="280" height="64"/>
+  <text class="label" x="40" y="118">1. 症状をメモ</text>
+  <text class="small" x="40" y="140">影響範囲 / 発生時刻 / 直近変更</text>
+
+  <rect class="accent" x="340" y="90" width="280" height="64"/>
+  <text class="label" x="360" y="118">2. Web UI の入口</text>
+  <text class="small" x="360" y="140">Task History / Syslog</text>
+
+  <rect class="box" x="660" y="90" width="280" height="64"/>
+  <text class="label" x="680" y="118">3. リソース確認</text>
+  <text class="small" x="680" y="140">CPU / メモリ / ディスクI/O</text>
+
+  <rect class="box" x="20" y="190" width="280" height="64"/>
+  <text class="label" x="40" y="218">4. 影響の切り分け</text>
+  <text class="small" x="40" y="240">ノード？ゲスト？ストレージ？ネットワーク？</text>
+
+  <rect class="box" x="340" y="190" width="280" height="64"/>
+  <text class="label" x="360" y="218">5. OS ログへ</text>
+  <text class="small" x="360" y="240">`journalctl` / `/var/log/...`</text>
+
+  <rect class="box" x="660" y="190" width="280" height="64"/>
+  <text class="label" x="680" y="218">6. 対処と記録</text>
+  <text class="small" x="680" y="240">再発防止 / Runbook 更新</text>
+
+  <rect class="note" x="20" y="290" width="920" height="90"/>
+  <text class="label" x="40" y="322">ヒント</text>
+  <text class="small" x="40" y="346">- 失敗タスクの “最初のエラー” を拾う（後続のエラーは派生のことが多い）</text>
+  <text class="small" x="40" y="366">- いきなり複雑な対処をせず、切り分けと再現性の確保を優先する</text>
+
+  <line class="line" x1="300" y1="122" x2="340" y2="122"/>
+  <line class="line" x1="620" y1="122" x2="660" y2="122"/>
+
+  <line class="line" x1="800" y1="154" x2="800" y2="190"/>
+  <line class="line" x1="660" y1="222" x2="620" y2="222"/>
+  <line class="line" x1="340" y1="222" x2="300" y2="222"/>
+
+  <line class="line" x1="160" y1="154" x2="160" y2="190"/>
+  <line class="line" x1="300" y1="222" x2="340" y2="222"/>
+  <line class="line" x1="620" y1="222" x2="660" y2="222"/>
+</svg>
+
