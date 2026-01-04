@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="520" viewBox="0 0 980 520">
+  <style>
+    .title { font: 20px sans-serif; font-weight: 600; fill: #0f172a; }
+    .label { font: 14px sans-serif; fill: #0f172a; }
+    .small { font: 12px sans-serif; fill: #334155; }
+    .box { fill: #f8fafc; stroke: #334155; stroke-width: 1.5; rx: 10; }
+    .accent { fill: #eef2ff; stroke: #3730a3; stroke-width: 1.5; rx: 10; }
+    .net { fill: #ecfeff; stroke: #0e7490; stroke-width: 1.5; rx: 10; }
+    .note { fill: #fff7ed; stroke: #9a3412; stroke-width: 1.5; rx: 10; }
+    .line { stroke: #334155; stroke-width: 2; }
+    .dash { stroke: #334155; stroke-width: 2; stroke-dasharray: 6 6; }
+  </style>
+
+  <rect x="0" y="0" width="980" height="520" fill="#ffffff"/>
+
+  <text class="title" x="20" y="36">Proxmox VE のアーキテクチャ（概略）</text>
+  <text class="small" x="20" y="58">主要コンポーネントを「管理」「クラスタ」「仮想化」「ストレージ/ネットワーク」の観点で整理した図です。</text>
+
+  <!-- Operator -->
+  <rect class="box" x="20" y="100" width="220" height="60"/>
+  <text class="label" x="35" y="132">管理者 / 運用者</text>
+  <text class="small" x="35" y="152">ブラウザ / CLI / API</text>
+
+  <!-- Proxmox VE boundary -->
+  <rect class="box" x="280" y="90" width="680" height="310"/>
+  <text class="label" x="300" y="120">Proxmox VE（単一ノード / クラスタ）</text>
+
+  <!-- Management layer -->
+  <rect class="accent" x="300" y="140" width="300" height="70"/>
+  <text class="label" x="320" y="170">管理（Web UI / API）</text>
+  <text class="small" x="320" y="192">設定変更・タスク実行の入口</text>
+
+  <!-- Cluster services -->
+  <rect class="accent" x="620" y="140" width="320" height="70"/>
+  <text class="label" x="640" y="170">クラスタ基盤</text>
+  <text class="small" x="640" y="192">corosync（メンバーシップ/クォーラム）</text>
+
+  <rect class="accent" x="620" y="220" width="320" height="70"/>
+  <text class="label" x="640" y="250">設定共有</text>
+  <text class="small" x="640" y="272">pve-cluster（/etc/pve）</text>
+
+  <!-- Virtualization layer -->
+  <rect class="box" x="300" y="240" width="300" height="110"/>
+  <text class="label" x="320" y="270">仮想化の実行</text>
+  <text class="small" x="320" y="295">VM: QEMU/KVM</text>
+  <text class="small" x="320" y="315">コンテナ: LXC</text>
+
+  <!-- Storage/Network -->
+  <rect class="net" x="300" y="360" width="300" height="70"/>
+  <text class="label" x="320" y="390">ストレージ</text>
+  <text class="small" x="320" y="412">LVM / ZFS / Ceph など</text>
+
+  <rect class="net" x="620" y="300" width="320" height="70"/>
+  <text class="label" x="640" y="330">ネットワーク</text>
+  <text class="small" x="640" y="352">Linux ブリッジ / VLAN / Bond など</text>
+
+  <!-- Arrows -->
+  <line class="line" x1="240" y1="130" x2="300" y2="175"/>
+  <line class="line" x1="450" y1="210" x2="450" y2="240"/>
+  <line class="line" x1="600" y1="175" x2="620" y2="175"/>
+  <line class="dash" x1="600" y1="175" x2="620" y2="255"/>
+  <line class="line" x1="450" y1="350" x2="450" y2="360"/>
+  <line class="dash" x1="600" y1="295" x2="620" y2="335"/>
+
+  <!-- Hardware -->
+  <rect class="box" x="280" y="420" width="680" height="70"/>
+  <text class="label" x="300" y="450">ハードウェア / ホスト OS</text>
+  <text class="small" x="300" y="472">CPU / メモリ / ディスク / NIC（この上で Proxmox VE が動作）</text>
+
+  <line class="line" x1="620" y1="370" x2="620" y2="420"/>
+
+  <!-- External note -->
+  <rect class="note" x="20" y="190" width="220" height="300"/>
+  <text class="label" x="35" y="220">読み方のヒント</text>
+  <text class="small" x="35" y="245">- UI 操作 → 管理レイヤー</text>
+  <text class="small" x="35" y="265">- 共有設定やクォーラム → クラスタ基盤</text>
+  <text class="small" x="35" y="285">- VM/コンテナが動かない → 仮想化</text>
+  <text class="small" x="35" y="305">- 起動/性能/容量 → ストレージ</text>
+  <text class="small" x="35" y="325">- 接続/到達性 → ネットワーク</text>
+  <text class="small" x="35" y="365">詳細手順は後続章で扱います。</text>
+</svg>

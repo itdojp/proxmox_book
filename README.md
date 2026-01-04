@@ -1,35 +1,33 @@
-# Proxmox VE 書籍プロジェクト
+# Proxmox VE 実践ガイド
 
-本リポジトリは、Proxmox VE を活用したインフラ設計・運用の知見を、書籍（Markdown 原稿）として整理・管理するためのリポジトリです。
-単なる機能紹介ではなく、「なぜその設計にするのか」「どのような運用体制を前提にしているのか」を言語化し、読者が自分の現場に持ち帰って応用できることを目標とします。
+Proxmox VE をこれから本格的に活用したいインフラエンジニア／システムインテグレータ向けに、設計・運用の考え方を体系的に整理した技術書です。
 
-## 想定読者と前提知識
+- 公開ページ（GitHub Pages）: https://itdojp.github.io/proxmox_book/
+- 目次（リポジトリ内）: `docs/index.md`
+- シリーズ: https://github.com/itdojp/it-engineer-knowledge-architecture
 
-主な読者像と前提知識は `manuscript/ja/part0/preface.md` を参照してください。
+## 対象読者
 
-## 対象バージョン
+- これから Proxmox VE を評価・導入しようとしているインフラエンジニア
+- 中小規模〜中堅規模のシステムインテグレータに所属し、オンプレミス環境の提案・構築を担当している技術者
+- 既存の仮想化基盤（例: vSphere など）からの移行・並行運用を検討している技術リーダー
 
-- 原則として **Proxmox VE 9.1（9.x 系）** を前提にします（詳細: `manuscript/ja/part0/preface.md` / `manuscript/ja/part0/env-setup.md`）。
+## 前提知識
 
-## 目次（日本語版）
+- Linux サーバの基本的な操作（パッケージ管理、ログ確認、ネットワーク設定など）
+- 仮想化の基本概念（ハイパーバイザ、仮想マシン、スナップショットなど）
+- TCP/IP ネットワークの基礎（IP アドレス、ルーティング、VLAN の概要）
 
-- `manuscript/ja/SUMMARY.md`
+## 執筆・ビルド（貢献者向け）
 
-## ビルド（日本語版）
+- 原稿: `manuscript/ja/`
+- 章順: `manuscript/ja/SUMMARY.md`
+- 結合（Markdown）: `make build-ja`（出力: `build/ja/book.md`）
 
-このリポジトリでは、各章の Markdown を連結し、`build/ja/book.md`（+ 任意で PDF）を生成できます。
+## フィードバック（誤り指摘・改善提案）
 
-```bash
-make build-ja
-```
+誤字脱字、技術的な誤り、改善提案は Issues / Pull Request で受け付けます。
 
-- `pandoc` が存在する場合: `build/ja/book-ja.pdf` も生成します。
-- `pandoc` がない場合: Markdown の連結のみを行います。
+## ライセンス
 
-## ディレクトリ構成（概要）
-
-- `manuscript/`: 原稿（章ごとの Markdown）
-- `diagrams/`: 図版（SVG 等）
-- `images/`: 画像（スクリーンショット等）
-- `plans/`: 執筆・編集の ExecPlan
-
+本書は Creative Commons BY-NC-SA 4.0 で提供されています。詳細は `LICENSE.md` を参照してください。

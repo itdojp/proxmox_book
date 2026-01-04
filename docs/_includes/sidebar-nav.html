@@ -1,0 +1,141 @@
+<!-- Sidebar Navigation - Proxmox VE Practical Guide -->
+<div class="sidebar-content">
+    <!-- Book Info -->
+    <div class="book-info">
+        <h2 class="book-title">🖥️ Proxmox VE 実践ガイド</h2>
+        <p class="book-subtitle">小〜中規模オンプレ仮想化基盤の設計・運用ガイド</p>
+    </div>
+
+    <!-- Table of Contents -->
+    <div class="toc">
+        <h3 class="toc-title">目次</h3>
+
+        <!-- Top / Introduction -->
+        <div class="toc-section">
+            <ul class="toc-list">
+                <li class="toc-item">
+                    <a href="{{ '/' | relative_url }}" class="toc-link {% if page.url == '/' %}active{% endif %}">
+                        🏠 トップ
+                    </a>
+                </li>
+                <li class="toc-item">
+                    <a href="{{ '/introduction/' | relative_url }}" class="toc-link {% if page.url contains '/introduction/' %}active{% endif %}">
+                        📖 はじめに
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Part 0 -->
+        <div class="toc-section">
+            <h3 class="toc-section-title">🧪 Part 0: 準備</h3>
+            <ul class="toc-list">
+                <li class="toc-item">
+                    <a href="{{ '/introduction/env-setup/' | relative_url }}" class="toc-link {% if page.url contains '/introduction/env-setup/' %}active{% endif %}">
+                        執筆環境・検証環境の準備
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Part I -->
+        <div class="toc-section">
+            <h3 class="toc-section-title">🔰 Part I: 基本操作</h3>
+            <ul class="toc-list">
+                <li class="toc-item toc-chapter">
+                    <a href="{{ '/chapters/chapter-01-overview/' | relative_url }}" class="toc-link {% if page.url contains 'chapter-01-overview' %}active{% endif %}">
+                        <span class="chapter-number">1.</span>Proxmox VE の概要とポジショニング
+                    </a>
+                </li>
+                <li class="toc-item toc-chapter">
+                    <a href="{{ '/chapters/chapter-02-architecture/' | relative_url }}" class="toc-link {% if page.url contains 'chapter-02-architecture' %}active{% endif %}">
+                        <span class="chapter-number">2.</span>アーキテクチャと主要コンポーネント
+                    </a>
+                </li>
+                <li class="toc-item toc-chapter">
+                    <a href="{{ '/chapters/chapter-03-proxmox-install/' | relative_url }}" class="toc-link {% if page.url contains 'chapter-03-proxmox-install' %}active{% endif %}">
+                        <span class="chapter-number">3.</span>Proxmox VE のインストール
+                    </a>
+                </li>
+                <li class="toc-item toc-chapter">
+                    <a href="{{ '/chapters/chapter-04-vm-basics/' | relative_url }}" class="toc-link {% if page.url contains 'chapter-04-vm-basics' %}active{% endif %}">
+                        <span class="chapter-number">4.</span>仮想マシンの作成と基本操作
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Part II -->
+        <div class="toc-section">
+            <h3 class="toc-section-title">💾 Part II: 設計（ストレージ／ネットワーク）</h3>
+            <ul class="toc-list">
+                <li class="toc-item toc-chapter">
+                    <a href="{{ '/chapters/chapter-05-storage/' | relative_url }}" class="toc-link {% if page.url contains 'chapter-05-storage' %}active{% endif %}">
+                        <span class="chapter-number">5.</span>ストレージ構成（ZFS / LVM / Ceph の基礎）
+                    </a>
+                </li>
+                <li class="toc-item toc-chapter">
+                    <a href="{{ '/chapters/chapter-06-network/' | relative_url }}" class="toc-link {% if page.url contains 'chapter-06-network' %}active{% endif %}">
+                        <span class="chapter-number">6.</span>ネットワーク設計と VLAN
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Part III -->
+        <div class="toc-section">
+            <h3 class="toc-section-title">🧩 Part III: クラスタ・保護</h3>
+            <ul class="toc-list">
+                <li class="toc-item toc-chapter">
+                    <a href="{{ '/chapters/chapter-07-cluster-ha/' | relative_url }}" class="toc-link {% if page.url contains 'chapter-07-cluster-ha' %}active{% endif %}">
+                        <span class="chapter-number">7.</span>クラスタ構成と HA
+                    </a>
+                </li>
+                <li class="toc-item toc-chapter">
+                    <a href="{{ '/chapters/chapter-08-backup/' | relative_url }}" class="toc-link {% if page.url contains 'chapter-08-backup' %}active{% endif %}">
+                        <span class="chapter-number">8.</span>バックアップ・リストアとレプリケーション
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Part IV -->
+        <div class="toc-section">
+            <h3 class="toc-section-title">🛠️ Part IV: 運用・連携</h3>
+            <ul class="toc-list">
+                <li class="toc-item toc-chapter">
+                    <a href="{{ '/chapters/chapter-09-operations/' | relative_url }}" class="toc-link {% if page.url contains 'chapter-09-operations' %}active{% endif %}">
+                        <span class="chapter-number">9.</span>運用・監視・トラブルシュート
+                    </a>
+                </li>
+                <li class="toc-item toc-chapter">
+                    <a href="{{ '/chapters/chapter-10-enterprise/' | relative_url }}" class="toc-link {% if page.url contains 'chapter-10-enterprise' %}active{% endif %}">
+                        <span class="chapter-number">10.</span>エンタープライズ連携・事例ベースの設計指針
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Resources -->
+    <div class="toc-section">
+        <h3 class="toc-section-title">📚 リソース</h3>
+        <ul class="toc-list">
+            <li class="toc-item">
+                <a href="https://github.com/itdojp/proxmox_book" class="toc-link" target="_blank" rel="noopener">
+                    💾 GitHubリポジトリ
+                </a>
+            </li>
+            <li class="toc-item">
+                <a href="https://itdojp.github.io/it-engineer-knowledge-architecture/" class="toc-link" target="_blank" rel="noopener">
+                    📚 書籍一覧
+                </a>
+            </li>
+            <li class="toc-item">
+                <a href="https://itdo.jp" class="toc-link" target="_blank" rel="noopener">
+                    🏢 株式会社アイティードゥ
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
