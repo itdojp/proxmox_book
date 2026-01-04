@@ -557,20 +557,6 @@ Proxmox VE のインストールメディアから起動すると、グラフィ
 インストール全体の流れは、`diagrams/part1/ch3/install-flow.svg` に概略図としてまとめます。
 実際の画面とは細部が異なる場合がありますが、どのタイミングでどの情報を入力するのかを把握する助けになります。
 
-スクリーンショット（TODO）:
-- 取得対象（Issue #2）:
-  - `images/part1/ch3/01-boot-menu.png` インストールメディア起動直後のメニュー画面
-  - `images/part1/ch3/02-license.png` ライセンス確認画面
-  - `images/part1/ch3/03-target-disk-filesystem.png` インストール先ディスク選択とファイルシステム設定画面
-  - `images/part1/ch3/04-locale-timezone-keyboard.png` ロケール・タイムゾーン・キーボードレイアウト設定画面
-  - `images/part1/ch3/05-admin-password-email.png` 管理者パスワードとメールアドレス入力画面
-  - `images/part1/ch3/06-hostname-network.png` ホスト名と初期ネットワーク設定入力画面
-  - `images/part1/ch3/07-install-progress.png` インストール進行状況（プログレスバー）画面
-  - `images/part1/ch3/08-install-complete-reboot.png` インストール完了後の再起動プロンプト画面
-  - `images/part1/ch3/09-console-webui-url.png` 再起動後のコンソールに表示される Web GUI アクセス URL 画面
-  - `images/part1/ch3/10-webui-first-login.png` 初回 Web GUI ログイン画面
-  - `images/part1/ch3/11-webui-dashboard-node-summary.png` Web GUI ログイン後のダッシュボード（ノード概要とリソースグラフが見える画面）
-
 ## 初期 Web GUI アクセスと最低限の確認
 
 インストール完了後、再起動すると Proxmox VE ノードが起動し、コンソールには Web GUI へのアクセス URL が表示されます。
@@ -1094,14 +1080,6 @@ Web UI からバックアップジョブを作成し、対象となる VM / コ�
 - 取得頻度: まずは手動実行で 1 回、次に 1 日 1 回など
 - 世代管理（保持数）: 少数（例: 3 世代）から始める
 
-スクリーンショット（TODO）:
-- 取得対象（Issue #2）:
-  - `images/part3/ch8/01-datacenter-backup-jobs.png` Datacenter -> Backup ジョブ一覧画面
-  - `images/part3/ch8/02-create-backup-job-wizard.png` 新規バックアップジョブ作成ウィザード
-  - `images/part3/ch8/03-manual-backup-task-log.png` 手動バックアップ実行時のタスクログ画面
-  - `images/part3/ch8/04-restore-dialog.png` バックアップ一覧画面からのリストアダイアログ
-  - `images/part3/ch8/05-replication-job-settings.png` レプリケーションジョブ設定画面（ノード間レプリケーションの例）
-
 ## リストアの考え方
 
 取得したバックアップから VM をリストアする際には、次の点を意識します。
@@ -1187,12 +1165,6 @@ Web UI からバックアップジョブを作成し、対象となる VM / コ�
 4. 必要に応じてホスト OS のログ（`journalctl` など）へ進む
 
 図としての全体像は `diagrams/part4/ch9/triage-flow.svg` を参照してください。
-
-スクリーンショット（TODO）:
-- 取得対象（Issue #2）:
-  - `images/part4/ch9/01-node-syslog.png` Web UI の Syslog 画面（ノード単位）
-  - `images/part4/ch9/02-task-history.png` Task History 画面（ジョブの成功／失敗が分かる例）
-  - `images/part4/ch9/03-node-dashboard-resource-graphs.png` ノードダッシュボードのリソースグラフ（CPU / メモリ / ディスク I/O）
 
 ## 日次・週次・月次の運用チェックリスト（例）
 

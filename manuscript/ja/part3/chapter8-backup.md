@@ -60,14 +60,6 @@ Web UI からバックアップジョブを作成し、対象となる VM / コ�
 - 取得頻度: まずは手動実行で 1 回、次に 1 日 1 回など
 - 世代管理（保持数）: 少数（例: 3 世代）から始める
 
-スクリーンショット（TODO）:
-- 取得対象（Issue #2）:
-  - `images/part3/ch8/01-datacenter-backup-jobs.png` Datacenter -> Backup ジョブ一覧画面
-  - `images/part3/ch8/02-create-backup-job-wizard.png` 新規バックアップジョブ作成ウィザード
-  - `images/part3/ch8/03-manual-backup-task-log.png` 手動バックアップ実行時のタスクログ画面
-  - `images/part3/ch8/04-restore-dialog.png` バックアップ一覧画面からのリストアダイアログ
-  - `images/part3/ch8/05-replication-job-settings.png` レプリケーションジョブ設定画面（ノード間レプリケーションの例）
-
 ## リストアの考え方
 
 取得したバックアップから VM をリストアする際には、次の点を意識します。
