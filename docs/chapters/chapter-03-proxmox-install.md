@@ -70,6 +70,20 @@ Proxmox VE のインストールメディアから起動すると、グラフィ
 インストール全体の流れは、`diagrams/part1/ch3/install-flow.svg` に概略図としてまとめます。
 実際の画面とは細部が異なる場合がありますが、どのタイミングでどの情報を入力するのかを把握する助けになります。
 
+スクリーンショット（TODO）:
+- 取得対象（Issue #2）:
+  - `images/part1/ch3/01-boot-menu.png` インストールメディア起動直後のメニュー画面
+  - `images/part1/ch3/02-license.png` ライセンス確認画面
+  - `images/part1/ch3/03-target-disk-filesystem.png` インストール先ディスク選択とファイルシステム設定画面
+  - `images/part1/ch3/04-locale-timezone-keyboard.png` ロケール・タイムゾーン・キーボードレイアウト設定画面
+  - `images/part1/ch3/05-admin-password-email.png` 管理者パスワードとメールアドレス入力画面
+  - `images/part1/ch3/06-hostname-network.png` ホスト名と初期ネットワーク設定入力画面
+  - `images/part1/ch3/07-install-progress.png` インストール進行状況（プログレスバー）画面
+  - `images/part1/ch3/08-install-complete-reboot.png` インストール完了後の再起動プロンプト画面
+  - `images/part1/ch3/09-console-webui-url.png` 再起動後のコンソールに表示される Web GUI アクセス URL 画面
+  - `images/part1/ch3/10-webui-first-login.png` 初回 Web GUI ログイン画面
+  - `images/part1/ch3/11-webui-dashboard-node-summary.png` Web GUI ログイン後のダッシュボード（ノード概要とリソースグラフが見える画面）
+
 ## 初期 Web GUI アクセスと最低限の確認
 
 インストール完了後、再起動すると Proxmox VE ノードが起動し、コンソールには Web GUI へのアクセス URL が表示されます。
@@ -103,10 +117,3 @@ Proxmox VE のインストールメディアから起動すると、グラフィ
 - 管理用 PC から、コンソールに表示された IP へ疎通できるか（同一セグメント、VLAN、配線）
 - ブラウザで `https://<IP>:8006/` を開けるか（ポート番号の付け忘れに注意）
 - ノードのコンソールで、IP アドレスが想定どおりか（入力ミスや DHCP になっていないか）
-
-## まとめ
-
-- インストール時に後から変えにくい値（ディスク、ホスト名、IP など）を事前に決めてから進めると手戻りを減らせます。
-- 成功判定は「Web GUI にログインでき、最低限の設定（時刻・ストレージなど）が想定どおりである」ことです。
-- アクセスできない場合は、ネットワーク到達性と `:8006`、ノード側の IP 設定を最小手順で切り分けます。
-- 次に読む章: 第4章「仮想マシンの作成と基本操作」に進み、VM を 1 台作って動かします。
