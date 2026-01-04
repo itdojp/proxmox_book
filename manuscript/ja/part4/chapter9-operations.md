@@ -31,12 +31,6 @@
 
 図としての全体像は `diagrams/part4/ch9/triage-flow.svg` を参照してください。
 
-スクリーンショット（TODO）:
-- 取得対象（Issue #2）:
-  - `images/part4/ch9/01-node-syslog.png` Web UI の Syslog 画面（ノード単位）
-  - `images/part4/ch9/02-task-history.png` Task History 画面（ジョブの成功／失敗が分かる例）
-  - `images/part4/ch9/03-node-dashboard-resource-graphs.png` ノードダッシュボードのリソースグラフ（CPU / メモリ / ディスク I/O）
-
 ## 日次・週次・月次の運用チェックリスト（例）
 
 ### 日次

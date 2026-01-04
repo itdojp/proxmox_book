@@ -19,3 +19,20 @@
 - `images/part1/ch3/10-webui-first-login.png` 初回 Web GUI ログイン画面
 - `images/part1/ch3/11-webui-dashboard-node-summary.png` Web GUI ログイン後のダッシュボード（ノード概要とリソースグラフが見える画面）
 
+## 第8章　バックアップ・リストアとレプリケーション
+
+取得対象（Issue #2）:
+
+- `images/part3/ch8/01-datacenter-backup-jobs.png` Datacenter -> Backup ジョブ一覧画面
+- `images/part3/ch8/02-create-backup-job-wizard.png` 新規バックアップジョブ作成ウィザード
+- `images/part3/ch8/03-manual-backup-task-log.png` 手動バックアップ実行時のタスクログ画面
+- `images/part3/ch8/04-restore-dialog.png` バックアップ一覧画面からのリストアダイアログ
+- `images/part3/ch8/05-replication-job-settings.png` レプリケーションジョブ設定画面（ノード間レプリケーションの例）
+
+## 第9章　運用・監視・トラブルシュート
+
+取得対象（Issue #2）:
+
+- `images/part4/ch9/01-node-syslog.png` Web UI の Syslog 画面（ノード単位）
+- `images/part4/ch9/02-task-history.png` Task History 画面（ジョブの成功／失敗が分かる例）
+- `images/part4/ch9/03-node-dashboard-resource-graphs.png` ノードダッシュボードのリソースグラフ（CPU / メモリ / ディスク I/O）
