@@ -94,6 +94,7 @@ Relevant files:
 - [2025-11-16 13:45] Reviewed cluster/HA ExecPlan (Chapter 7) to confirm that a 3-node nested lab pattern defined here is sufficient for the planned scenarios.
 - [2025-12-21] Updated plan for a beginner-focused revision pass aligned to Proxmox VE 9.1.
 - [2025-12-21] Added “最初に決めること” checklists and example values to `env-setup.md`, updated 9.1 notes, and replaced the lab topology SVG placeholder with a minimal real diagram.
+- [2026-01-11] Updated the Debian base OS wording in `env-setup.md` to “Debian 13（Trixie）” to reduce staleness risk (minor version numbers change more frequently).
 
 
 
