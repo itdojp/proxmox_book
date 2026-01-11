@@ -17,9 +17,9 @@ Web UI のスクリーンショットは、必要に応じて `tools/pve-webui-s
 - `images/part1/ch3/06-hostname-network.png` ホスト名と初期ネットワーク設定入力画面
 - `images/part1/ch3/07-install-progress.png` インストール進行状況（プログレスバー）画面
 - `images/part1/ch3/08-install-complete-reboot.png` インストール完了後の再起動プロンプト画面
-- `images/part1/ch3/09-console-webui-url.png` 再起動後のコンソールに表示される Web GUI アクセス URL 画面
-- `images/part1/ch3/10-webui-first-login.png` 初回 Web GUI ログイン画面
-- `images/part1/ch3/11-webui-dashboard-node-summary.png` Web GUI ログイン後のダッシュボード（ノード概要とリソースグラフが見える画面）
+- `images/part1/ch3/09-console-webui-url.png` 再起動後のコンソールに表示される Web UI アクセス URL 画面
+- `images/part1/ch3/10-webui-first-login.png` 初回 Web UI ログイン画面
+- `images/part1/ch3/11-webui-dashboard-node-summary.png` Web UI ログイン後のダッシュボード（ノード概要とリソースグラフが見える画面）
 
 ## 第8章　バックアップ・リストアとレプリケーション
 
