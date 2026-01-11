@@ -8,7 +8,7 @@
 - Title: JA Part IV / Chapter 9 – 運用・監視・トラブルシュート
 - Author: AuthorExecAgent (with human reviewer)
 - Date created: 2025-11-16
-- Last updated: 2025-12-21
+- Last updated: 2026-01-11
 - Related issues/PRs: [TBD]
 
 
@@ -63,7 +63,7 @@ Files:
 - [x] Provide 2–3 troubleshooting scenarios with step-by-step guidance.
 - [x] Add beginner-friendly framing (“分かること/分からないこと”, “最初に見る場所” checklist) and a minimal terminology memo.
 - [x] Add a minimal triage flow diagram under `diagrams/part4/ch9/`.
-- [x] Reference Issue #2 screenshot checklist and mark insertion points as TODO in the manuscript.
+- [x] スクリーンショット取得タスクは Issue #2 / 横断 ExecPlan に集約し、本文はスクリーンショット無しでも読み進められる形にする（課題管理情報は本文に出さない）。
 
 
 
@@ -84,6 +84,7 @@ Files:
 - [2025-11-16 15:20] Drafted `manuscript/ja/part4/chapter9-operations.md` with checklists, basic monitoring/log-reading guidance, and representative troubleshooting scenarios.
 - [2025-12-21] Updated plan for a beginner-focused revision pass aligned to Proxmox VE 9.1.
 - [2025-12-21] Added beginner framing/checklists to `chapter9-operations.md`, added `diagrams/part4/ch9/triage-flow.svg`, and referenced Issue #2 for future screenshots.
+- [2026-01-11] Added a minimal “updates + repositories” section to `chapter9-operations.md` and aligned the plan wording with the project convention (screenshots tracked in Issues; no TODO blocks in the manuscript).
 
 
 
