@@ -37,7 +37,7 @@
   2. 対象読者と前提
   3. インストール前の準備（ハードウェア・BIOS 設定・ISO 入手）
   4. インストーラの画面遷移と入力項目
-  5. 初期 Web GUI アクセスと最低限の確認
+  5. 初期 Web UI アクセスと最低限の確認
   6. よくあるつまずきポイント
 - [x] Implement the outline as headings and placeholder paragraphs in the manuscript file.
 - [ ] Perform one clean installation run in the reference environment and record notes.
