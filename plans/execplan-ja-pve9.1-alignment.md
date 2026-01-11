@@ -8,8 +8,10 @@
 - Title: JA – Proxmox VE 9.1 実機検証・スクリーンショット・本文反映
 - Author: AuthorExecAgent (with human reviewer)
 - Date created: 2025-12-20
-- Last updated: 2025-12-21
-- Related issues/PRs: Issue #2（スクリーンショット取得タスクリスト）
+- Last updated: 2026-01-11
+- Related issues/PRs:
+  - Issue #2（スクリーンショット取得タスクリスト）
+  - Issue #25（Web UI スクリーンショット取得手順）
 
 
 

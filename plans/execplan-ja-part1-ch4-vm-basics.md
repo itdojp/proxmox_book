@@ -8,7 +8,7 @@
 - Title: JA Part I / Chapter 4 – 仮想マシン作成と基本操作
 - Author: AuthorExecAgent (with human reviewer)
 - Date created: 2025-11-16
-- Last updated: 2025-12-21
+- Last updated: 2026-01-11
 - Related issues/PRs: [TBD]
 
 
@@ -89,6 +89,7 @@ Files:
 - [2025-11-16 14:30] Drafted `manuscript/ja/part1/chapter4-vm-basics.md` covering example guest OS choice, VM creation wizard, basic lifecycle operations, snapshots/templates, and common pitfalls; prepared `images/part1/ch4/` for future screenshots.
 - [2025-12-21] Updated plan for a beginner-focused revision pass aligned to Proxmox VE 9.1.
 - [2025-12-21] Added beginner framing and example values to `chapter4-vm-basics.md`, added `diagrams/part1/ch4/vm-create-flow.svg`, and kept screenshots as TODO (Issue #2).
+- [2026-01-11] Updated `chapter4-vm-basics.md` to avoid pointing readers to internal Issue numbers; clarified that screenshots are pending and how to proceed without them.
 
 
 
@@ -105,6 +106,7 @@ Files:
 
 
 - Decision: Use a generic Linux server distribution as the primary example guest OS, so that most readers can follow along with a freely available ISO image.
+- Decision: Avoid referencing internal GitHub Issue IDs in reader-facing text; track screenshot work in Issues and `images/README.md` instead.
 
 
 
