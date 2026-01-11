@@ -8,7 +8,7 @@
 - Title: JA Part I / Chapter 3 – Proxmox VE のインストール
 - Author: AuthorExecAgent (with human reviewer)
 - Date created: 2025-12-21
-- Last updated: 2025-12-21
+- Last updated: 2026-01-11
 - Related issues/PRs:
   - Issue #2（スクリーンショット取得タスクリスト）
   - plans/execplan-ja-pve9.1-alignment.md（実機検証・スクショ・本文反映の横断計画）
@@ -77,7 +77,7 @@
   - 初回 Web UI ログインと成功判定（例: ノード概要、ストレージ、時刻）
   - よくあるつまずきポイント（アクセスできない/インストール先誤り等）と最小限の切り分け
 - [x] `diagrams/part1/ch3/install-flow.svg` のプレースホルダを、最小限の実図に置換する（インストール〜初回ログインの全体フロー）。
-- [x] Issue #2 の該当項目（インストール）を参照し、本文中にスクリーンショット差し込み箇所（`images/part1/ch3/...`）を TODO として明示する。
+- [x] スクリーンショット取得タスクは Issue #2 / 横断 ExecPlan に集約し、本文はスクリーンショット無しでも読み進められる形にする（課題管理情報は本文に出さない）。
 - [x] `make build-ja` を実行し、結合原稿に本章が含まれることを確認する（生成物はコミットしない）。
 - [x] Progress / Outcomes を更新する（このパスでやったこと、残タスク、次回再開地点）。
 
@@ -100,6 +100,7 @@
 
 - [2025-12-21] Plan created (Chapter 3 ExecPlan was missing; added a dedicated plan for beginner-friendly text/diagram pass aligned to Proxmox VE 9.1).
 - [2025-12-21] Updated `chapter3-proxmox-install.md` with beginner framing, pre-install checklist/example values, and a minimal troubleshooting checklist; replaced the install-flow SVG placeholder; ran `make build-ja` successfully (output not committed).
+- [2026-01-11] Added first-login notes (`root@pam`) and kept the chapter text usable without screenshots; screenshot tracking remains in Issue #2 and the cross-cutting 9.1 alignment ExecPlan.
 
 
 

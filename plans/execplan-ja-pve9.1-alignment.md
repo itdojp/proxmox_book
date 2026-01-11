@@ -171,7 +171,7 @@
 - [2025-12-21] Added “Proxmox VE 9.1 前提” notes to JA manuscript (preface/env-setup and key UI-heavy chapters) and linked Roadmap known issues as a caution for kernel/driver compatibility.
 - [2025-12-21] Ran `make build-ja` successfully and refreshed `build/ja/book.md` after fixing the Makefile dependency rule.
 - [2025-12-21] Defined screenshot conventions in `images/README.md`, created initial `images/part*/ch*/` directories, and updated Issue #2 with canonical filenames/paths.
-- [2025-12-21] Updated screenshot TODO blocks in Chapters 3/8/9 to list the canonical filenames (from Issue #2) to make later insertion straightforward.
+- [2025-12-21] Documented canonical screenshot filenames/paths in Issue #2 and kept the reader-facing chapters usable without screenshots (assets are added later).
 - [2026-01-11] Added `tools/pve-webui-screenshots/` (Playwright-based) to help capture Web UI screenshots from CLI (login/dashboard as a first pass).
 
 
