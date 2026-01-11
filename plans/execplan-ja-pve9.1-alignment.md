@@ -102,6 +102,8 @@
 - [x] 9.1 リリースノート（Roadmap）から、本書に影響しそうな変更点を章ごとに整理（インストーラ/UI/ネットワーク/クラスタ/バックアップ）
 - [x] スクリーンショットの共通ルールを決める（例: 解像度、UI 言語、マスク方針、ファイル命名規則）
 - [x] Issue #2 のチェックリストを「章 → 画面 → 保存先パス」まで確定させる
+- [x] Web UI スクリーンショットの自動取得用ツールを追加（`tools/pve-webui-screenshots/`）
+- [ ] ツールを実機（単一ノード / クラスタ）で動作確認し、Issue #2 の Web UI スクショを取得してコミットする
 
 
 ### 6.2 第3章（インストール）
@@ -168,6 +170,7 @@
 - [2025-12-21] Ran `make build-ja` successfully and refreshed `build/ja/book.md` after fixing the Makefile dependency rule.
 - [2025-12-21] Defined screenshot conventions in `images/README.md`, created initial `images/part*/ch*/` directories, and updated Issue #2 with canonical filenames/paths.
 - [2025-12-21] Updated screenshot TODO blocks in Chapters 3/8/9 to list the canonical filenames (from Issue #2) to make later insertion straightforward.
+- [2026-01-11] Added `tools/pve-webui-screenshots/` (Playwright-based) to help capture Web UI screenshots from CLI (login/dashboard as a first pass).
 
 
 

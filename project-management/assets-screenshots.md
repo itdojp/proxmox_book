@@ -5,6 +5,8 @@
 
 ## 第3章　Proxmox VE のインストール
 
+Web UI のスクリーンショットは、必要に応じて `tools/pve-webui-screenshots/` で自動取得できます（要: Proxmox の Web UI へ到達できる環境）。
+
 取得対象（Issue #2）:
 
 - `images/part1/ch3/01-boot-menu.png` インストールメディア起動直後のメニュー画面
