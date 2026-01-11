@@ -67,7 +67,7 @@ The plan is complete when:
 
 
 - [x] `manuscript/ja/part0/preface.md` exists and contains all planned sections.
-- [x] (When a TOC/summary file is introduced) it mentions this chapter with a consistent title and positioning.
+- [x] `manuscript/ja/SUMMARY.md` lists this chapter with a consistent title and positioning.
 - [x] The content accurately reflects the actual TOC and project goals, based on the latest ExecPlans and TOC/summary information.
 
 
@@ -77,10 +77,11 @@ The plan is complete when:
 
 
 - [2025-11-16 11:30] Plan created.
-- [2025-11-16 13:00] Updated ExecPlan to reflect absence of TOC/summary file and clarified that this pass is the initial draft from scratch.
+- [2025-11-16 13:00] Clarified that this pass is the initial draft from scratch; at the time, the TOC/summary file was not yet present.
 - [2025-11-16 13:20] Created `manuscript/ja/part0/preface.md` and drafted all planned sections at an initial, minimum-complete level.
 - [2025-11-16 13:30] Performed a quick style and consistency check; marked all concrete steps and validation items (except future TOC alignment) as satisfied for the initial draft.
 - [2025-11-16 15:30] Created `manuscript/ja/SUMMARY.md` and confirmed that it lists the preface chapter with a consistent title and placement.
+- [2026-01-11] Updated this ExecPlan wording to reflect that `manuscript/ja/SUMMARY.md` is the canonical TOC.
 
 
 
