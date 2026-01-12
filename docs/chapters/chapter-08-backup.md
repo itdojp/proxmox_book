@@ -60,6 +60,20 @@ Web UI からバックアップジョブを作成し、対象となる VM / コ�
 
 流れの全体像は `diagrams/part3/ch8/backup-restore-flow.svg` にまとめます。
 
+### スクショ無しでの最小確認（CLI）
+
+スクリーンショットが無い段階でも、次の CLI を使うと「ジョブが動いているか」「バックアップが残っているか」を最低限確認できます。
+
+- ストレージ一覧（見える/容量がある）: `pvesm status`
+- バックアップファイル一覧（例: `local` の場合）: `pvesm list local --content backup`
+- 直近タスク（入口）: `pvesh get /cluster/tasks --limit 20`
+- バックアップジョブ定義（入口）: `pvesh get /cluster/backup`
+
+バックアップ実行ログ（入口）:
+
+- `ls -1t /var/log/vzdump/*.log | head -n 1`
+- `tail -n 50 /var/log/vzdump/<直近のログファイル>`
+
 ### 例: ラボ用バックアップ方針（最小）
 
 迷う場合は、まず次のような「学習用の最小方針」から始めるとよいでしょう。

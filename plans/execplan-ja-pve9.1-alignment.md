@@ -173,6 +173,7 @@
 - [2025-12-21] Defined screenshot conventions in `images/README.md`, created initial `images/part*/ch*/` directories, and updated Issue #2 with canonical filenames/paths.
 - [2025-12-21] Documented canonical screenshot filenames/paths in Issue #2 and kept the reader-facing chapters usable without screenshots (assets are added later).
 - [2026-01-11] Added `tools/pve-webui-screenshots/` (Playwright-based) to help capture Web UI screenshots from CLI (login/dashboard as a first pass).
+- [2026-01-12] Adjusted kernel-related notes to avoid over-specific patch-level claims and to prefer reader-facing verification (`pveversion -v`, `uname -r`) while keeping 9.1/9.x alignment intact.
 
 
 
@@ -180,12 +181,12 @@
 ## 9. Surprises & discoveries
 
 
-- Roadmap “Proxmox VE 9.1” より（2025-11-19 リリース）:
-  - ベース OS は Debian Trixie (13.2)、デフォルトカーネルは 6.17.2-1。
-  - GUI: グローバル検索バーの位置変更、Tag View の一括操作など（スクショ差分が出やすい）。
-  - インストーラ: NIC 名の pin（GUI/TUI/auto installer）、Debian mirror 選択をしない（CDN 利用）など。
-  - SDN: GUI のステータス表示が詳細化（Fabrics がリソースツリーに追加、学習 IP/MAC 等）。
-  - Known issues: kernel 6.17 と NVIDIA vGPU、LINSTOR/DRBD、特定 Dell PowerEdge の起動問題（必要なら 6.14 kernel pin が推奨されるケースがある）。
+- リリース情報（Proxmox VE 9.1 / 9.x）を追う際に注意すべき点:
+  - ベース OS は Debian 13（Trixie）。
+  - カーネルは更新で入れ替わりやすく、6.14 系（9.0 リリース時点の安定デフォルト）から 6.17 系へ移行中である。
+    - 6.17 は機能・ドライバ対応が広がる一方で、特定の追加モジュール（例: NVIDIA vGPU、LINSTOR/DRBD）との互換性注意点が出ることがある。
+    - 公式フォーラムのアナウンスを参照（例: `https://forum.proxmox.com/threads/proxmox-ve-9-kernel-6-14-remains-supported-and-default-until-further-notice.166375/`）。
+  - UI はマイナー更新で差分が出やすい。本文は「入口（Datacenter/Node）」「成功判定」で案内し、スクリーンショットで精密化する。
 
 
 
@@ -194,7 +195,7 @@
 
 
 - Decision: 本文は “Proxmox VE 9.1（9.x）” を前提にしつつ、UI 変更・既知の互換性問題が絡む箇所は「古くなりやすい」「要確認」を明示する。
-- Decision: Part 0 / 第3章に「Proxmox VE 9.1 前提」と「カーネル 6.17 周りの既知の注意点（該当者のみ）」を短いノートとして追加する（詳細は運用章に回す）。
+- Decision: Part 0 / 第3章に「Proxmox VE 9.1 前提」と「カーネル更新に伴う互換性注意点（該当者のみ）」を短いノートとして追加する（詳細は運用章に回す）。
 - Decision: スクリーンショットは英語 UI（Light テーマ）を基本とし、本文側で日本語補足する。
 - Reason: メニュー名・画面項目の表記ゆれを減らし、公式ドキュメントと照合しやすくするため。
 - Decision: スクリーンショットの保存先と命名規則を `images/part{N}/ch{M}/{NN}-{slug}.png` に固定する。
