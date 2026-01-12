@@ -67,6 +67,36 @@ async function saveScreenshot({ page, outPath }) {
   await page.screenshot({ path: outPath, fullPage: true });
 }
 
+async function dismissMessageBoxes(page) {
+  const box = page.locator("css=.x-message-box").first();
+  try {
+    await box.waitFor({ state: "visible", timeout: 1500 });
+  } catch {
+    return;
+  }
+
+  // Most common: “No valid subscription” on labs without enterprise subscription.
+  try {
+    await box.locator('css=.x-btn:has-text("OK")').first().click({ timeout: 5000 });
+  } catch {
+    // Fallback to clicking the close icon if present.
+    try {
+      await box
+        .locator('css=.x-tool-close, css=.x-window-header-close')
+        .first()
+        .click({ timeout: 3000 });
+    } catch {
+      // ignore
+    }
+  }
+
+  try {
+    await box.waitFor({ state: "hidden", timeout: 10000 });
+  } catch {
+    // ignore
+  }
+}
+
 async function fetchJson({ url, method = "GET", headers = {}, body }) {
   const response = await fetch(url, { method, headers, body });
   const text = await response.text();
@@ -109,12 +139,72 @@ async function apiGet({ baseUrl, ticket, path }) {
   return json?.data;
 }
 
+function buildTextReplacements({ baseUrl, firstNode }) {
+  let host = "";
+  let hostWithPort = "";
+  try {
+    const u = new URL(baseUrl);
+    host = u.hostname;
+    hostWithPort = u.host;
+  } catch {
+    // ignore
+  }
+  const replacements = [
+    // Replace “real” values with the canonical examples used in the manuscript/images README.
+    [host, "192.168.10.11"],
+    [hostWithPort, "192.168.10.11:8006"],
+    [String(firstNode || ""), "pve1"]
+  ];
+  return replacements.filter(([from]) => from);
+}
+
+async function redactForScreenshot(page, replacements) {
+  await page.evaluate((pairs) => {
+    const replacements = Array.isArray(pairs) ? pairs : [];
+    const replaceAll = (text) => {
+      let out = text;
+      for (const [from, to] of replacements) {
+        if (!from || !to) continue;
+        out = out.split(from).join(to);
+      }
+      // Best-effort redaction for device identifiers that would otherwise leak lab-specific info.
+      out = out
+        // Interface names embedding MACs (e.g., enx00e05d105b64, wlx001122334455)
+        .replace(/\b(enx|wlx)[0-9a-f]{12}\b/g, "$1001122334455")
+        // Raw MAC addresses
+        .replace(/\b([0-9a-f]{2}:){5}[0-9a-f]{2}\b/g, "00:11:22:33:44:55");
+      return out;
+    };
+
+    const root = document.body || document.documentElement;
+    if (!root) return;
+
+    // Replace in the document title (sometimes rendered in visible chrome).
+    try {
+      document.title = replaceAll(document.title || "");
+    } catch {
+      // ignore
+    }
+
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    const nodes = [];
+    let node;
+    while ((node = walker.nextNode())) nodes.push(node);
+    for (const n of nodes) {
+      const v = n.nodeValue;
+      if (v) n.nodeValue = replaceAll(v);
+    }
+  }, replacements);
+}
+
 async function safeClick(page, selectors) {
+  const timeoutMs = 6000;
+  await dismissMessageBoxes(page);
   for (const selector of selectors) {
     const locator = page.locator(selector).first();
     try {
-      await locator.waitFor({ state: "visible", timeout: 1500 });
-      await locator.click({ timeout: 1500 });
+      await locator.waitFor({ state: "visible", timeout: timeoutMs });
+      await locator.click({ timeout: timeoutMs });
       return;
     } catch {
       // try next
@@ -133,6 +223,88 @@ async function waitAnyText(page, texts) {
     }
   }
   // no-op: some environments/locales may differ
+}
+
+async function gotoDatacenter(page) {
+  await safeClick(page, [
+    "text=Datacenter",
+    'css=.x-tree-node-text:has-text("Datacenter")'
+  ]);
+}
+
+async function gotoNode(page, nodeName) {
+  if (!nodeName) return;
+  // NOTE: We may redact the real node name in the DOM (e.g., pve01 -> pve1).
+  // Try both to keep navigation working while still producing sanitized screenshots.
+  const candidates = Array.from(new Set([nodeName, "pve1"].filter(Boolean)));
+  await safeClick(page, [
+    ...candidates.map((n) => `text=${n}`),
+    ...candidates.map((n) => `css=.x-tree-node-text:has-text("${n}")`),
+    ...candidates.map((n) => `css=.x-tree-node-anchor:has-text("${n}")`)
+  ]);
+}
+
+async function gotoSection(page, label) {
+  // Datacenter/node sub-navigation is rendered as a treelist in PVE 9.x.
+  await safeClick(page, [
+    `css=.x-treelist-item-text:has-text("${label}")`,
+    `css=.x-treelist-item:has-text("${label}")`,
+    `text=${label}`
+  ]);
+}
+
+function splitUserAndRealm(username) {
+  const match = String(username || "").match(/^(?<user>[^@]+)@(?<realm>[^@]+)$/);
+  if (match?.groups?.user && match?.groups?.realm) return match.groups;
+  return { user: String(username || ""), realm: "" };
+}
+
+async function loginViaUi(page, { username, password }) {
+  const { user, realm } = splitUserAndRealm(username);
+
+  // Wait for login dialog.
+  await page.locator("text=Proxmox VE Login").first().waitFor({ timeout: 45000 });
+  await page.locator('input[name="username"]').fill(user);
+  await page.locator('input[name="password"]').fill(password);
+
+  // Realm is a combo box; default is PAM in most labs. Only try to override when explicit.
+  if (realm && realm !== "pam") {
+    const realmInput = page.locator('input[name="realm"]');
+    await realmInput.click();
+    await realmInput.fill(realm);
+    await realmInput.press("Enter");
+  }
+
+  await safeClick(page, ['css=.x-btn-inner:has-text("Login")', "text=Login"]);
+
+  // The window should disappear on success.
+  await page
+    .locator("text=Proxmox VE Login")
+    .first()
+    .waitFor({ state: "hidden", timeout: 45000 });
+
+  // Basic UI landmarks.
+  await waitAnyText(page, ["Datacenter", "Server View", "Search"]);
+
+  // Dismiss post-login warnings (e.g., subscription notice) that block clicks.
+  await dismissMessageBoxes(page);
+}
+
+async function ensureWorkspaceReady({ page, imagesRoot, label = "Summary" }) {
+  const readyLocator = page
+    .locator(`css=.x-treelist-item-text:has-text("${label}")`)
+    .first();
+  try {
+    await readyLocator.waitFor({ state: "visible", timeout: 45000 });
+  } catch (error) {
+    const debugPath = path.join(imagesRoot, "_debug", "workspace-not-ready.png");
+    await saveScreenshot({ page, outPath: debugPath });
+    throw new Error(
+      `Workspace not ready (missing treelist item: ${label}). Saved debug screenshot at ${debugPath}\n${String(
+        error?.message || error
+      )}`
+    );
+  }
 }
 
 async function main() {
@@ -174,6 +346,7 @@ async function main() {
   const ticket = await getTicket({ baseUrl, username, password, otp });
   const nodes = await apiGet({ baseUrl, ticket, path: "/nodes" });
   const firstNode = Array.isArray(nodes) && nodes.length > 0 ? nodes[0].node : "";
+  const replacements = buildTextReplacements({ baseUrl, firstNode });
 
   const browser = await chromium.launch({
     headless: true,
@@ -189,34 +362,115 @@ async function main() {
 
     const page = await context.newPage();
 
-    // 1) Login page (no auth)
+    // 1) Login page (before auth)
     await page.goto(baseUrl, { waitUntil: "domcontentloaded" });
     await waitAnyText(page, ["Login", "Username", "Realm"]);
+    await redactForScreenshot(page, replacements);
     await saveScreenshot({
       page,
       outPath: path.join(imagesRoot, "part1/ch3/10-webui-first-login.png")
     });
 
-    // 2) Dashboard (auth via ticket cookie)
-    await context.addCookies([{ name: "PVEAuthCookie", value: ticket, url: baseUrl }]);
-    await page.goto(baseUrl, { waitUntil: "domcontentloaded" });
+    // 2) Login via UI (avoids fragile cookie-only auth differences across environments)
+    await loginViaUi(page, { username, password });
     await waitAnyText(page, ["Datacenter", "Search", "Server View"]);
 
-    if (firstNode) {
-      await safeClick(page, [
-        `text=${firstNode}`,
-        `css=.x-tree-node-text:has-text("${firstNode}")`,
-        `css=.x-tree-node-anchor:has-text("${firstNode}")`
-      ]);
-    }
+    // Ensure the workspace is fully rendered (the left treelist shows up after initial load).
+    await gotoDatacenter(page);
+    await ensureWorkspaceReady({ page, imagesRoot, label: "Summary" });
+
+    // Chapter 3: dashboard (node summary)
+    await gotoNode(page, firstNode);
+    await ensureWorkspaceReady({ page, imagesRoot, label: "Summary" });
+    await gotoSection(page, "Summary");
+    await waitAnyText(page, ["CPU usage", "Memory usage", "Rootfs"]);
+    await redactForScreenshot(page, replacements);
     await saveScreenshot({
       page,
       outPath: path.join(imagesRoot, "part1/ch3/11-webui-dashboard-node-summary.png")
     });
 
-    process.stdout.write("Done (partial): saved login + dashboard screenshots.\n");
+    // 3) Datacenter -> Storage list (Chapter 5)
+    await gotoDatacenter(page);
+    await page.waitForTimeout(1500);
+    try {
+      await gotoSection(page, "Storage");
+    } catch (error) {
+      const debugPath = path.join(imagesRoot, "_debug", "datacenter-before-storage-click.png");
+      await saveScreenshot({ page, outPath: debugPath });
+      throw new Error(
+        `Failed to open Datacenter -> Storage. Saved debug screenshot at ${debugPath}\n${String(
+          error?.message || error
+        )}`
+      );
+    }
+    await waitAnyText(page, ["Storage", "Content"]);
+    await redactForScreenshot(page, replacements);
+    await saveScreenshot({
+      page,
+      outPath: path.join(imagesRoot, "part2/ch5/01-datacenter-storage-list.png")
+    });
+
+    // 4) Node -> Network list (Chapter 6)
+    await gotoNode(page, firstNode);
+    await page.waitForTimeout(1500);
+    await gotoSection(page, "Network");
+    await waitAnyText(page, ["Network", "Interface", "Bridge"]);
+    // Wait for grid rows to populate so redaction catches interface names / CIDR values.
+    await page.locator("css=.x-grid-item").first().waitFor({ timeout: 30000 });
+    await page.waitForTimeout(1000);
+    await redactForScreenshot(page, replacements);
+    await saveScreenshot({
+      page,
+      outPath: path.join(imagesRoot, "part2/ch6/01-node-network-list.png")
+    });
+
+    // 5) Node dashboard graphs (Chapter 9)
+    await gotoNode(page, firstNode);
+    await page.waitForTimeout(1500);
+    await gotoSection(page, "Summary");
+    await waitAnyText(page, ["CPU usage", "Memory usage", "Rootfs"]);
+    await redactForScreenshot(page, replacements);
+    await saveScreenshot({
+      page,
+      outPath: path.join(imagesRoot, "part4/ch9/03-node-dashboard-resource-graphs.png")
+    });
+
+    // 6) Node syslog (Chapter 9)
+    await gotoNode(page, firstNode);
+    await page.waitForTimeout(1500);
+    // Label is "System Log" in current UI, but keep "Syslog" as a fallback.
+    try {
+      await gotoSection(page, "System Log");
+    } catch {
+      await gotoSection(page, "Syslog");
+    }
+    await waitAnyText(page, ["System Log", "Syslog"]);
+    await redactForScreenshot(page, replacements);
+    await saveScreenshot({
+      page,
+      outPath: path.join(imagesRoot, "part4/ch9/01-node-syslog.png")
+    });
+
+    // 7) Datacenter task history (Chapter 9)
+    await gotoDatacenter(page);
+    await page.waitForTimeout(1500);
+    await gotoSection(page, "Summary");
+    await waitAnyText(page, ["Search:", "Type"]);
+    // Ensure the bottom "Tasks" tab is selected.
+    try {
+      await safeClick(page, ['css=.x-tab-inner:has-text("Tasks")', "text=Tasks"]);
+    } catch {
+      // ignore; it is often selected by default
+    }
+    await redactForScreenshot(page, replacements);
+    await saveScreenshot({
+      page,
+      outPath: path.join(imagesRoot, "part4/ch9/02-task-history.png")
+    });
+
     process.stdout.write(
-      "Next: extend selectors/flows for wizard/network/backup/cluster screenshots as needed.\n"
+      "Done: saved login/dashboard + storage/network + ops screenshots.\n"
     );
   } finally {
     await browser.close();
