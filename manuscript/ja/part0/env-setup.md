@@ -23,7 +23,13 @@
 ## 対象バージョン（Proxmox VE 9.1）
 
 本書のスクリーンショットと UI 手順は、原則として **Proxmox VE 9.1（9.x 系）** を前提にしています。
-Proxmox VE 9.1 は Debian 13（Trixie）をベースとしており、標準のカーネルは 6.17 系です。
+Proxmox VE 9.x は Debian 13（Trixie）をベースとしており、OS の基本的な操作感は Debian 系 Linux と共通です。
+
+ただし、カーネル（例: 6.14 系 / 6.17 系）や UI はマイナー更新で変わることがあります。
+読者の環境での「いまの状態」は次のコマンドで確認できます。
+
+- Proxmox VE のバージョン確認: `pveversion -v`
+- カーネル確認: `uname -r`
 
 注意: Proxmox VE のバージョンアップでは、カーネル更新に伴ってドライバやカーネルモジュールの互換性問題が出ることがあります。
 たとえば NVIDIA vGPU や LINSTOR/DRBD といった追加モジュールを利用する場合は、導入・更新前に公式の既知の問題を確認してください（例: `https://pve.proxmox.com/wiki/Roadmap` の “Known Issues & Breaking Changes”）。
