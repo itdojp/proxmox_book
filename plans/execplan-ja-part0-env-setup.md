@@ -95,6 +95,7 @@ Relevant files:
 - [2025-12-21] Updated plan for a beginner-focused revision pass aligned to Proxmox VE 9.1.
 - [2025-12-21] Added “最初に決めること” checklists and example values to `env-setup.md`, updated 9.1 notes, and replaced the lab topology SVG placeholder with a minimal real diagram.
 - [2026-01-11] Updated the Debian base OS wording in `env-setup.md` to “Debian 13（Trixie）” to reduce staleness risk (minor version numbers change more frequently).
+- [2026-01-11] Added “章のゴール” and “この章で分かること/分からないこと” sections to `env-setup.md` for consistency with other beginner-friendly chapters.
 
 
 
