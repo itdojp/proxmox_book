@@ -152,7 +152,7 @@ VM の確認:
   - `local` の `Content` に ISO が表示されているか（Web UI）
   - CLI なら `pvesm list local --content iso` で見えるか
 - VM が起動しない/止まる:
-  - Web UI の Task History で対象 VM の直近タスクを確認する
+  - Web UI の `Tasks` で対象 VM の直近タスクを確認する
   - CLI なら `qm status <VMID>` / `qm list` で状態を確認する
 - ゲスト OS のネットワーク疎通が取れない:
   - VM の `Hardware` で NIC の Bridge が想定どおりか（例: `vmbr0`）

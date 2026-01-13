@@ -841,7 +841,7 @@ VM の確認:
   - `local` の `Content` に ISO が表示されているか（Web UI）
   - CLI なら `pvesm list local --content iso` で見えるか
 - VM が起動しない/止まる:
-  - Web UI の Task History で対象 VM の直近タスクを確認する
+  - Web UI の `Tasks` で対象 VM の直近タスクを確認する
   - CLI なら `qm status <VMID>` / `qm list` で状態を確認する
 - ゲスト OS のネットワーク疎通が取れない:
   - VM の `Hardware` で NIC の Bridge が想定どおりか（例: `vmbr0`）
@@ -1381,7 +1381,7 @@ Web UI からバックアップジョブを作成し、対象となる VM / コ�
 ## よくあるつまずきポイント
 
 - バックアップジョブが失敗する:
-  - まずは Web UI の Task History と、`/var/log/vzdump/` の直近ログを確認します。
+  - まずは Web UI の `Tasks` と、`/var/log/vzdump/` の直近ログを確認します。
   - 保存先ストレージの空き容量や到達性（NFS など）を疑います。
 - バックアップが保存されているはずのストレージが見えない/選べない:
   - Datacenter → Storage の定義と、ストレージの Content 種別（backup を許可しているか）を確認します。
@@ -1439,7 +1439,7 @@ Web UI からバックアップジョブを作成し、対象となる VM / コ�
 ## 用語メモ（最小）
 
 - タスク（Tasks）: Web UI で実行された操作の履歴（成功/失敗の入口になりやすい）
-- Syslog: ノードのログの入口（詳細はホスト OS のログも併用する）
+- System Log（Syslog）: ノードのログの入口（詳細はホスト OS のログも併用する）
 - Runbook: 手順を標準化した運用メモ（「誰がやっても同じになる」ことが目的）
 
 ## 最初に見る場所（チェックリスト）
@@ -1447,19 +1447,19 @@ Web UI からバックアップジョブを作成し、対象となる VM / コ�
 トラブル時にいきなり深掘りすると迷子になりがちです。まずは次の順で “入口” を確認します。
 
 1. 何が起きたか（症状・影響範囲・発生時刻）をメモする
-2. Web UI の Task History / Syslog で、直近の失敗タスクやエラーを確認する
-3. ノード/ゲストの概要画面（リソースグラフ）で、CPU/メモリ/ディスクI/O の異常がないか見る
+2. Web UI の `Tasks` / `System Log` で、直近の失敗タスクやエラーを確認する
+3. ノード/ゲストの概要画面（リソースグラフ）で、CPU/メモリ/ディスク I/O の異常がないか見る
 4. 必要に応じてホスト OS のログ（`journalctl` など）へ進む
 
 図としての全体像は `diagrams/part4/ch9/triage-flow.svg` を参照してください。
 
 Web UI 画面の例:
 
-Task History の例:
+`Tasks`（タスク履歴）の例:
 
-![Task History（例）](../../images/part4/ch9/02-task-history.png)
+![Tasks（例）](../../images/part4/ch9/02-task-history.png)
 
-Syslog の例:
+System Log（Syslog）の例:
 
 ![Syslog（例）](../../images/part4/ch9/01-node-syslog.png)
 
@@ -1520,7 +1520,7 @@ Proxmox VE は、パッケージ更新によって機能追加や不具合修正
 
 Proxmox VE の運用では、Web UI やホスト OS 上のログ、監視ツールを組み合わせて状態を把握します。
 
-- Web UI の「Syslog」や「Task History」で、直近のジョブやエラーを確認する
+- Web UI の `System Log` や `Tasks` で、直近のジョブやエラーを確認する
 - ホスト OS のログファイル（例: journalctl や /var/log/syslog）を参照し、ハードウェアやサービスの異常を確認する
 - CPU / メモリ / ストレージ I/O のグラフを俯瞰し、平常と異なるパターンがないかを見る
 
