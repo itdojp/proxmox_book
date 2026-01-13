@@ -174,6 +174,7 @@
 - [2025-12-21] Documented canonical screenshot filenames/paths in Issue #2 and kept the reader-facing chapters usable without screenshots (assets are added later).
 - [2026-01-11] Added `tools/pve-webui-screenshots/` (Playwright-based) to help capture Web UI screenshots from CLI (login/dashboard as a first pass).
 - [2026-01-12] Adjusted kernel-related notes to avoid over-specific patch-level claims and to prefer reader-facing verification (`pveversion -v`, `uname -r`) while keeping 9.1/9.x alignment intact.
+- [2026-01-12] Validated `tools/pve-webui-screenshots/capture.mjs` against a Proxmox VE 9.1.1 lab and hardened it (UI-based login, auto-dismiss “No valid subscription” modal, improved redaction for IP/host/interface identifiers). Captured sanitized Web UI screenshots for ch3/ch5/ch6/ch9 and updated Issue #2 and Issue #25 accordingly (screenshots for ch4/ch7/ch8 remain).
 
 
 
@@ -187,6 +188,8 @@
     - 6.17 は機能・ドライバ対応が広がる一方で、特定の追加モジュール（例: NVIDIA vGPU、LINSTOR/DRBD）との互換性注意点が出ることがある。
     - 公式フォーラムのアナウンスを参照（例: `https://forum.proxmox.com/threads/proxmox-ve-9-kernel-6-14-remains-supported-and-default-until-further-notice.166375/`）。
   - UI はマイナー更新で差分が出やすい。本文は「入口（Datacenter/Node）」「成功判定」で案内し、スクリーンショットで精密化する。
+- Web UI 自動取得の落とし穴:
+  - ログイン直後に “No valid subscription” のモーダルが出る環境があり、クリックがブロックされる（自動で閉じる必要がある）。
 
 
 
@@ -198,6 +201,8 @@
 - Decision: Part 0 / 第3章に「Proxmox VE 9.1 前提」と「カーネル更新に伴う互換性注意点（該当者のみ）」を短いノートとして追加する（詳細は運用章に回す）。
 - Decision: スクリーンショットは英語 UI（Light テーマ）を基本とし、本文側で日本語補足する。
 - Reason: メニュー名・画面項目の表記ゆれを減らし、公式ドキュメントと照合しやすくするため。
+- Decision: Web UI スクリーンショット取得は cookie 注入よりも UI ログインを優先し、モーダルを自動で閉じる。
+- Reason: 環境差分で cookie-only の挙動が不安定になりやすく、モーダルがクリックをブロックするため。
 - Decision: スクリーンショットの保存先と命名規則を `images/part{N}/ch{M}/{NN}-{slug}.png` に固定する。
 - Reason: 章内の順序が追いやすく、差し替えやレビュー時の参照が容易になるため。
 
