@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="520" viewBox="0 0 980 520">
+  <style>
+    .title { font: 20px sans-serif; font-weight: 600; fill: #0f172a; }
+    .subtitle { font: 16px sans-serif; font-weight: 600; fill: #0f172a; }
+    .label { font: 14px sans-serif; fill: #0f172a; }
+    .small { font: 12px sans-serif; fill: #334155; }
+    .box { fill: #f8fafc; stroke: #334155; stroke-width: 1.5; rx: 10; }
+    .net { fill: #ecfeff; stroke: #0e7490; stroke-width: 1.5; rx: 10; }
+    .accent { fill: #eef2ff; stroke: #3730a3; stroke-width: 1.5; rx: 10; }
+    .line { stroke: #334155; stroke-width: 2; }
+  </style>
+
+  <rect x="0" y="0" width="980" height="520" fill="#ffffff"/>
+
+  <text class="title" x="20" y="36">ネットワークトポロジ（概略）</text>
+  <text class="small" x="20" y="58">VLAN を使う場合はスイッチ側の設定（トランク/アクセスポート）と整合させます。ここでは “分け方” を示します。</text>
+
+  <!-- Pattern A -->
+  <text class="subtitle" x="20" y="98">パターン A: 単一ノード（基本）</text>
+
+  <rect class="box" x="20" y="115" width="420" height="150"/>
+  <text class="label" x="40" y="145">管理用 PC</text>
+  <text class="small" x="40" y="165">Web UI へアクセス</text>
+
+  <rect class="net" x="20" y="285" width="420" height="70"/>
+  <text class="label" x="40" y="315">管理 + VM ネットワーク（共用）</text>
+  <text class="small" x="40" y="335">例: VLAN 10 / 192.168.10.0/24</text>
+
+  <rect class="accent" x="20" y="375" width="420" height="110"/>
+  <text class="label" x="40" y="405">Proxmox VE ノード（pve1）</text>
+  <text class="small" x="40" y="428">vmbr0（ブリッジ）に VM を接続</text>
+  <text class="small" x="40" y="448">必要なら VLAN で分離（後からでも可）</text>
+
+  <line class="line" x1="230" y1="265" x2="230" y2="285"/>
+  <line class="line" x1="230" y1="355" x2="230" y2="375"/>
+
+  <!-- Pattern B -->
+  <text class="subtitle" x="520" y="98">パターン B: 3 ノードクラスタ（発展）</text>
+
+  <rect class="box" x="520" y="115" width="440" height="70"/>
+  <text class="label" x="540" y="145">管理用 PC</text>
+  <text class="small" x="540" y="165">クラスタ管理・操作</text>
+
+  <rect class="net" x="520" y="205" width="440" height="70"/>
+  <text class="label" x="540" y="235">管理ネットワーク（例 VLAN 10）</text>
+  <text class="small" x="540" y="255">pve1/pve2/pve3 の管理 IP</text>
+
+  <rect class="net" x="520" y="295" width="440" height="70"/>
+  <text class="label" x="540" y="325">VM ネットワーク（例 VLAN 20）</text>
+  <text class="small" x="540" y="345">ゲストの通信</text>
+
+  <rect class="net" x="520" y="385" width="440" height="70"/>
+  <text class="label" x="540" y="415">ストレージ/バックアップ（例 VLAN 30）</text>
+  <text class="small" x="540" y="435">Ceph 等を使うなら分離を検討</text>
+
+  <rect class="accent" x="520" y="465" width="440" height="40"/>
+  <text class="label" x="540" y="492">Proxmox VE ノード群（pve1/pve2/pve3）</text>
+
+  <line class="line" x1="740" y1="185" x2="740" y2="205"/>
+  <line class="line" x1="740" y1="275" x2="740" y2="295"/>
+  <line class="line" x1="740" y1="365" x2="740" y2="385"/>
+  <line class="line" x1="740" y1="455" x2="740" y2="465"/>
+</svg>

@@ -94,7 +94,7 @@ Proxmox VE のインストールメディアから起動すると、グラフィ
 
 ログイン画面の例:
 
-![Proxmox VE Login（例）](../../../images/part1/ch3/10-webui-first-login.png)
+![Proxmox VE Login（例）](../../images/part1/ch3/10-webui-first-login.png)
 
 ### 初回ログイン（ユーザー名と認証方式）
 
@@ -129,7 +129,7 @@ Proxmox VE では、ユーザー名に認証方式（realm）を含めて指定�
 
 ログイン後の画面の例（Datacenter の Summary 画面）:
 
-![Datacenter Summary（例）](../../../images/part1/ch3/11-webui-dashboard-node-summary.png)
+![Datacenter Summary（例）](../../images/part1/ch3/11-webui-dashboard-node-summary.png)
 
 ### スクショ無しでの最小確認（CLI）
 

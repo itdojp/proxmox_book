@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="420" viewBox="0 0 980 420">
+  <style>
+    .title { font: 20px sans-serif; font-weight: 600; fill: #0f172a; }
+    .label { font: 14px sans-serif; fill: #0f172a; }
+    .small { font: 12px sans-serif; fill: #334155; }
+    .box { fill: #f8fafc; stroke: #334155; stroke-width: 1.5; rx: 10; }
+    .accent { fill: #eef2ff; stroke: #3730a3; stroke-width: 1.5; rx: 10; }
+    .line { stroke: #334155; stroke-width: 2; }
+  </style>
+
+  <rect x="0" y="0" width="980" height="420" fill="#ffffff"/>
+
+  <text class="title" x="20" y="36">VM 作成ウィザードの流れ（概略）</text>
+  <text class="small" x="20" y="58">タブ名や細かな項目はバージョンで変わることがあります。ここでは “何を決めるか” を押さえます。</text>
+
+  <!-- Row 1 -->
+  <rect class="accent" x="20" y="90" width="210" height="64"/>
+  <text class="label" x="40" y="118">1. 一般</text>
+  <text class="small" x="40" y="140">VMID / 名前</text>
+
+  <rect class="box" x="260" y="90" width="210" height="64"/>
+  <text class="label" x="280" y="118">2. OS</text>
+  <text class="small" x="280" y="140">ISO / ゲスト種別</text>
+
+  <rect class="box" x="500" y="90" width="210" height="64"/>
+  <text class="label" x="520" y="118">3. システム</text>
+  <text class="small" x="520" y="140">BIOS/マシン等</text>
+
+  <rect class="accent" x="740" y="90" width="210" height="64"/>
+  <text class="label" x="760" y="118">4. ディスク</text>
+  <text class="small" x="760" y="140">容量/ストレージ</text>
+
+  <!-- Row 2 -->
+  <rect class="box" x="20" y="190" width="210" height="64"/>
+  <text class="label" x="40" y="218">5. CPU</text>
+  <text class="small" x="40" y="240">コア数など</text>
+
+  <rect class="box" x="260" y="190" width="210" height="64"/>
+  <text class="label" x="280" y="218">6. メモリ</text>
+  <text class="small" x="280" y="240">割り当て量</text>
+
+  <rect class="accent" x="500" y="190" width="210" height="64"/>
+  <text class="label" x="520" y="218">7. ネットワーク</text>
+  <text class="small" x="520" y="240">ブリッジ/VLAN</text>
+
+  <rect class="box" x="740" y="190" width="210" height="64"/>
+  <text class="label" x="760" y="218">8. 確認/作成</text>
+  <text class="small" x="760" y="240">設定を確定</text>
+
+  <!-- Row 3 -->
+  <rect class="box" x="20" y="290" width="210" height="64"/>
+  <text class="label" x="40" y="318">9. 起動</text>
+  <text class="small" x="40" y="340">Start</text>
+
+  <rect class="box" x="260" y="290" width="210" height="64"/>
+  <text class="label" x="280" y="318">10. コンソール</text>
+  <text class="small" x="280" y="340">インストール</text>
+
+  <rect class="box" x="500" y="290" width="210" height="64"/>
+  <text class="label" x="520" y="318">11. スナップショット</text>
+  <text class="small" x="520" y="340">必要に応じて</text>
+
+  <rect class="box" x="740" y="290" width="210" height="64"/>
+  <text class="label" x="760" y="318">12. テンプレート/複製</text>
+  <text class="small" x="760" y="340">台数を増やす</text>
+
+  <!-- Arrows -->
+  <line class="line" x1="230" y1="122" x2="260" y2="122"/>
+  <line class="line" x1="470" y1="122" x2="500" y2="122"/>
+  <line class="line" x1="710" y1="122" x2="740" y2="122"/>
+
+  <line class="line" x1="845" y1="154" x2="845" y2="190"/>
+  <line class="line" x1="740" y1="222" x2="710" y2="222"/>
+  <line class="line" x1="500" y1="222" x2="470" y2="222"/>
+  <line class="line" x1="260" y1="222" x2="230" y2="222"/>
+
+  <line class="line" x1="125" y1="254" x2="125" y2="290"/>
+  <line class="line" x1="230" y1="322" x2="260" y2="322"/>
+  <line class="line" x1="470" y1="322" x2="500" y2="322"/>
+  <line class="line" x1="710" y1="322" x2="740" y2="322"/>
+</svg>
+

@@ -48,7 +48,7 @@ Proxmox VE では、インストール直後から “用途の違うストレ�
 
 Datacenter -> Storage 一覧の例:
 
-![Datacenter -> Storage（例）](../../../images/part2/ch5/01-datacenter-storage-list.png)
+![Datacenter -> Storage（例）](../../images/part2/ch5/01-datacenter-storage-list.png)
 
 ### スクショ無しでの最小確認（CLI）
 

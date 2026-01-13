@@ -13,7 +13,7 @@ JA_CHAPTERS := \
 	manuscript/ja/part4/chapter9-operations.md \
 	manuscript/ja/part4/chapter10-enterprise.md
 
-.PHONY: build-ja
+.PHONY: build-ja sync-docs-ja check-ja
 
 build-ja: $(JA_BUILD_DIR)/book.md
 	@echo "build-ja: combined manuscript is at $(JA_BUILD_DIR)/book.md"
@@ -23,6 +23,13 @@ build-ja: $(JA_BUILD_DIR)/book.md
 	else \
 		echo "pandoc not found; skipped PDF generation. You can install pandoc and rerun make build-ja to produce a PDF."; \
 	fi
+
+sync-docs-ja:
+	python3 tools/sync_docs_ja.py
+
+check-ja: build-ja sync-docs-ja
+	@git diff --exit-code
+	@echo "check-ja: OK (no diff after build-ja + sync-docs-ja)"
 
 $(JA_BUILD_DIR):
 	mkdir -p $(JA_BUILD_DIR)
