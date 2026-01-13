@@ -31,6 +31,20 @@
 
 図としての全体像は `diagrams/part4/ch9/triage-flow.svg` を参照してください。
 
+Web UI 画面の例:
+
+Task History の例:
+
+![Task History（例）](../../../images/part4/ch9/02-task-history.png)
+
+Syslog の例:
+
+![Syslog（例）](../../../images/part4/ch9/01-node-syslog.png)
+
+ノード概要（リソースグラフ）の例:
+
+![Node Summary（例）](../../../images/part4/ch9/03-node-dashboard-resource-graphs.png)
+
 ## 日次・週次・月次の運用チェックリスト（例）
 
 ### 日次

@@ -613,6 +613,10 @@ Proxmox VE のインストールメディアから起動すると、グラフィ
 - URL は `https://<IPアドレス>:8006/` の形式になることが一般的ですが、まずは **コンソールに表示された URL** をそのまま使ってください。
 - 初回アクセスでは証明書警告が表示されることがあります（学習環境では一般的）。本番環境では証明書の扱いを運用方針として決める必要があります。
 
+ログイン画面の例:
+
+![Proxmox VE Login（例）](../../images/part1/ch3/10-webui-first-login.png)
+
 ### 初回ログイン（ユーザー名と認証方式）
 
 Proxmox VE では、ユーザー名に認証方式（realm）を含めて指定します。
@@ -632,6 +636,10 @@ Proxmox VE では、ユーザー名に認証方式（realm）を含めて指定�
 - 時刻設定が大きくずれていないか（必要に応じて NTP 設定を行う）
 
 ここまで確認できれば、このノードは「第4章の VM 作成」に進める状態になっています。
+
+ログイン後の画面の例（Datacenter の Summary 画面）:
+
+![Datacenter Summary（例）](../../images/part1/ch3/11-webui-dashboard-node-summary.png)
 
 ### スクショ無しでの最小確認（CLI）
 
@@ -851,6 +859,10 @@ Proxmox VE では、インストール直後から “用途の違うストレ�
 - インストール時に ZFS を選ぶなど、ディスク構成によってストレージ名や構成は変わります。
 - ストレージごとに「置けるもの（ISO/バックアップ/ディスクなど）」が決まっています。ISO のアップロード先に迷った場合は、そのストレージが ISO を扱える設定（コンテンツ種別）になっているかを確認してください。
 
+Datacenter -> Storage 一覧の例:
+
+![Datacenter -> Storage（例）](../../images/part2/ch5/01-datacenter-storage-list.png)
+
 ### スクショ無しでの最小確認（CLI）
 
 スクリーンショットが無い段階でも、次の CLI を使うと「今どのストレージが使える状態か」「どこに何があるか」を最低限確認できます。
@@ -1023,6 +1035,10 @@ Part 0 で紹介したラボパターンに合わせて、シンプルなネッ�
 
 Proxmox VE では、Linux ブリッジを用いて仮想マシンやコンテナを物理ネットワークに接続します。
 標準インストール直後は、物理 NIC（例: eno1）に対して vmbr0 が作成され、そのブリッジにホスト自身と仮想マシンが接続される構成が一般的です。
+
+Node -> Network 一覧の例:
+
+![Node -> Network（例）](../../images/part2/ch6/01-node-network-list.png)
 
 ## ネットワーク変更の反映と安全策（重要）
 
@@ -1375,6 +1391,20 @@ Web UI からバックアップジョブを作成し、対象となる VM / コ�
 4. 必要に応じてホスト OS のログ（`journalctl` など）へ進む
 
 図としての全体像は `diagrams/part4/ch9/triage-flow.svg` を参照してください。
+
+Web UI 画面の例:
+
+Task History の例:
+
+![Task History（例）](../../images/part4/ch9/02-task-history.png)
+
+Syslog の例:
+
+![Syslog（例）](../../images/part4/ch9/01-node-syslog.png)
+
+ノード概要（リソースグラフ）の例:
+
+![Node Summary（例）](../../images/part4/ch9/03-node-dashboard-resource-graphs.png)
 
 ## 日次・週次・月次の運用チェックリスト（例）
 
