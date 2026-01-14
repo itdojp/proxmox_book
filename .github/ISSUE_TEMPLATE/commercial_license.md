@@ -2,7 +2,7 @@
 name: 商用ライセンス契約申請
 about: 法人・営利団体向け商用ライセンス契約の申請
 title: "[商用ライセンス] 契約申請 - [組織名]"
-labels: "commercial-license, enterprise"
+labels: ["commercial-license", "enterprise"]
 assignees: ""
 ---
 
@@ -56,4 +56,3 @@ assignees: ""
 - 本申請は契約を保証するものではありません
 - 詳細な契約条件は別途調整させていただきます
 - 契約締結まで商用利用はお控えください
-
