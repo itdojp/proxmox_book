@@ -53,6 +53,36 @@ Node.js が必要です（このリポジトリの作業環境では Node 22 を
 出力先:
 - `images/part*/ch*/`（Issue #2 のパス）
 
+保存されるファイル（現時点）:
+
+デフォルト:
+- `images/part1/ch3/10-webui-first-login.png`
+- `images/part1/ch3/11-webui-dashboard-node-summary.png`
+- `images/part2/ch5/01-datacenter-storage-list.png`
+- `images/part2/ch6/01-node-network-list.png`
+- `images/part4/ch9/01-node-syslog.png`
+- `images/part4/ch9/02-task-history.png`
+- `images/part4/ch9/03-node-dashboard-resource-graphs.png`
+
+`PVE_CAPTURE_CH4=1` の場合（Create VM wizard）:
+- `images/part1/ch4/01-create-vm-wizard-general.png`
+- `images/part1/ch4/02-create-vm-wizard-os.png`
+- `images/part1/ch4/03-create-vm-wizard-system.png`
+- `images/part1/ch4/04-create-vm-wizard-disks.png`
+- `images/part1/ch4/05-create-vm-wizard-cpu.png`
+- `images/part1/ch4/06-create-vm-wizard-memory.png`
+- `images/part1/ch4/07-create-vm-wizard-network.png`
+
+`PVE_CAPTURE_EXTENDED=1` の場合（安全に開ける一覧/設定ダイアログ/ウィザード中心）:
+- `images/part2/ch5/02-node-local-lvm-lvmthin.png`
+- `images/part2/ch6/02-vmbr0-settings.png`
+- `images/part2/ch6/03-bond-settings.png`
+- `images/part2/ch6/04-vlan-subif-settings.png`
+- `images/part3/ch7/01-datacenter-cluster-empty.png`
+- `images/part3/ch7/02-create-cluster-wizard.png`
+- `images/part3/ch8/01-datacenter-backup-jobs.png`
+- `images/part3/ch8/02-create-backup-job-wizard.png`
+
 ## トラブルシュート
 
 - `PVE_INSECURE=1` を付けても TLS エラーになる場合:

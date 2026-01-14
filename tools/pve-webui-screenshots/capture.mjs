@@ -19,7 +19,7 @@ Required env:
 Optional env:
   PVE_INSECURE=1 allow self-signed cert (lab only)
   PVE_CAPTURE_CH4=1 capture Create VM wizard screenshots (Chapter 4)
-  PVE_CAPTURE_EXTENDED=1 capture additional safe UI pages (ch5/ch6/ch7/ch8)
+  PVE_CAPTURE_EXTENDED=1 capture additional safe UI pages/dialogs/wizards (ch5/ch6/ch7/ch8)
 `;
   process.stderr.write(msg.trimStart());
   process.stderr.write("\n");
@@ -420,6 +420,22 @@ async function closeTopMostWindow(page) {
   await dismissMessageBoxes(page);
 }
 
+async function optionalStep({ page, imagesRoot, name, fn }) {
+  try {
+    await fn();
+  } catch (error) {
+    const debugPath = path.join(imagesRoot, "_debug", `${name}.png`);
+    try {
+      await saveScreenshot({ page, outPath: debugPath });
+    } catch {
+      // ignore
+    }
+    process.stderr.write(
+      `WARN: skipped optional step "${name}": ${String(error?.message || error)} (debug: ${debugPath})\n`
+    );
+  }
+}
+
 async function loginViaUi(page, { username, password }) {
   const { user, realm } = splitUserAndRealm(username);
 
@@ -594,59 +610,179 @@ async function main() {
 
     if (captureExtended) {
       // Chapter 5: Node -> Disks -> LVM-Thin (safe read-only view)
-      await gotoNode(page, firstNode);
-      await page.waitForTimeout(1200);
-      try {
-        await gotoSection(page, "Disks");
-      } catch {
-        // ignore; some layouts show Disks as a group only
-      }
-      await gotoSection(page, "LVM-Thin");
-      await waitAnyText(page, ["LVM-Thin", "thinpool", "LV Name"]);
-      await redactForScreenshot(page, replacements);
-      await saveScreenshot({
+      await optionalStep({
         page,
-        outPath: path.join(imagesRoot, "part2/ch5/02-node-local-lvm-lvmthin.png")
+        imagesRoot,
+        name: "extended-ch5-lvmthin",
+        fn: async () => {
+          await gotoNode(page, firstNode);
+          await page.waitForTimeout(1200);
+          try {
+            await gotoSection(page, "Disks");
+          } catch {
+            // ignore; some layouts show Disks as a group only
+          }
+          await gotoSection(page, "LVM-Thin");
+          await waitAnyText(page, ["LVM-Thin", "thinpool", "LV Name"]);
+          await redactForScreenshot(page, replacements);
+          await saveScreenshot({
+            page,
+            outPath: path.join(imagesRoot, "part2/ch5/02-node-local-lvm-lvmthin.png")
+          });
+        }
       });
 
       // Chapter 6: vmbr0 settings dialog (safe; do not apply)
-      await gotoNode(page, firstNode);
-      await page.waitForTimeout(1200);
-      await gotoSection(page, "Network");
-      await page.locator("css=.x-grid-item").first().waitFor({ timeout: 30000 });
-      await safeClick(page, [
-        'css=.x-grid-item:has-text("vmbr0")',
-        'css=.x-grid-cell:has-text("vmbr0")'
-      ]);
-      await safeClick(page, ['css=.x-btn-inner:has-text("Edit")', "text=Edit"]);
-      await page.waitForTimeout(800);
-      await redactForScreenshot(page, replacements);
-      await saveScreenshot({
+      await optionalStep({
         page,
-        outPath: path.join(imagesRoot, "part2/ch6/02-vmbr0-settings.png")
+        imagesRoot,
+        name: "extended-ch6-vmbr0-edit",
+        fn: async () => {
+          await gotoNode(page, firstNode);
+          await page.waitForTimeout(1200);
+          await gotoSection(page, "Network");
+          await page.locator("css=.x-grid-item").first().waitFor({ timeout: 30000 });
+          await safeClick(page, [
+            'css=.x-grid-item:has-text("vmbr0")',
+            'css=.x-grid-cell:has-text("vmbr0")'
+          ]);
+          await safeClick(page, ['css=.x-btn-inner:has-text("Edit")', "text=Edit"]);
+          await page.waitForTimeout(800);
+          await redactForScreenshot(page, replacements);
+          await saveScreenshot({
+            page,
+            outPath: path.join(imagesRoot, "part2/ch6/02-vmbr0-settings.png")
+          });
+          await closeTopMostWindow(page);
+        }
       });
-      await closeTopMostWindow(page);
+
+      // Chapter 6: bond/vlan dialogs (safe; do not apply)
+      await optionalStep({
+        page,
+        imagesRoot,
+        name: "extended-ch6-bond-dialog",
+        fn: async () => {
+          await gotoNode(page, firstNode);
+          await page.waitForTimeout(1200);
+          await gotoSection(page, "Network");
+          await page.locator("css=.x-grid-item").first().waitFor({ timeout: 30000 });
+          await safeClick(page, ['css=.x-btn-inner:has-text("Create")', "text=Create"]);
+          await safeClick(page, [
+            'css=.x-menu-item-text:has-text("Bond")',
+            'css=.x-menu-item-text:has-text("Linux Bond")',
+            "text=Bond",
+            "text=Linux Bond"
+          ]);
+          await page.waitForTimeout(800);
+          await redactForScreenshot(page, replacements);
+          await saveScreenshot({
+            page,
+            outPath: path.join(imagesRoot, "part2/ch6/03-bond-settings.png")
+          });
+          await closeTopMostWindow(page);
+        }
+      });
+
+      await optionalStep({
+        page,
+        imagesRoot,
+        name: "extended-ch6-vlan-dialog",
+        fn: async () => {
+          await gotoNode(page, firstNode);
+          await page.waitForTimeout(1200);
+          await gotoSection(page, "Network");
+          await page.locator("css=.x-grid-item").first().waitFor({ timeout: 30000 });
+          await safeClick(page, ['css=.x-btn-inner:has-text("Create")', "text=Create"]);
+          await safeClick(page, [
+            'css=.x-menu-item-text:has-text("VLAN")',
+            'css=.x-menu-item-text:has-text("Linux VLAN")',
+            "text=VLAN",
+            "text=Linux VLAN"
+          ]);
+          await page.waitForTimeout(800);
+          await redactForScreenshot(page, replacements);
+          await saveScreenshot({
+            page,
+            outPath: path.join(imagesRoot, "part2/ch6/04-vlan-subif-settings.png")
+          });
+          await closeTopMostWindow(page);
+        }
+      });
 
       // Chapter 7: Datacenter -> Cluster (empty / no cluster defined)
-      await gotoDatacenter(page);
-      await page.waitForTimeout(1200);
-      await gotoSection(page, "Cluster");
-      await waitAnyText(page, ["Cluster", "Create Cluster", "no cluster"]);
-      await redactForScreenshot(page, replacements);
-      await saveScreenshot({
+      await optionalStep({
         page,
-        outPath: path.join(imagesRoot, "part3/ch7/01-datacenter-cluster-empty.png")
+        imagesRoot,
+        name: "extended-ch7-cluster-empty",
+        fn: async () => {
+          await gotoDatacenter(page);
+          await page.waitForTimeout(1200);
+          await gotoSection(page, "Cluster");
+          await waitAnyText(page, ["Cluster", "Create Cluster", "no cluster"]);
+          await redactForScreenshot(page, replacements);
+          await saveScreenshot({
+            page,
+            outPath: path.join(imagesRoot, "part3/ch7/01-datacenter-cluster-empty.png")
+          });
+        }
       });
 
-      // Chapter 8: Datacenter -> Backup jobs list
-      await gotoDatacenter(page);
-      await page.waitForTimeout(1200);
-      await gotoSection(page, "Backup");
-      await waitAnyText(page, ["Backup", "Backup Jobs", "Job"]);
-      await redactForScreenshot(page, replacements);
-      await saveScreenshot({
+      await optionalStep({
         page,
-        outPath: path.join(imagesRoot, "part3/ch8/01-datacenter-backup-jobs.png")
+        imagesRoot,
+        name: "extended-ch7-create-cluster-wizard",
+        fn: async () => {
+          await gotoDatacenter(page);
+          await page.waitForTimeout(1200);
+          await gotoSection(page, "Cluster");
+          await safeClick(page, ['css=.x-btn-inner:has-text("Create Cluster")', "text=Create Cluster"]);
+          await page.waitForTimeout(800);
+          await redactForScreenshot(page, replacements);
+          await saveScreenshot({
+            page,
+            outPath: path.join(imagesRoot, "part3/ch7/02-create-cluster-wizard.png")
+          });
+          await closeTopMostWindow(page);
+        }
+      });
+
+      // Chapter 8: Datacenter -> Backup jobs list + create wizard
+      await optionalStep({
+        page,
+        imagesRoot,
+        name: "extended-ch8-backup-jobs",
+        fn: async () => {
+          await gotoDatacenter(page);
+          await page.waitForTimeout(1200);
+          await gotoSection(page, "Backup");
+          await waitAnyText(page, ["Backup", "Backup Jobs", "Job"]);
+          await redactForScreenshot(page, replacements);
+          await saveScreenshot({
+            page,
+            outPath: path.join(imagesRoot, "part3/ch8/01-datacenter-backup-jobs.png")
+          });
+        }
+      });
+
+      await optionalStep({
+        page,
+        imagesRoot,
+        name: "extended-ch8-create-backup-job-wizard",
+        fn: async () => {
+          await gotoDatacenter(page);
+          await page.waitForTimeout(1200);
+          await gotoSection(page, "Backup");
+          await safeClick(page, ['css=.x-btn-inner:has-text("Add")', "text=Add"]);
+          await waitAnyText(page, ["Create", "Backup Job"]);
+          await page.waitForTimeout(800);
+          await redactForScreenshot(page, replacements);
+          await saveScreenshot({
+            page,
+            outPath: path.join(imagesRoot, "part3/ch8/02-create-backup-job-wizard.png")
+          });
+          await closeTopMostWindow(page);
+        }
       });
     }
 
