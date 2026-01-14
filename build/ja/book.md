@@ -664,10 +664,36 @@ Proxmox VE では、ユーザー名に認証方式（realm）を含めて指定�
 
 スクリーンショットが無い段階でも、次の CLI で「インストール直後に最低限見るべきポイント」を確認できます。
 
-- Proxmox VE のバージョン確認: `pveversion -v`
-- IP アドレスの状態: `ip -br a`
-- ルーティング（デフォルトゲートウェイ等）: `ip r`
-- Web UI の待受（8006）確認: `ss -lntp | grep ':8006'`
+```bash
+pveversion -v
+ip -br a
+ip r
+ss -lntp | grep ':8006'
+```
+
+出力例（抜粋）:
+
+```text
+$ pveversion -v
+pve-manager/9.1.1/<build>
+proxmox-kernel-6.17.2-1-pve
+...
+
+$ ip -br a
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+eno1             UP
+vmbr0            UP             192.168.10.11/24
+...
+
+$ ss -lntp | grep ':8006'
+LISTEN 0 4096 0.0.0.0:8006 0.0.0.0:* users:(("pveproxy",pid=...,fd=...))
+```
+
+見るポイント（最低限）:
+
+- `pveversion -v`: `pve-manager/9.1.x` が表示される（9.x 系であることを確認）
+- `ip -br a` / `ip r`: 管理用 IP とデフォルトゲートウェイが想定どおりである
+- `ss -lntp | grep ':8006'`: `:8006` が LISTEN している（Web UI の待受）
 
 ## よくあるつまずきポイント
 
@@ -823,12 +849,42 @@ Web UI から「仮想マシンの作成」ウィザードを起動し、次の�
 
 ISO の確認（例: `local` に置いた場合）:
 
-- `pvesm list local --content iso`
+```bash
+pvesm list local --content iso
+```
+
+出力例（抜粋）:
+
+```text
+$ pvesm list local --content iso
+Volid                                     Format  Type  Size
+local:iso/ubuntu-24.04.1-live-server-amd64.iso iso     iso   <SIZE>
+...
+```
 
 VM の確認:
 
-- VM 一覧: `qm list`
-- 状態確認: `qm status <VMID>`
+```bash
+qm list
+qm status <VMID>
+```
+
+出力例（抜粋）:
+
+```text
+$ qm list
+ VMID NAME        STATUS     MEM(MB) BOOTDISK(GB) PID
+  100 vm-ubuntu01 running    2048    20.00        12345
+
+$ qm status 100
+status: running
+```
+
+見るポイント（最低限）:
+
+- `pvesm list ... --content iso`: アップロードした ISO が表示される
+- `qm list`: 期待した名前の VM が表示される（`VMID` は以降の操作で使います）
+- `qm status <VMID>`: `running` / `stopped` が表示される
 
 ## スナップショットとテンプレートの基礎
 
@@ -957,15 +1013,41 @@ Datacenter -> Storage 一覧の例:
 
 スクリーンショットが無い段階でも、次の CLI を使うと「今どのストレージが使える状態か」「どこに何があるか」を最低限確認できます。
 
-- ストレージ一覧（容量/状態）: `pvesm status`
-- ストレージ内の一覧（例: `local`）: `pvesm list local`
-- ISO の一覧（例: `local`）: `pvesm list local --content iso`
-- バックアップの一覧（例: `local`）: `pvesm list local --content backup`
+```bash
+pvesm status
+pvesm list local --content iso
+pvesm list local --content backup
+```
+
+出力例（抜粋）:
+
+```text
+$ pvesm status
+Name      Type     Status  Total     Used    Available  %
+local     dir      active  100.00G   5.00G   95.00G     5.00%
+local-lvm lvmthin  active   80.00G  20.00G   60.00G    25.00%
+
+$ pvesm list local --content iso
+Volid                                     Format  Type  Size
+local:iso/ubuntu-24.04.1-live-server-amd64.iso iso     iso   <SIZE>
+
+$ pvesm list local --content backup
+Volid                                              Format   Type    Size
+local:backup/vzdump-qemu-100-<YYYY_MM_DD-HH_MM_SS>.vma.zst vma.zst  backup  <SIZE>
+...
+```
+
+見るポイント（最低限）:
+
+- `pvesm status`: 対象ストレージが `active` で、空き容量がある
+- `pvesm list ...`: ISO やバックアップが「どのストレージにあるか」を把握できる
 
 ストレージ方式ごとの確認（使っている場合のみ）:
 
-- ZFS の状態: `zpool status`
-- LVM の状態: `lvs`
+```bash
+zpool status
+lvs
+```
 
 ## LVM ベースのローカルストレージ
 
