@@ -10,6 +10,7 @@
 - Last updated: 2026-01-15
 - Related issues/PRs:
   - Issue #83（JA: diagrams を本文に埋め込み（参照だけでなく見える化））
+  - PR #84（JA: embed diagrams into chapters）
 
 
 ## 2. Purpose and big picture
@@ -76,22 +77,23 @@
 
 ### 6.3 PR 化とマージ
 
-- [ ] 変更が過剰でないか（alt テキスト、配置）を確認する
-- [ ] `make check-ja` が差分ゼロで成功する状態にする（コミット後に再実行）
-- [ ] Issue #83 を Fixes する PR を作成し、マージする
+- [x] 変更が過剰でないか（alt テキスト、配置）を確認する
+- [x] `make check-ja` が差分ゼロで成功する状態にする（コミット後に再実行）
+- [x] Issue #83 を Fixes する PR を作成し、マージする
 
 
 ## 7. Validation and acceptance
 
-- [ ] 対象章で、図が「参照」ではなく本文に埋め込まれて表示される
-- [ ] `make check-ja` が成功し、差分ゼロ（`git diff` が空）である
-- [ ] PR がマージされ、Issue #83 がクローズされる
+- [x] 対象章で、図が「参照」ではなく本文に埋め込まれて表示される
+- [x] `make check-ja` が成功し、差分ゼロ（`git diff` が空）である
+- [x] PR がマージされ、Issue #83 がクローズされる
 
 
 ## 8. Progress
 
 - [2026-01-15] Plan created (Issue #83).
-- [2026-01-15] Embedded existing SVG diagrams into the Japanese manuscript chapters and refreshed generated docs via `make check-ja` (work in progress; not yet committed/PR).
+- [2026-01-15] Embedded existing SVG diagrams into the Japanese manuscript chapters and refreshed generated docs via `make check-ja`.
+- [2026-01-15] Confirmed `make check-ja` is clean (no diff), opened PR #84 (Fixes #83), and merged it.
 
 
 ## 9. Surprises & discoveries
@@ -107,8 +109,12 @@
 
 ## 11. Outcomes & retrospective
 
-- Status: in-progress
-- TODO: PR マージ後に、実際に達成できたこと（対象章、表示確認、チェック結果）を簡潔に追記する。
+- Status: build-validated
+- `diagrams/` に置いていた既存の SVG 図を、`manuscript/ja` の本文へ埋め込み（GitHub 上でも図が見える状態）にした。
+- `make check-ja` を通し、`docs/` と `build/ja/book.md` へ同期できる状態を維持した。
+- 次の改善点:
+  - 図の「読み取りのコツ」（例: 何を見ればよいか）を、各章の学習ゴールに合わせて最小限だけ補強する
+  - スクリーンショット反映（Issue #2 / #25）は、環境が整い次第まとめて対応する
 
 
 ## 12. Idempotence & recovery
