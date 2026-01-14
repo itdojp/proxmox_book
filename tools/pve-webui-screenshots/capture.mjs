@@ -14,9 +14,11 @@ Required env:
   PVE_BASE_URL   e.g. https://192.168.10.11:8006
   PVE_USERNAME   e.g. root@pam
   PVE_PASSWORD   password (do not commit)
+  (or) PVE_PASSWORD_FILE path to a file containing the password
 
 Optional env:
   PVE_INSECURE=1 allow self-signed cert (lab only)
+  PVE_CAPTURE_CH4=1 capture Create VM wizard screenshots (Chapter 4)
 `;
   process.stderr.write(msg.trimStart());
   process.stderr.write("\n");
@@ -26,6 +28,16 @@ function mustEnv(name) {
   const value = process.env[name];
   if (!value) throw new Error(`Missing env var: ${name}`);
   return value;
+}
+
+async function resolvePassword() {
+  if (process.env.PVE_PASSWORD) return process.env.PVE_PASSWORD;
+  const passwordFile = process.env.PVE_PASSWORD_FILE;
+  if (passwordFile) {
+    const raw = await fs.readFile(passwordFile, { encoding: "utf8" });
+    return raw.replace(/\r?\n$/, "");
+  }
+  throw new Error("Missing env var: PVE_PASSWORD (or PVE_PASSWORD_FILE)");
 }
 
 function repoRoot() {
@@ -79,14 +91,19 @@ async function dismissMessageBoxes(page) {
   try {
     await box.locator('css=.x-btn:has-text("OK")').first().click({ timeout: 5000 });
   } catch {
-    // Fallback to clicking the close icon if present.
+    // Some confirmations use Yes/No.
     try {
-      await box
-        .locator('css=.x-tool-close, css=.x-window-header-close')
-        .first()
-        .click({ timeout: 3000 });
+      await box.locator('css=.x-btn:has-text("Yes")').first().click({ timeout: 3000 });
     } catch {
-      // ignore
+      // Fallback to clicking the close icon if present.
+      try {
+        await box
+          .locator('css=.x-tool-close, css=.x-window-header-close')
+          .first()
+          .click({ timeout: 3000 });
+      } catch {
+        // ignore
+      }
     }
   }
 
@@ -213,6 +230,23 @@ async function safeClick(page, selectors) {
   throw new Error(`Click failed. Tried selectors: ${selectors.join(", ")}`);
 }
 
+async function safeClickWithin(container, selectors) {
+  const timeoutMs = 6000;
+  const page = container.page();
+  await dismissMessageBoxes(page);
+  for (const selector of selectors) {
+    const locator = container.locator(selector).first();
+    try {
+      await locator.waitFor({ state: "visible", timeout: timeoutMs });
+      await locator.click({ timeout: timeoutMs });
+      return;
+    } catch {
+      // try next
+    }
+  }
+  throw new Error(`Click failed. Tried selectors: ${selectors.join(", ")}`);
+}
+
 async function waitAnyText(page, texts) {
   for (const text of texts) {
     try {
@@ -257,6 +291,117 @@ function splitUserAndRealm(username) {
   const match = String(username || "").match(/^(?<user>[^@]+)@(?<realm>[^@]+)$/);
   if (match?.groups?.user && match?.groups?.realm) return match.groups;
   return { user: String(username || ""), realm: "" };
+}
+
+async function captureCreateVmWizard({ page, imagesRoot, replacements }) {
+  const outDir = path.join(imagesRoot, "part1/ch4");
+
+  await safeClick(page, [
+    'css=.x-btn-inner:has-text("Create VM")',
+    'css=.x-btn:has-text("Create VM")',
+    "text=Create VM"
+  ]);
+
+  const wizardTitleCandidates = ["Create: Virtual Machine", "Create VM", "Virtual Machine"];
+  await waitAnyText(page, wizardTitleCandidates);
+
+  const wizard = page
+    .locator("css=.x-window")
+    .filter({ hasText: "Create" })
+    .last();
+  try {
+    await wizard.waitFor({ state: "visible", timeout: 20000 });
+  } catch (error) {
+    const debugPath = path.join(imagesRoot, "_debug", "create-vm-wizard-not-visible.png");
+    await saveScreenshot({ page, outPath: debugPath });
+    throw new Error(
+      `Create VM wizard did not appear. Saved debug screenshot at ${debugPath}\n${String(
+        error?.message || error
+      )}`
+    );
+  }
+
+  const steps = [
+    { label: "General", out: "01-create-vm-wizard-general.png" },
+    { label: "OS", out: "02-create-vm-wizard-os.png" },
+    { label: "System", out: "03-create-vm-wizard-system.png" },
+    { label: "Disks", out: "04-create-vm-wizard-disks.png" },
+    { label: "CPU", out: "05-create-vm-wizard-cpu.png" },
+    { label: "Memory", out: "06-create-vm-wizard-memory.png" },
+    { label: "Network", out: "07-create-vm-wizard-network.png" }
+  ];
+
+  const bestEffortFillName = async () => {
+    const candidates = [
+      'input[name="name"]',
+      'input[name="vmname"]',
+      'input[name="hostname"]'
+    ];
+    for (const selector of candidates) {
+      const input = wizard.locator(selector).first();
+      try {
+        await input.waitFor({ state: "visible", timeout: 500 });
+        await input.fill("vm-ubuntu01");
+        return;
+      } catch {
+        // try next
+      }
+    }
+  };
+
+  const bestEffortSelectNoMedia = async () => {
+    const selectors = [
+      'css=.x-form-cb-label:has-text("Do not use any media")',
+      'css=.x-form-radio-label:has-text("Do not use any media")',
+      "text=Do not use any media"
+    ];
+    for (const selector of selectors) {
+      try {
+        await wizard.locator(selector).first().click({ timeout: 800 });
+        return;
+      } catch {
+        // try next
+      }
+    }
+  };
+
+  let currentIndex = 0; // assume wizard opens at "General"
+  for (let targetIndex = 0; targetIndex < steps.length; targetIndex++) {
+    const step = steps[targetIndex];
+
+    // Prefer direct tab navigation (fast + avoids required-field gating).
+    try {
+      await safeClickWithin(wizard, [
+        `css=.x-tab-inner:has-text("${step.label}")`,
+        `css=.x-tab:has-text("${step.label}")`,
+        `text=${step.label}`
+      ]);
+      currentIndex = targetIndex;
+    } catch {
+      // Fall back to Next-based navigation (may require filling mandatory fields).
+      while (currentIndex < targetIndex) {
+        const current = steps[currentIndex]?.label || "";
+        if (current === "General") await bestEffortFillName();
+        if (current === "OS") await bestEffortSelectNoMedia();
+        await safeClickWithin(wizard, ['css=.x-btn-inner:has-text("Next")', "text=Next"]);
+        currentIndex += 1;
+        await page.waitForTimeout(400);
+      }
+    }
+
+    await page.waitForTimeout(600);
+    await redactForScreenshot(page, replacements);
+    await saveScreenshot({ page, outPath: path.join(outDir, step.out) });
+  }
+
+  // Close wizard without creating a VM.
+  try {
+    await safeClickWithin(wizard, ['css=.x-btn-inner:has-text("Cancel")', "text=Cancel"]);
+  } catch {
+    // Some environments show a close icon only.
+    await safeClickWithin(wizard, ["css=.x-tool-close", "css=.x-window-header-close"]);
+  }
+  await dismissMessageBoxes(page);
 }
 
 async function loginViaUi(page, { username, password }) {
@@ -328,9 +473,10 @@ async function main() {
 
   const baseUrl = mustEnv("PVE_BASE_URL");
   const username = mustEnv("PVE_USERNAME");
-  const password = mustEnv("PVE_PASSWORD");
+  const password = await resolvePassword();
   const insecure = process.env.PVE_INSECURE === "1";
   const otp = process.env.PVE_OTP || "";
+  const captureCh4 = process.env.PVE_CAPTURE_CH4 === "1";
 
   if (insecure) {
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
@@ -389,6 +535,10 @@ async function main() {
       page,
       outPath: path.join(imagesRoot, "part1/ch3/11-webui-dashboard-node-summary.png")
     });
+
+    if (captureCh4) {
+      await captureCreateVmWizard({ page, imagesRoot, replacements });
+    }
 
     // 3) Datacenter -> Storage list (Chapter 5)
     await gotoDatacenter(page);
