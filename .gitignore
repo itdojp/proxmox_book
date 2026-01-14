@@ -7,3 +7,7 @@ Thumbs.db
 *.swp
 *.swo
 *~
+
+# Generated screenshots for debugging (may contain sensitive lab info)
+images/_debug/
+docs/images/_debug/

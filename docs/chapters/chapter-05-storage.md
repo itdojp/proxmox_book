@@ -50,6 +50,10 @@ Datacenter -> Storage 一覧の例:
 
 ![Datacenter -> Storage（例）](../../images/part2/ch5/01-datacenter-storage-list.png)
 
+Node -> Disks -> LVM-Thin の例（`local-lvm` の実体を把握する入口）:
+
+![Node -> Disks -> LVM-Thin（例）](../../images/part2/ch5/02-node-local-lvm-lvmthin.png)
+
 ### スクショ無しでの最小確認（CLI）
 
 スクリーンショットが無い段階でも、次の CLI を使うと「今どのストレージが使える状態か」「どこに何があるか」を最低限確認できます。

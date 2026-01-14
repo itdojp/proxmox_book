@@ -62,8 +62,14 @@
 
 クラスタ作成・参加の入口は、Web UI の **Datacenter → Cluster** です。
 
+- Datacenter → Cluster（クラスタ未構成の例）:
+  - ![Datacenter -> Cluster（例）](../../images/part3/ch7/01-datacenter-cluster-empty.png)
 - 最初のノード: Datacenter → Cluster → Create Cluster からクラスタを作成する
 - 追加するノード: Datacenter → Cluster → Join Cluster から参加させる
+
+Create Cluster ウィザードの例（入口）:
+
+![Create Cluster（例）](../../images/part3/ch7/02-create-cluster-wizard.png)
 
 成功判定（最低限）:
 
