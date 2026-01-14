@@ -114,6 +114,108 @@ Node -> Network 一覧の例:
 - 変更が反映されない/意図と違う:
   - Web UI 変更直後は `/etc/network/interfaces.new` 側に書かれていることがあります。適用済みかどうかを意識します。
 
+## 設定ファイル例（/etc/network/interfaces）
+
+注意: 以下は「学習用の例」です。**インターフェース名（`eno1` 等）や VLAN ID、IP アドレスは環境ごとに異なります**。
+適用前に必ず「コンソール確保」と「設定退避」を行ってください（誤適用するとノードへ入れなくなるためです）。
+
+### パターン A: 物理 NIC + `vmbr0`（最小）
+
+管理用 IP をブリッジ（`vmbr0`）側に持たせる、最小構成の例です。
+
+```ini
+auto lo
+iface lo inet loopback
+
+iface eno1 inet manual
+
+auto vmbr0
+iface vmbr0 inet static
+  address 192.168.10.11/24
+  gateway 192.168.10.1
+  bridge-ports eno1
+  bridge-stp off
+  bridge-fd 0
+```
+
+ポイント:
+
+- 物理 NIC（例: `eno1`）には IP を付けず、ブリッジ側（例: `vmbr0`）に IP を設定します。
+
+### パターン B: VLAN-aware bridge + 管理用 VLAN（例: VLAN 10）
+
+スイッチ側が VLAN（トランク）に対応しており、管理用ネットワークを VLAN で分離したい場合の例です。
+ブリッジを VLAN-aware にし、ホスト管理用の IP を `vmbr0.<VLAN>` に載せます。
+
+```ini
+auto lo
+iface lo inet loopback
+
+iface eno1 inet manual
+
+auto vmbr0
+iface vmbr0 inet manual
+  bridge-ports eno1
+  bridge-stp off
+  bridge-fd 0
+  bridge-vlan-aware yes
+  bridge-vids 2-4094
+
+auto vmbr0.10
+iface vmbr0.10 inet static
+  address 192.168.10.11/24
+  gateway 192.168.10.1
+```
+
+ポイント（最低限）:
+
+- `vmbr0` は VLAN-aware の “土台” になり、VM 側の仮想 NIC に VLAN タグを指定して使い分けます。
+- `vmbr0.10` のような VLAN インターフェースは、ホスト（Proxmox VE 自身）がその VLAN で通信したいときに使います（管理用 VLAN など）。
+
+### パターン C: `bond0` + `vmbr0`（冗長化）
+
+2 本の物理 NIC をボンド（`bond0`）として束ね、その上にブリッジ（`vmbr0`）を構成する例です。
+ラボで始める場合は、まず `active-backup` のようなシンプルなモードから検証すると安全です（LACP/802.3ad はスイッチ側設定が必要）。
+
+```ini
+auto lo
+iface lo inet loopback
+
+iface eno1 inet manual
+iface eno2 inet manual
+
+auto bond0
+iface bond0 inet manual
+  bond-slaves eno1 eno2
+  bond-miimon 100
+  bond-mode active-backup
+
+auto vmbr0
+iface vmbr0 inet static
+  address 192.168.10.11/24
+  gateway 192.168.10.1
+  bridge-ports bond0
+  bridge-stp off
+  bridge-fd 0
+```
+
+### 反映・切り戻しの最小手順（例）
+
+手動編集を行う場合は、まず退避してから反映します（編集方法は利用できるエディタに合わせてください）。
+
+```bash
+cp -a /etc/network/interfaces /etc/network/interfaces.bak.$(date +%F)
+# /etc/network/interfaces を編集する
+ifreload -a
+```
+
+復旧の入口（最小）:
+
+```bash
+cp -a /etc/network/interfaces.bak.<DATE> /etc/network/interfaces
+ifreload -a
+```
+
 ## ボンディングの概要
 
 冗長性や帯域確保が必要な場合、複数の物理 NIC をボンドインターフェースとして束ね、その上にブリッジを構成することができます。
@@ -122,8 +224,9 @@ Node -> Network 一覧の例:
 ## VLAN の基本と Proxmox VE での扱い
 
 VLAN を利用すると、1 本の物理リンク上で論理的にネットワークを分離できます。
-Proxmox VE では、ブリッジインターフェース上に VLAN タグ付きのサブインターフェースを作成し、
-VM の仮想 NIC に VLAN ID を割り当てることで、複数の VLAN を使い分けることができます。
+Proxmox VE では、VM の仮想 NIC に VLAN タグを指定して使い分けることができます。
+ただし、VLAN の扱い（VLAN-aware bridge か、従来方式か、OVS か等）はブリッジ設定によって変わるため、
+まずはラボで 1 つの VLAN から動作確認すると安全です。
 
 ラボ環境では、次のような使い分けが考えられます。
 
@@ -132,7 +235,8 @@ VM の仮想 NIC に VLAN ID を割り当てることで、複数の VLAN を使
 - VLAN 30: ストレージ／バックアップ用ネットワーク（必要に応じて）
 
 これらの設定は、Proxmox VE の Web UI またはテキスト形式の設定ファイルを通じて行います。
-本書では、具体的な CLI コマンドや設定ファイルの例は後続の詳細セクションまたは付録で扱う前提とし、ここでは設計の考え方とパターンに焦点を当てます。
+本書では、本章で最低限の設定ファイル例（`/etc/network/interfaces`）を示しつつ、設計の考え方とパターンに焦点を当てます。
+SDN/EVPN のような発展トピックや、環境依存が大きいチューニングは別パスで扱います。
 
 ## 設計時の注意点
 
