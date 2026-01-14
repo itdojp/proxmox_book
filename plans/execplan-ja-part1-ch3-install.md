@@ -8,9 +8,10 @@
 - Title: JA Part I / Chapter 3 – Proxmox VE のインストール
 - Author: AuthorExecAgent (with human reviewer)
 - Date created: 2025-12-21
-- Last updated: 2026-01-11
+- Last updated: 2026-01-14
 - Related issues/PRs:
   - Issue #2（スクリーンショット取得タスクリスト）
+  - Issue #77（用語メモの最小追加）
   - plans/execplan-ja-pve9.1-alignment.md（実機検証・スクショ・本文反映の横断計画）
 
 
@@ -101,6 +102,7 @@
 - [2025-12-21] Plan created (Chapter 3 ExecPlan was missing; added a dedicated plan for beginner-friendly text/diagram pass aligned to Proxmox VE 9.1).
 - [2025-12-21] Updated `chapter3-proxmox-install.md` with beginner framing, pre-install checklist/example values, and a minimal troubleshooting checklist; replaced the install-flow SVG placeholder; ran `make build-ja` successfully (output not committed).
 - [2026-01-11] Added first-login notes (`root@pam`) and kept the chapter text usable without screenshots; screenshot tracking remains in Issue #2 and the cross-cutting 9.1 alignment ExecPlan.
+- [2026-01-14] Added a minimal terminology memo section to reduce beginner friction (Issue #77).
 
 
 
