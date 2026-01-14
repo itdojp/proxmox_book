@@ -87,6 +87,7 @@ Files:
 - [2025-11-16 14:55] Drafted `manuscript/ja/part2/chapter6-network.md` with lab-oriented patterns for single-node and 3-node clusters, and created placeholder topology diagram `diagrams/part2/ch6/network-topology.svg`.
 - [2025-12-21] Updated plan for a beginner-focused revision pass aligned to Proxmox VE 9.1.
 - [2025-12-21] Added beginner framing/checklists to `chapter6-network.md` and replaced the placeholder topology SVG with a minimal real diagram.
+- [2026-01-14] Added and embedded Web UI screenshots for Network list and representative dialogs (vmbr0 edit / Bond / VLAN) (PR #70).
 
 
 
@@ -111,7 +112,7 @@ Files:
 
 
 - Status: text-draft
-- Status: assets-pending（UI 手順/スクリーンショット未記述）
+- Status: assets-partial（代表的な画面（Network 一覧、vmbr0/Bond/VLAN ダイアログ）を追加。詳細 UI 手順は未完）
 - Status: build-validated (`build/ja/book.md` に含まれることを確認済み)
 - Initial draft of Chapter 6 exists at `manuscript/ja/part2/chapter6-network.md`, covering Linux bridges, bonding, VLANs, and lab-oriented topology patterns.
 - The network topology diagram at `diagrams/part2/ch6/network-topology.svg` is now a minimal-but-real diagram; detailed interface names and VLAN tags can be added later without restructuring the text.
