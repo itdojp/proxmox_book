@@ -9,7 +9,9 @@
 - Author: AuthorExecAgent (with human reviewer)
 - Date created: 2025-11-16
 - Last updated: 2026-01-14
-- Related issues/PRs: [TBD]
+- Related issues/PRs:
+  - Issue #2（スクリーンショット取得タスクリスト）
+  - Issue #73（UI 手順の最小補強）
 
 
 
@@ -59,7 +61,8 @@ Files:
 
 
 - [x] Draft sections for backup concepts and strategies.
-- [ ] Document step-by-step backup job creation and restore (to be detailed in a later pass when a reference environment is available).
+- [x] Add minimal Web UI navigation steps (entry points) for job creation → Run now → Tasks → Restore.
+- [ ] Document full step-by-step backup job creation and restore (to be detailed in a later pass when a reference environment is available).
 - [x] Add example of replication between nodes at a conceptual level.
 - [x] Add beginner-friendly framing (“分かること/分からないこと”, prerequisites checklist) and a minimal terminology memo.
 - [x] Add a minimal diagram under `diagrams/part3/ch8/` to visualize backup → restore → test flow.
@@ -87,6 +90,7 @@ Files:
 - [2025-12-21] Added beginner framing/terminology to `chapter8-backup.md`, added `diagrams/part3/ch8/backup-restore-flow.svg`, and referenced Issue #2 for future screenshots/UI walkthrough.
 - [2026-01-11] Aligned the plan wording with the project convention: screenshot work is tracked in Issues, and reader-facing text should not depend on screenshots.
 - [2026-01-14] Added and embedded Web UI screenshots for backup entry points and key dialogs (jobs list / create wizard / task log / restore dialog) (Issue #2).
+- [2026-01-14] Added minimal Web UI navigation steps (entry points) for job creation → Run now → Tasks → Restore (Issue #73).
 
 
 
@@ -114,7 +118,7 @@ Files:
 - Status: assets-partial（Datacenter → Backup の入口スクリーンショットを追加。実行/タスクログ/リストアの一部は反映済み）
 - Status: build-validated (`build/ja/book.md` に含まれることを確認済み)
 - Initial draft of Chapter 8 exists at `manuscript/ja/part3/chapter8-backup.md`, explaining backup/restore and replication concepts tied to the book's lab patterns.
-- A minimal backup→restore→test flow diagram is now available at `diagrams/part3/ch8/backup-restore-flow.svg`; detailed UI walkthroughs and screenshots are still pending and should be aligned to Proxmox VE 9.1 in a later pass.
+- A minimal backup→restore→test flow diagram is now available at `diagrams/part3/ch8/backup-restore-flow.svg`; a later pass can expand the walkthrough to a “full click-by-click” level without changing the chapter structure.
 - For future reliability-related chapters, centering the narrative on “recoverability” rather than individual features keeps guidance aligned with real-world needs.
 
 

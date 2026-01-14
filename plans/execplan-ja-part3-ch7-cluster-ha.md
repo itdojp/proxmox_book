@@ -9,7 +9,9 @@
 - Author: AuthorExecAgent (with human reviewer)
 - Date created: 2025-11-16
 - Last updated: 2026-01-14
-- Related issues/PRs: [TBD]
+- Related issues/PRs:
+  - Issue #2（スクリーンショット取得タスクリスト）
+  - Issue #73（UI 手順の最小補強）
 
 
 
@@ -63,6 +65,7 @@ Files:
 - [x] Outline sections for cluster basics, setup, and HA.
 - [x] Create topology diagram with 3 nodes and shared storage.
 - [ ] Document step-by-step cluster creation and adding nodes.
+- [x] Add minimal Web UI navigation steps (entry points) for Create/Join Cluster.
 - [x] Document setting up HA concepts for a VM and basic test scenarios at a conceptual level.
 - [x] Add beginner-friendly framing (“分かること/分からないこと”, prerequisites checklist) and a minimal terminology memo.
 - [x] Replace `diagrams/part3/ch7/cluster-ha.svg` placeholder with a minimal-but-real diagram consistent with the chapter.
@@ -88,6 +91,7 @@ Files:
 - [2025-12-21] Updated plan for a beginner-focused revision pass aligned to Proxmox VE 9.1.
 - [2025-12-21] Added beginner framing/checklists to `chapter7-cluster-ha.md` and replaced the placeholder cluster/HA SVG with a minimal real diagram.
 - [2026-01-14] Added and embedded Web UI screenshots for Datacenter → Cluster entry points (cluster empty + create wizard + join wizard) (Issue #2).
+- [2026-01-14] Added minimal Web UI navigation steps (entry points) for Create/Join Cluster (Issue #73).
 
 
 

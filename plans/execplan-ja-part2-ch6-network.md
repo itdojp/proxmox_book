@@ -9,7 +9,9 @@
 - Author: AuthorExecAgent (with human reviewer)
 - Date created: 2025-11-16
 - Last updated: 2026-01-14
-- Related issues/PRs: [TBD]
+- Related issues/PRs:
+  - Issue #2（スクリーンショット取得タスクリスト）
+  - Issue #73（UI 手順の最小補強）
 
 
 
@@ -63,7 +65,8 @@ Files:
 
 - [x] Define 1–2 reference topologies (single-node, small cluster).
 - [x] Draft bridge/bond/VLAN explanation.
-- [ ] Provide step-by-step examples of configuring network in Proxmox UI (to be detailed in a later pass or appendix).
+- [x] Add minimal Web UI navigation steps (entry points) for Node → Network and VM NIC VLAN Tag.
+- [ ] Provide full step-by-step examples of configuring network in Proxmox UI (to be detailed in a later pass or appendix).
 - [x] Add beginner-friendly framing (“分かること/分からないこと”, “最初に決めること” checklist) and a minimal terminology memo.
 - [x] Replace `diagrams/part2/ch6/network-topology.svg` placeholder with a minimal-but-real diagram consistent with the chapter.
 
@@ -74,7 +77,7 @@ Files:
 
 
 - [x] Readers can design and reason about a basic VLAN-aware network pattern in their lab, based on the chapter.
-- [ ] Examples match Proxmox 9.1 behavior (to be confirmed once concrete UI steps and screenshots are added and cross-checked).
+- [x] Examples match Proxmox 9.1 behavior (cross-checked against live 9.1.1 Web UI screenshots).
 - [x] Diagram is no longer a placeholder and is consistent with the text.
 
 
@@ -88,6 +91,7 @@ Files:
 - [2025-12-21] Updated plan for a beginner-focused revision pass aligned to Proxmox VE 9.1.
 - [2025-12-21] Added beginner framing/checklists to `chapter6-network.md` and replaced the placeholder topology SVG with a minimal real diagram.
 - [2026-01-14] Added and embedded Web UI screenshots for Network list and representative dialogs (vmbr0 edit / Bond / VLAN) plus a VM NIC VLAN tag example (Issue #2).
+- [2026-01-14] Added minimal Web UI navigation steps (entry points) so readers can locate Network/Bond/VLAN/VM VLAN Tag screens without screenshots alone (Issue #73).
 
 
 
