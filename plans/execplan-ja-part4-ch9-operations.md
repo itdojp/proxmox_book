@@ -12,6 +12,7 @@
 - Related issues/PRs:
   - Issue #2（スクリーンショット取得タスクリスト）
   - Issue #78（CLI 最小確認の見出し・導入を統一）
+  - Issue #79（初心者の誤解・つまずきポイント追記）
 
 
 
@@ -88,6 +89,7 @@ Files:
 - [2025-12-21] Added beginner framing/checklists to `chapter9-operations.md`, added `diagrams/part4/ch9/triage-flow.svg`, and referenced Issue #2 for future screenshots.
 - [2026-01-11] Added a minimal “updates + repositories” section to `chapter9-operations.md` and aligned the plan wording with the project convention (screenshots tracked in Issues; no TODO blocks in the manuscript).
 - [2026-01-14] Refined the CLI “minimum verification” section (what to check / what not to run) for consistency across chapters (Issue #78).
+- [2026-01-14] Refined the “troubleshooting scenarios” section so readers have a clearer “what to check first” order (Issue #79).
 
 
 
