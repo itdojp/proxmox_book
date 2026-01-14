@@ -9,7 +9,9 @@
 - Author: AuthorExecAgent (with human reviewer)
 - Date created: 2025-11-16
 - Last updated: 2026-01-14
-- Related issues/PRs: [TBD]
+- Related issues/PRs:
+  - Issue #2（スクリーンショット取得タスクリスト）
+  - Issue #75（UI 手順の最小補強）
 
 
 
@@ -67,6 +69,7 @@ Files:
 - [x] Add comparison table (features, pros/cons).
 - [x] Add one or two typical storage layout examples.
 - [x] Add beginner-friendly framing (“この章で分かること/分からないこと”, terminology memo) and clarify what is out-of-scope (detailed commands/tuning).
+- [x] Add minimal Web UI navigation steps (entry points) for Datacenter → Storage and Node → Disks → LVM-Thin.
 - [x] Replace `diagrams/part2/ch5/storage-layout.svg` placeholder with a minimal-but-real diagram consistent with the chapter.
 
 
@@ -91,6 +94,7 @@ Files:
 - [2025-12-21] Updated plan for a beginner-focused revision pass aligned to Proxmox VE 9.1.
 - [2025-12-21] Added beginner framing/terminology memo to `chapter5-storage.md` and replaced the placeholder storage layout SVG with a minimal real diagram.
 - [2026-01-14] Added and embedded Web UI screenshots for Datacenter → Storage and Node → Disks → LVM-Thin (Issue #2).
+- [2026-01-14] Added minimal Web UI navigation steps (entry points) so readers can locate the storage screens without getting stuck (Issue #75).
 
 
 
