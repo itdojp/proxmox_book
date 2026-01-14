@@ -74,12 +74,37 @@
 
 スクリーンショットが無い段階でも、次の CLI で「クラスタが成立しているか」を最低限確認できます。
 
-- クォーラム確認: `pvecm status`
-- ノード一覧: `pvecm nodes`
+```bash
+pvecm status
+pvecm nodes
+```
+
+出力例（抜粋）:
+
+```text
+$ pvecm status
+...
+Quorate: Yes
+Nodes: 3
+...
+
+$ pvecm nodes
+Nodeid Votes Name
+1      1     pve1
+2      1     pve2
+3      1     pve3
+```
+
+見るポイント（最低限）:
+
+- `pvecm status`: `Quorate: Yes` になっている（クォーラム成立）
+- `pvecm nodes`: 想定したノード（例: `pve1/pve2/pve3`）が表示される
 
 問題切り分けの入口（例）:
 
-- `journalctl -u corosync -u pve-cluster --no-pager -n 50`
+```bash
+journalctl -u corosync -u pve-cluster --no-pager -n 50
+```
 
 ## HA 設定と基本的なテスト
 
@@ -97,7 +122,24 @@
 
 HA を有効化した後に「今どのノードで動く想定か」「エラーになっていないか」を確認する入口として、次が使えます。
 
-- HA 全体の状態: `ha-manager status`
+```bash
+ha-manager status
+```
+
+出力例（抜粋）:
+
+```text
+$ ha-manager status
+quorum OK
+master pve1 (active, ...)
+service vm:100 (pve2, started)
+...
+```
+
+見るポイント（最低限）:
+
+- `quorum OK` が表示される（クォーラム前提を満たしている）
+- 対象 VM（例: `vm:100`）が `started` になっている（起動状態の入口）
 
 ## よくあるつまずきポイント
 
