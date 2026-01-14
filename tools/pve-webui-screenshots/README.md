@@ -32,6 +32,7 @@ Node.js が必要です（このリポジトリの作業環境では Node 22 を
 任意:
 - `PVE_INSECURE=1` 自己署名証明書を許容（学習環境向け）
 - `PVE_CAPTURE_CH4=1` 第4章の「Create VM wizard」スクショも取得する
+- `PVE_CAPTURE_EXTENDED=1` 追加の安全な画面（ch5/ch6/ch7/ch8）も取得する
 
 実行例:
 

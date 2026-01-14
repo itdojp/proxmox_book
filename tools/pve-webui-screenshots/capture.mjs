@@ -19,6 +19,7 @@ Required env:
 Optional env:
   PVE_INSECURE=1 allow self-signed cert (lab only)
   PVE_CAPTURE_CH4=1 capture Create VM wizard screenshots (Chapter 4)
+  PVE_CAPTURE_EXTENDED=1 capture additional safe UI pages (ch5/ch6/ch7/ch8)
 `;
   process.stderr.write(msg.trimStart());
   process.stderr.write("\n");
@@ -404,6 +405,21 @@ async function captureCreateVmWizard({ page, imagesRoot, replacements }) {
   await dismissMessageBoxes(page);
 }
 
+async function closeTopMostWindow(page) {
+  const win = page.locator("css=.x-window").filter({ has: page.locator("css=.x-tool-close") }).last();
+  try {
+    await win.waitFor({ state: "visible", timeout: 1500 });
+  } catch {
+    return;
+  }
+  try {
+    await win.locator("css=.x-tool-close, css=.x-window-header-close").first().click({ timeout: 3000 });
+  } catch {
+    // ignore
+  }
+  await dismissMessageBoxes(page);
+}
+
 async function loginViaUi(page, { username, password }) {
   const { user, realm } = splitUserAndRealm(username);
 
@@ -477,6 +493,7 @@ async function main() {
   const insecure = process.env.PVE_INSECURE === "1";
   const otp = process.env.PVE_OTP || "";
   const captureCh4 = process.env.PVE_CAPTURE_CH4 === "1";
+  const captureExtended = process.env.PVE_CAPTURE_EXTENDED === "1";
 
   if (insecure) {
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
@@ -574,6 +591,64 @@ async function main() {
       page,
       outPath: path.join(imagesRoot, "part2/ch6/01-node-network-list.png")
     });
+
+    if (captureExtended) {
+      // Chapter 5: Node -> Disks -> LVM-Thin (safe read-only view)
+      await gotoNode(page, firstNode);
+      await page.waitForTimeout(1200);
+      try {
+        await gotoSection(page, "Disks");
+      } catch {
+        // ignore; some layouts show Disks as a group only
+      }
+      await gotoSection(page, "LVM-Thin");
+      await waitAnyText(page, ["LVM-Thin", "thinpool", "LV Name"]);
+      await redactForScreenshot(page, replacements);
+      await saveScreenshot({
+        page,
+        outPath: path.join(imagesRoot, "part2/ch5/02-node-local-lvm-lvmthin.png")
+      });
+
+      // Chapter 6: vmbr0 settings dialog (safe; do not apply)
+      await gotoNode(page, firstNode);
+      await page.waitForTimeout(1200);
+      await gotoSection(page, "Network");
+      await page.locator("css=.x-grid-item").first().waitFor({ timeout: 30000 });
+      await safeClick(page, [
+        'css=.x-grid-item:has-text("vmbr0")',
+        'css=.x-grid-cell:has-text("vmbr0")'
+      ]);
+      await safeClick(page, ['css=.x-btn-inner:has-text("Edit")', "text=Edit"]);
+      await page.waitForTimeout(800);
+      await redactForScreenshot(page, replacements);
+      await saveScreenshot({
+        page,
+        outPath: path.join(imagesRoot, "part2/ch6/02-vmbr0-settings.png")
+      });
+      await closeTopMostWindow(page);
+
+      // Chapter 7: Datacenter -> Cluster (empty / no cluster defined)
+      await gotoDatacenter(page);
+      await page.waitForTimeout(1200);
+      await gotoSection(page, "Cluster");
+      await waitAnyText(page, ["Cluster", "Create Cluster", "no cluster"]);
+      await redactForScreenshot(page, replacements);
+      await saveScreenshot({
+        page,
+        outPath: path.join(imagesRoot, "part3/ch7/01-datacenter-cluster-empty.png")
+      });
+
+      // Chapter 8: Datacenter -> Backup jobs list
+      await gotoDatacenter(page);
+      await page.waitForTimeout(1200);
+      await gotoSection(page, "Backup");
+      await waitAnyText(page, ["Backup", "Backup Jobs", "Job"]);
+      await redactForScreenshot(page, replacements);
+      await saveScreenshot({
+        page,
+        outPath: path.join(imagesRoot, "part3/ch8/01-datacenter-backup-jobs.png")
+      });
+    }
 
     // 5) Node dashboard graphs (Chapter 9)
     await gotoNode(page, firstNode);
