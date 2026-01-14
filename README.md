@@ -25,9 +25,15 @@ Proxmox VE は定期的にアップデートされるため、マイナーバー
 
 ## 執筆・ビルド（貢献者向け）
 
-- 原稿: `manuscript/ja/`
+- 正本（編集対象）: `manuscript/ja/`（本文）、`images/`（スクショ）、`diagrams/`（図）
 - 章順: `manuscript/ja/SUMMARY.md`
-- 結合（Markdown）: `make build-ja`（出力: `build/ja/book.md`）
+- GitHub Pages（Web 公開）: `docs/`（※ `docs/chapters/` / `docs/introduction/` は正本から同期）
+
+### よく使うコマンド
+
+- 本文の結合（Markdown）: `make build-ja`（出力: `build/ja/book.md`）
+- `docs/` へ同期（章 + 図/スクショ）: `make sync-docs-ja`
+- CI 相当の確認: `make check-ja`（`build-ja` + `sync-docs-ja` 実行後に差分が無いこと）
 
 ## フィードバック（誤り指摘・改善提案）
 

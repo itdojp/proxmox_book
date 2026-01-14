@@ -75,7 +75,7 @@ Proxmox VE では、Linux ブリッジを用いて仮想マシンやコンテナ
 
 Node -> Network 一覧の例:
 
-![Node -> Network（例）](../../../images/part2/ch6/01-node-network-list.png)
+![Node -> Network（例）](../../images/part2/ch6/01-node-network-list.png)
 
 ## ネットワーク変更の反映と安全策（重要）
 

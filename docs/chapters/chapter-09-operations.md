@@ -35,15 +35,15 @@ Web UI 画面の例:
 
 `Tasks`（タスク履歴）の例:
 
-![Tasks（例）](../../../images/part4/ch9/02-task-history.png)
+![Tasks（例）](../../images/part4/ch9/02-task-history.png)
 
 System Log（Syslog）の例:
 
-![Syslog（例）](../../../images/part4/ch9/01-node-syslog.png)
+![Syslog（例）](../../images/part4/ch9/01-node-syslog.png)
 
 ノード概要（リソースグラフ）の例:
 
-![Node Summary（例）](../../../images/part4/ch9/03-node-dashboard-resource-graphs.png)
+![Node Summary（例）](../../images/part4/ch9/03-node-dashboard-resource-graphs.png)
 
 ## ログと基本的な指標の読み方（概要）
 

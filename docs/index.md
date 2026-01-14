@@ -56,6 +56,9 @@ Proxmox VE をこれから本格的に活用したいインフラエンジニア
 ## 📄 ライセンス
 
 本書は **Creative Commons BY-NC-SA 4.0** ライセンスで公開されています。  
-詳細は https://github.com/itdojp/it-engineer-knowledge-architecture/blob/main/LICENSE.md を参照してください。
+詳細は以下を参照してください。
+
+- シリーズ共通ライセンス: https://github.com/itdojp/it-engineer-knowledge-architecture/blob/main/LICENSE.md
+- 本リポジトリ内: https://github.com/itdojp/proxmox_book/blob/main/LICENSE.md
 
 {% include page-navigation.html %}
