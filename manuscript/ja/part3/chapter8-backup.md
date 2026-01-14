@@ -54,6 +54,13 @@ Web UI からバックアップジョブを作成し、対象となる VM / コ�
 - バックアップジョブの作成: Datacenter → Backup
 - リストアの入口（例）: バックアップが保存されているストレージの Backups タブから、対象バックアップを選んで Restore
 
+スクリーンショット（例）:
+
+- Datacenter → Backup（ジョブ一覧）:
+  - ![Datacenter -> Backup（例）](../../../images/part3/ch8/01-datacenter-backup-jobs.png)
+- バックアップジョブ作成ダイアログ（入口）:
+  - ![Create Backup Job（例）](../../../images/part3/ch8/02-create-backup-job-wizard.png)
+
 補足:
 - UI の配置や文言はバージョン差で変わることがあります。見つからない場合は「Datacenter（全体設定）」「ストレージ（バックアップの置き場）」を起点に探してください。
 - 復元テストでは、既存の VM と競合しないように別 VMID（または別ノード）としてリストアするのが安全です。

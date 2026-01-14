@@ -785,6 +785,23 @@ Web UI から「仮想マシンの作成」ウィザードを起動し、次の�
 
 流れの全体像は `diagrams/part1/ch4/vm-create-flow.svg` にまとめます。
 
+スクリーンショット（例: Create VM wizard）:
+
+- General（一般設定）
+  - ![Create VM wizard: General（例）](../../images/part1/ch4/01-create-vm-wizard-general.png)
+- OS
+  - ![Create VM wizard: OS（例）](../../images/part1/ch4/02-create-vm-wizard-os.png)
+- System
+  - ![Create VM wizard: System（例）](../../images/part1/ch4/03-create-vm-wizard-system.png)
+- Disks
+  - ![Create VM wizard: Disks（例）](../../images/part1/ch4/04-create-vm-wizard-disks.png)
+- CPU
+  - ![Create VM wizard: CPU（例）](../../images/part1/ch4/05-create-vm-wizard-cpu.png)
+- Memory
+  - ![Create VM wizard: Memory（例）](../../images/part1/ch4/06-create-vm-wizard-memory.png)
+- Network
+  - ![Create VM wizard: Network（例）](../../images/part1/ch4/07-create-vm-wizard-network.png)
+
 ### 手順（Web UI）
 
 1. 画面右上の `Create VM` をクリックする
@@ -1008,6 +1025,10 @@ Proxmox VE では、インストール直後から “用途の違うストレ�
 Datacenter -> Storage 一覧の例:
 
 ![Datacenter -> Storage（例）](../../images/part2/ch5/01-datacenter-storage-list.png)
+
+Node -> Disks -> LVM-Thin の例（`local-lvm` の実体を把握する入口）:
+
+![Node -> Disks -> LVM-Thin（例）](../../images/part2/ch5/02-node-local-lvm-lvmthin.png)
 
 ### スクショ無しでの最小確認（CLI）
 
@@ -1251,6 +1272,12 @@ Node -> Network 一覧の例:
 
 ![Node -> Network（例）](../../images/part2/ch6/01-node-network-list.png)
 
+ブリッジ（例: `vmbr0`）の設定を確認する入口（編集ダイアログ）:
+
+![Edit: Linux Bridge（例）](../../images/part2/ch6/02-vmbr0-settings.png)
+
+注意: ネットワーク設定を変更するとアクセス断のリスクがあります。**この章のスクリーンショットは「編集画面の例」であり、適用操作は行いません**。
+
 ## ネットワーク変更の反映と安全策（重要）
 
 ネットワーク設定を変更して適用すると、ノードにアクセスできなくなるリスクがあります。
@@ -1395,6 +1422,10 @@ ifreload -a
 冗長性や帯域確保が必要な場合、複数の物理 NIC をボンドインターフェースとして束ね、その上にブリッジを構成することができます。
 ラボ環境では、実際にリンク障害を再現してみることで、フェイルオーバの動作を確認できます。
 
+ボンド作成ダイアログの例（入口）:
+
+![Create: Linux Bond（例）](../../images/part2/ch6/03-bond-settings.png)
+
 ## VLAN の基本と Proxmox VE での扱い
 
 VLAN を利用すると、1 本の物理リンク上で論理的にネットワークを分離できます。
@@ -1411,6 +1442,10 @@ Proxmox VE では、VM の仮想 NIC に VLAN タグを指定して使い分け�
 これらの設定は、Proxmox VE の Web UI またはテキスト形式の設定ファイルを通じて行います。
 本書では、本章で最低限の設定ファイル例（`/etc/network/interfaces`）を示しつつ、設計の考え方とパターンに焦点を当てます。
 SDN/EVPN のような発展トピックや、環境依存が大きいチューニングは別パスで扱います。
+
+VLAN 作成ダイアログの例（入口）:
+
+![Create: Linux VLAN（例）](../../images/part2/ch6/04-vlan-subif-settings.png)
 
 ## 設計時の注意点
 
@@ -1490,8 +1525,14 @@ SDN/EVPN のような発展トピックや、環境依存が大きいチュー�
 
 クラスタ作成・参加の入口は、Web UI の **Datacenter → Cluster** です。
 
+- Datacenter → Cluster（クラスタ未構成の例）:
+  - ![Datacenter -> Cluster（例）](../../images/part3/ch7/01-datacenter-cluster-empty.png)
 - 最初のノード: Datacenter → Cluster → Create Cluster からクラスタを作成する
 - 追加するノード: Datacenter → Cluster → Join Cluster から参加させる
+
+Create Cluster ウィザードの例（入口）:
+
+![Create Cluster（例）](../../images/part3/ch7/02-create-cluster-wizard.png)
 
 成功判定（最低限）:
 
@@ -1639,6 +1680,13 @@ Web UI からバックアップジョブを作成し、対象となる VM / コ�
 
 - バックアップジョブの作成: Datacenter → Backup
 - リストアの入口（例）: バックアップが保存されているストレージの Backups タブから、対象バックアップを選んで Restore
+
+スクリーンショット（例）:
+
+- Datacenter → Backup（ジョブ一覧）:
+  - ![Datacenter -> Backup（例）](../../images/part3/ch8/01-datacenter-backup-jobs.png)
+- バックアップジョブ作成ダイアログ（入口）:
+  - ![Create Backup Job（例）](../../images/part3/ch8/02-create-backup-job-wizard.png)
 
 補足:
 - UI の配置や文言はバージョン差で変わることがあります。見つからない場合は「Datacenter（全体設定）」「ストレージ（バックアップの置き場）」を起点に探してください。

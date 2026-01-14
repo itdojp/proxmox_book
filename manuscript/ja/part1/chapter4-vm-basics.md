@@ -62,6 +62,23 @@ Web UI から「仮想マシンの作成」ウィザードを起動し、次の�
 
 流れの全体像は `diagrams/part1/ch4/vm-create-flow.svg` にまとめます。
 
+スクリーンショット（例: Create VM wizard）:
+
+- General（一般設定）
+  - ![Create VM wizard: General（例）](../../../images/part1/ch4/01-create-vm-wizard-general.png)
+- OS
+  - ![Create VM wizard: OS（例）](../../../images/part1/ch4/02-create-vm-wizard-os.png)
+- System
+  - ![Create VM wizard: System（例）](../../../images/part1/ch4/03-create-vm-wizard-system.png)
+- Disks
+  - ![Create VM wizard: Disks（例）](../../../images/part1/ch4/04-create-vm-wizard-disks.png)
+- CPU
+  - ![Create VM wizard: CPU（例）](../../../images/part1/ch4/05-create-vm-wizard-cpu.png)
+- Memory
+  - ![Create VM wizard: Memory（例）](../../../images/part1/ch4/06-create-vm-wizard-memory.png)
+- Network
+  - ![Create VM wizard: Network（例）](../../../images/part1/ch4/07-create-vm-wizard-network.png)
+
 ### 手順（Web UI）
 
 1. 画面右上の `Create VM` をクリックする
