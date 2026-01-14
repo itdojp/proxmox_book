@@ -10,8 +10,9 @@
 - Title: JA Part I / Chapter 1 – Proxmox VE の概要とポジショニング
 - Author: AuthorExecAgent (with human reviewer)
 - Date created: 2025-11-16
-- Last updated: 2025-12-21
-- Related issues/PRs: [TBD]
+- Last updated: 2026-01-14
+- Related issues/PRs:
+  - Issue #79（初心者の誤解・つまずきポイント追記）
 
 
 
@@ -105,6 +106,7 @@ Relevant files:
 - [2025-11-16 15:45] Added a simple overview diagram at `diagrams/part1/ch1/overview.svg` and referenced it from the chapter text.
 - [2025-12-21] Updated plan for a beginner-focused revision pass aligned to Proxmox VE 9.1.
 - [2025-12-21] Added beginner framing (“章のゴール”, “分かること/分からないこと”, terminology memo) and replaced the overview SVG placeholder with a minimal real diagram.
+- [2026-01-14] Added a short “common misconceptions” section to reduce beginner friction (Issue #79).
 
 
 
