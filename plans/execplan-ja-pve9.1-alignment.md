@@ -8,7 +8,7 @@
 - Title: JA – Proxmox VE 9.1 実機検証・スクリーンショット・本文反映
 - Author: AuthorExecAgent (with human reviewer)
 - Date created: 2025-12-20
-- Last updated: 2026-01-11
+- Last updated: 2026-01-14
 - Related issues/PRs:
   - Issue #2（スクリーンショット取得タスクリスト）
   - Issue #25（Web UI スクリーンショット取得手順）
@@ -177,7 +177,7 @@
 - [2026-01-12] Validated `tools/pve-webui-screenshots/capture.mjs` against a Proxmox VE 9.1.1 lab and hardened it (UI-based login, auto-dismiss “No valid subscription” modal, improved redaction for IP/host/interface identifiers). Captured sanitized Web UI screenshots for ch3/ch5/ch6/ch9 and updated Issue #2 and Issue #25 accordingly (screenshots for ch4/ch7/ch8 remain).
 - [2026-01-14] Extended `tools/pve-webui-screenshots/capture.mjs` to optionally capture Chapter 4 “Create VM wizard” screenshots (`PVE_CAPTURE_CH4=1`) and to support reading the password from a file (`PVE_PASSWORD_FILE`).
 - [2026-01-14] Added `PVE_CAPTURE_EXTENDED=1` to capture additional safe UI pages (Node LVM-Thin, vmbr0 edit dialog, Datacenter Cluster/Backup lists).
-- [2026-01-14] Captured and committed sanitized Web UI screenshots for ch4/ch5/ch6/ch7/ch8, embedded them into the JA manuscript, and confirmed `make check-ja` passes (PR #70). Updated Issue #2 checklist accordingly.
+- [2026-01-14] Extended Web UI screenshot automation and captured sanitized screenshots for ch4/ch6/ch7/ch8 additions (Console/Snapshot, VM NIC VLAN tag, Join Cluster, Backup task log/Restore). Embedded them into the JA manuscript and updated Issue #2 accordingly (PR pending).
 
 
 

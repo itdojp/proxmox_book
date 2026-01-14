@@ -33,6 +33,9 @@ Node.js が必要です（このリポジトリの作業環境では Node 22 を
 - `PVE_INSECURE=1` 自己署名証明書を許容（学習環境向け）
 - `PVE_CAPTURE_CH4=1` 第4章の「Create VM wizard」スクショも取得する
 - `PVE_CAPTURE_EXTENDED=1` 追加の安全な画面（ch5/ch6/ch7/ch8）も取得する
+- `PVE_CAPTURE_VM_ASSETS=1` VM/バックアップ関連の追加スクショも取得する（**デモ VM 作成 + 手動バックアップ実行あり: ラボ専用**）
+  - `PVE_DEMO_VMID`（既定: `100`）作成するデモ VM の VMID（任意）
+  - `PVE_DEMO_VM_NAME`（既定: `vm-ubuntu01`）作成するデモ VM 名（任意）
 
 実行例:
 
@@ -80,8 +83,16 @@ Node.js が必要です（このリポジトリの作業環境では Node 22 を
 - `images/part2/ch6/04-vlan-subif-settings.png`
 - `images/part3/ch7/01-datacenter-cluster-empty.png`
 - `images/part3/ch7/02-create-cluster-wizard.png`
+- `images/part3/ch7/03-join-cluster-wizard.png`
 - `images/part3/ch8/01-datacenter-backup-jobs.png`
 - `images/part3/ch8/02-create-backup-job-wizard.png`
+
+`PVE_CAPTURE_VM_ASSETS=1` の場合（デモ VM の作成/バックアップ実行を含む）:
+- `images/part1/ch4/08-vm-summary-and-console.png`
+- `images/part1/ch4/09-snapshot-dialog-and-list.png`
+- `images/part2/ch6/05-vm-nic-vlan-id.png`
+- `images/part3/ch8/03-manual-backup-task-log.png`
+- `images/part3/ch8/04-restore-dialog.png`
 
 ## トラブルシュート
 
