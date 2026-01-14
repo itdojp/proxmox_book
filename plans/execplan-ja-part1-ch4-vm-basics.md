@@ -9,7 +9,10 @@
 - Author: AuthorExecAgent (with human reviewer)
 - Date created: 2025-11-16
 - Last updated: 2026-01-14
-- Related issues/PRs: [TBD]
+- Related issues/PRs:
+  - Issue #2（スクリーンショット取得タスクリスト）
+  - Issue #77（用語メモの最小追加）
+  - plans/execplan-ja-pve9.1-alignment.md（実機検証・スクショ・本文反映の横断計画）
 
 
 
@@ -91,6 +94,7 @@ Files:
 - [2025-12-21] Added beginner framing and example values to `chapter4-vm-basics.md`, added `diagrams/part1/ch4/vm-create-flow.svg`, and kept screenshots as TODO (Issue #2).
 - [2026-01-11] Updated `chapter4-vm-basics.md` to avoid pointing readers to internal Issue numbers; clarified that screenshots are pending and how to proceed without them.
 - [2026-01-14] Captured and embedded additional VM operation screenshots (Console / Snapshot) and refreshed wording to remove stale “screenshots later” notes (Issue #2).
+- [2026-01-14] Added a minimal terminology memo section to reduce beginner friction (Issue #77).
 
 
 
