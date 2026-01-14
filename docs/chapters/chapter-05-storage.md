@@ -50,9 +50,21 @@ Datacenter -> Storage 一覧の例:
 
 ![Datacenter -> Storage（例）](../../images/part2/ch5/01-datacenter-storage-list.png)
 
+### 最小手順（Web UI: Datacenter → Storage）
+
+1. 左のツリーで `Datacenter` をクリックする
+2. 左のナビで `Storage` を開く
+3. 一覧で、ストレージ名（例: `local` / `local-lvm`）と `Content`（何を置けるか）を確認する
+
 Node -> Disks -> LVM-Thin の例（`local-lvm` の実体を把握する入口）:
 
 ![Node -> Disks -> LVM-Thin（例）](../../images/part2/ch5/02-node-local-lvm-lvmthin.png)
+
+### 最小手順（Web UI: Node → Disks → LVM-Thin）
+
+1. 左のツリーで対象ノードをクリックする
+2. 左のナビで `Disks` → `LVM-Thin` を開く
+3. `local-lvm` がどの Volume Group / Thinpool に紐づいているか（または相当する構成）を確認する
 
 ### スクショ無しでの最小確認（CLI）
 
