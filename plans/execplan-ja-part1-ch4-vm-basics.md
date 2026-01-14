@@ -76,7 +76,7 @@ Files:
 
 
 - [x] A new reader can follow the chapter and successfully create and operate a VM in a typical lab environment, based on the written steps.
-- [ ] Screenshots and text match Proxmox 9.1 UI (to be fully confirmed after capturing screenshots and validating against a live environment).
+- [x] Screenshots and text match Proxmox 9.1 UI (Create VM wizard screenshots captured on a live 9.1.1 environment).
 - [x] Diagram exists and is no longer a placeholder.
 
 
@@ -90,6 +90,7 @@ Files:
 - [2025-12-21] Updated plan for a beginner-focused revision pass aligned to Proxmox VE 9.1.
 - [2025-12-21] Added beginner framing and example values to `chapter4-vm-basics.md`, added `diagrams/part1/ch4/vm-create-flow.svg`, and kept screenshots as TODO (Issue #2).
 - [2026-01-11] Updated `chapter4-vm-basics.md` to avoid pointing readers to internal Issue numbers; clarified that screenshots are pending and how to proceed without them.
+- [2026-01-14] Captured and embedded Create VM wizard screenshots (General/OS/System/Disks/CPU/Memory/Network) and validated `make check-ja` (PR #70).
 
 
 
@@ -115,10 +116,10 @@ Files:
 
 
 - Status: text-draft
-- Status: assets-pending (スクリーンショット未取得)
+- Status: assets-partial（Create VM wizard は反映済み。VM 詳細/コンソール/スナップショットは未取得）
 - Status: build-validated (`build/ja/book.md` に含まれることを確認済み)
 - Initial draft of Chapter 4 exists at `manuscript/ja/part1/chapter4-vm-basics.md`, covering core VM lifecycle operations and basic snapshot/template concepts.
-- The wizard flow diagram is now available at `diagrams/part1/ch4/vm-create-flow.svg`; screenshots are still pending and should be aligned to Proxmox VE 9.1 UI in a later pass.
+- The wizard flow diagram is available at `diagrams/part1/ch4/vm-create-flow.svg`, and Create VM wizard screenshots are now embedded in the chapter (Proxmox VE 9.1.1).
 - For future hands-on chapters, this pattern of “text-complete first, assets later” keeps momentum while clearly recording remaining work in the ExecPlan.
 
 

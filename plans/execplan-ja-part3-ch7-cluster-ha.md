@@ -87,6 +87,7 @@ Files:
 - [2025-11-16 15:05] Drafted `manuscript/ja/part3/chapter7-cluster-ha.md` with goals, core concepts, lab assumptions, cluster creation flow (overview), HA testing ideas, and created placeholder diagram `diagrams/part3/ch7/cluster-ha.svg`.
 - [2025-12-21] Updated plan for a beginner-focused revision pass aligned to Proxmox VE 9.1.
 - [2025-12-21] Added beginner framing/checklists to `chapter7-cluster-ha.md` and replaced the placeholder cluster/HA SVG with a minimal real diagram.
+- [2026-01-14] Added and embedded Web UI screenshots for Datacenter -> Cluster entry points (cluster empty + create wizard) (PR #70).
 
 
 
@@ -111,7 +112,7 @@ Files:
 
 
 - Status: text-draft
-- Status: assets-pending（UI 手順/スクリーンショット未記述）
+- Status: assets-partial（Datacenter -> Cluster の入口スクリーンショットを追加。参加/HA の詳細は未完）
 - Status: build-validated (`build/ja/book.md` に含まれることを確認済み)
 - Initial draft of Chapter 7 exists at `manuscript/ja/part3/chapter7-cluster-ha.md`, tying cluster concepts and HA behavior back to the previously defined lab setup.
 - The cluster/HA diagram at `diagrams/part3/ch7/cluster-ha.svg` is now a minimal-but-real diagram; a later pass can enrich it with node names, networks, and storage specifics without changing the narrative.

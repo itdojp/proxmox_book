@@ -144,7 +144,7 @@
 ### 6.7 全体（ビルド・整合）
 
 - [ ] スクリーンショットを本文に埋め込み（必要箇所はキャプションと参照）
-- [ ] `make build-ja` を実行し、`build/ja/book.md` の見出し順・画像参照が破綻していないか確認
+- [x] `make build-ja` を実行し、`build/ja/book.md` の見出し順・画像参照が破綻していないか確認（`make check-ja` で確認）
 - [ ] （可能なら）`pandoc` で PDF 生成し、画像サイズ・改ページの破綻を確認
 - [ ] 各章 ExecPlan の `Outcomes & retrospective` に `Status: live-validated` を付与し、残タスクを明記
 
@@ -156,7 +156,7 @@
 
 - [ ] Issue #2 のスクリーンショット項目が主要章（3/4/6/7/8）で概ね埋まっている
 - [ ] 第3章/第4章は初心者が UI だけで迷わず操作できる粒度になっている（入力例・成功判定あり）
-- [ ] `make build-ja` が成功し、結合原稿に章と画像参照が含まれている
+- [x] `make build-ja` が成功し、結合原稿に章と画像参照が含まれている
 - [ ] 9.1 で差分が出やすい箇所（UI、手順、スクショ）は、本文・ExecPlan ともに 9.1 前提になっている
 
 
@@ -177,6 +177,7 @@
 - [2026-01-12] Validated `tools/pve-webui-screenshots/capture.mjs` against a Proxmox VE 9.1.1 lab and hardened it (UI-based login, auto-dismiss “No valid subscription” modal, improved redaction for IP/host/interface identifiers). Captured sanitized Web UI screenshots for ch3/ch5/ch6/ch9 and updated Issue #2 and Issue #25 accordingly (screenshots for ch4/ch7/ch8 remain).
 - [2026-01-14] Extended `tools/pve-webui-screenshots/capture.mjs` to optionally capture Chapter 4 “Create VM wizard” screenshots (`PVE_CAPTURE_CH4=1`) and to support reading the password from a file (`PVE_PASSWORD_FILE`).
 - [2026-01-14] Added `PVE_CAPTURE_EXTENDED=1` to capture additional safe UI pages (Node LVM-Thin, vmbr0 edit dialog, Datacenter Cluster/Backup lists).
+- [2026-01-14] Captured and committed sanitized Web UI screenshots for ch4/ch5/ch6/ch7/ch8, embedded them into the JA manuscript, and confirmed `make check-ja` passes (PR #70). Updated Issue #2 checklist accordingly.
 
 
 
@@ -214,10 +215,12 @@
 ## 11. Outcomes & retrospective
 
 
-- Status: assets-pending（スクリーンショット取得と実機検証が未完）
+- Status: assets-partial（Web UI の主要スクリーンショットを追加。残りは未完）
+- Status: build-validated（`make check-ja` が成功）
 - スクリーンショットの共通ルール（UI 言語/テーマ/マスク/命名規則）を確定し、`images/` 配下の配置方針を固定した。
 - Issue #2 のチェックリストを「章 → 画面 → 保存先パス（ファイル名）」まで落とし込んだ。
-- 次の作業は、実機（単一ノード / 3 ノードクラスタ）での画面遷移確認とスクリーンショット取得を進め、本文へ埋め込みつつ `make build-ja` で破綻がないことを確認する。
+- Web UI スクリーンショット取得の自動化ツールを実機で安定動作させ、ch4〜ch8 の主要画面を本文に埋め込んだ（Issue #2 のチェックも更新）。
+- 次の作業は、未取得のスクリーンショット（インストール画面、VM 操作/スナップショット、クラスタ参加/HA、バックアップ実行/リストア等）を埋め、本文の UI 手順を必要に応じて “1クリックずつ” の粒度へ引き上げる。
 
 
 

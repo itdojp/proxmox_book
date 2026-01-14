@@ -90,6 +90,7 @@ Files:
 - [2025-11-16 15:40] Added a concise comparison table summarizing LVM/ZFS/Ceph use cases, strengths, and caveats.
 - [2025-12-21] Updated plan for a beginner-focused revision pass aligned to Proxmox VE 9.1.
 - [2025-12-21] Added beginner framing/terminology memo to `chapter5-storage.md` and replaced the placeholder storage layout SVG with a minimal real diagram.
+- [2026-01-14] Added and embedded Web UI screenshots for Datacenter -> Storage and Node -> Disks -> LVM-Thin (PR #70).
 
 
 
@@ -114,6 +115,7 @@ Files:
 
 
 - Status: text-draft
+- Status: assets-partial（Web UI の主要スクリーンショット（Storage 一覧、LVM-Thin）を追加）
 - Status: build-validated (`build/ja/book.md` に含まれることを確認済み)
 - Initial draft of Chapter 5 exists at `manuscript/ja/part2/chapter5-storage.md`, explaining LVM, ZFS, Ceph, and how to choose between them for the book's lab scenarios.
 - The storage layout diagram at `diagrams/part2/ch5/storage-layout.svg` is now a minimal-but-real diagram consistent with the text; a later pass can enrich it with more detail without changing the textual guidance.
