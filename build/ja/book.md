@@ -1502,12 +1502,37 @@ SDN/EVPN のような発展トピックや、環境依存が大きいチュー�
 
 スクリーンショットが無い段階でも、次の CLI で「クラスタが成立しているか」を最低限確認できます。
 
-- クォーラム確認: `pvecm status`
-- ノード一覧: `pvecm nodes`
+```bash
+pvecm status
+pvecm nodes
+```
+
+出力例（抜粋）:
+
+```text
+$ pvecm status
+...
+Quorate: Yes
+Nodes: 3
+...
+
+$ pvecm nodes
+Nodeid Votes Name
+1      1     pve1
+2      1     pve2
+3      1     pve3
+```
+
+見るポイント（最低限）:
+
+- `pvecm status`: `Quorate: Yes` になっている（クォーラム成立）
+- `pvecm nodes`: 想定したノード（例: `pve1/pve2/pve3`）が表示される
 
 問題切り分けの入口（例）:
 
-- `journalctl -u corosync -u pve-cluster --no-pager -n 50`
+```bash
+journalctl -u corosync -u pve-cluster --no-pager -n 50
+```
 
 ## HA 設定と基本的なテスト
 
@@ -1525,7 +1550,24 @@ SDN/EVPN のような発展トピックや、環境依存が大きいチュー�
 
 HA を有効化した後に「今どのノードで動く想定か」「エラーになっていないか」を確認する入口として、次が使えます。
 
-- HA 全体の状態: `ha-manager status`
+```bash
+ha-manager status
+```
+
+出力例（抜粋）:
+
+```text
+$ ha-manager status
+quorum OK
+master pve1 (active, ...)
+service vm:100 (pve2, started)
+...
+```
+
+見るポイント（最低限）:
+
+- `quorum OK` が表示される（クォーラム前提を満たしている）
+- 対象 VM（例: `vm:100`）が `started` になっている（起動状態の入口）
 
 ## よくあるつまずきポイント
 
@@ -1608,15 +1650,51 @@ Web UI からバックアップジョブを作成し、対象となる VM / コ�
 
 スクリーンショットが無い段階でも、次の CLI を使うと「ジョブが動いているか」「バックアップが残っているか」を最低限確認できます。
 
-- ストレージ一覧（見える/容量がある）: `pvesm status`
-- バックアップファイル一覧（例: `local` の場合）: `pvesm list local --content backup`
-- 直近タスク（入口）: `pvesh get /cluster/tasks --limit 20`
-- バックアップジョブ定義（入口）: `pvesh get /cluster/backup`
+```bash
+pvesm status
+pvesm list local --content backup
+pvesh get /cluster/backup --output-format json
+pvesh get /cluster/tasks --limit 20 --output-format json
+```
+
+出力例（抜粋）:
+
+```text
+$ pvesm list local --content backup
+Volid                                              Format   Type    Size
+local:backup/vzdump-qemu-100-<YYYY_MM_DD-HH_MM_SS>.vma.zst vma.zst  backup  <SIZE>
+...
+
+$ pvesh get /cluster/tasks --limit 1 --output-format json
+[
+  {
+    "type": "vzdump",
+    "status": "OK",
+    "node": "pve1",
+    "starttime": 1700000000
+  }
+]
+```
+
+見るポイント（最低限）:
+
+- `pvesm status`: バックアップ先ストレージが見えており（`active`）、空き容量がある
+- `pvesm list ... --content backup`: バックアップファイルが作成されている
+- `pvesh get /cluster/tasks ...`: 直近のタスクに `status: OK` がある（失敗時は `Tasks` とログへ）
 
 バックアップ実行ログ（入口）:
 
-- `ls -1t /var/log/vzdump/*.log | head -n 1`
-- `tail -n 50 /var/log/vzdump/<直近のログファイル>`
+```bash
+ls -1t /var/log/vzdump/*.log | head -n 1
+tail -n 50 /var/log/vzdump/<直近のログファイル>
+```
+
+出力例（抜粋）:
+
+```text
+$ ls -1t /var/log/vzdump/*.log | head -n 1
+/var/log/vzdump/vzdump-qemu-100-<YYYY_MM_DD-HH_MM_SS>.log
+```
 
 ### 例: ラボ用バックアップ方針（最小）
 

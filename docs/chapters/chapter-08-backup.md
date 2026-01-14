@@ -64,15 +64,51 @@ Web UI からバックアップジョブを作成し、対象となる VM / コ�
 
 スクリーンショットが無い段階でも、次の CLI を使うと「ジョブが動いているか」「バックアップが残っているか」を最低限確認できます。
 
-- ストレージ一覧（見える/容量がある）: `pvesm status`
-- バックアップファイル一覧（例: `local` の場合）: `pvesm list local --content backup`
-- 直近タスク（入口）: `pvesh get /cluster/tasks --limit 20`
-- バックアップジョブ定義（入口）: `pvesh get /cluster/backup`
+```bash
+pvesm status
+pvesm list local --content backup
+pvesh get /cluster/backup --output-format json
+pvesh get /cluster/tasks --limit 20 --output-format json
+```
+
+出力例（抜粋）:
+
+```text
+$ pvesm list local --content backup
+Volid                                              Format   Type    Size
+local:backup/vzdump-qemu-100-<YYYY_MM_DD-HH_MM_SS>.vma.zst vma.zst  backup  <SIZE>
+...
+
+$ pvesh get /cluster/tasks --limit 1 --output-format json
+[
+  {
+    "type": "vzdump",
+    "status": "OK",
+    "node": "pve1",
+    "starttime": 1700000000
+  }
+]
+```
+
+見るポイント（最低限）:
+
+- `pvesm status`: バックアップ先ストレージが見えており（`active`）、空き容量がある
+- `pvesm list ... --content backup`: バックアップファイルが作成されている
+- `pvesh get /cluster/tasks ...`: 直近のタスクに `status: OK` がある（失敗時は `Tasks` とログへ）
 
 バックアップ実行ログ（入口）:
 
-- `ls -1t /var/log/vzdump/*.log | head -n 1`
-- `tail -n 50 /var/log/vzdump/<直近のログファイル>`
+```bash
+ls -1t /var/log/vzdump/*.log | head -n 1
+tail -n 50 /var/log/vzdump/<直近のログファイル>
+```
+
+出力例（抜粋）:
+
+```text
+$ ls -1t /var/log/vzdump/*.log | head -n 1
+/var/log/vzdump/vzdump-qemu-100-<YYYY_MM_DD-HH_MM_SS>.log
+```
 
 ### 例: ラボ用バックアップ方針（最小）
 
