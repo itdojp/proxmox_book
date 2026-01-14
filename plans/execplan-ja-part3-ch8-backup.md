@@ -8,7 +8,7 @@
 - Title: JA Part III / Chapter 8 – バックアップ・リストアとレプリケーション
 - Author: AuthorExecAgent (with human reviewer)
 - Date created: 2025-11-16
-- Last updated: 2026-01-11
+- Last updated: 2026-01-14
 - Related issues/PRs: [TBD]
 
 
@@ -86,7 +86,7 @@ Files:
 - [2025-12-21] Updated plan for a beginner-focused revision pass aligned to Proxmox VE 9.1.
 - [2025-12-21] Added beginner framing/terminology to `chapter8-backup.md`, added `diagrams/part3/ch8/backup-restore-flow.svg`, and referenced Issue #2 for future screenshots/UI walkthrough.
 - [2026-01-11] Aligned the plan wording with the project convention: screenshot work is tracked in Issues, and reader-facing text should not depend on screenshots.
-- [2026-01-14] Added and embedded Web UI screenshots for Datacenter -> Backup (jobs list + create wizard entry point) (PR #70).
+- [2026-01-14] Added and embedded Web UI screenshots for backup entry points and key dialogs (jobs list / create wizard / task log / restore dialog) (Issue #2).
 
 
 
@@ -111,7 +111,7 @@ Files:
 
 
 - Status: text-draft
-- Status: assets-partial（Datacenter -> Backup の入口スクリーンショットを追加。実行/タスクログ/リストアは未完）
+- Status: assets-partial（Datacenter → Backup の入口スクリーンショットを追加。実行/タスクログ/リストアの一部は反映済み）
 - Status: build-validated (`build/ja/book.md` に含まれることを確認済み)
 - Initial draft of Chapter 8 exists at `manuscript/ja/part3/chapter8-backup.md`, explaining backup/restore and replication concepts tied to the book's lab patterns.
 - A minimal backup→restore→test flow diagram is now available at `diagrams/part3/ch8/backup-restore-flow.svg`; detailed UI walkthroughs and screenshots are still pending and should be aligned to Proxmox VE 9.1 in a later pass.
