@@ -12,6 +12,7 @@
 - Related issues/PRs:
   - Issue #2（スクリーンショット取得タスクリスト）
   - Issue #73（UI 手順の最小補強）
+  - Issue #78（CLI 最小確認の見出し・導入を統一）
 
 
 
@@ -92,6 +93,7 @@ Files:
 - [2025-12-21] Added beginner framing/checklists to `chapter6-network.md` and replaced the placeholder topology SVG with a minimal real diagram.
 - [2026-01-14] Added and embedded Web UI screenshots for Network list and representative dialogs (vmbr0 edit / Bond / VLAN) plus a VM NIC VLAN tag example (Issue #2).
 - [2026-01-14] Added minimal Web UI navigation steps (entry points) so readers can locate Network/Bond/VLAN/VM VLAN Tag screens without screenshots alone (Issue #73).
+- [2026-01-14] Refined the CLI “minimum verification” section heading and “what to check” bullets for consistency across chapters (Issue #78).
 
 
 
