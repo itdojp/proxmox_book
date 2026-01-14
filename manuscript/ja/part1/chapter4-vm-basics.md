@@ -126,12 +126,42 @@ Web UI から「仮想マシンの作成」ウィザードを起動し、次の�
 
 ISO の確認（例: `local` に置いた場合）:
 
-- `pvesm list local --content iso`
+```bash
+pvesm list local --content iso
+```
+
+出力例（抜粋）:
+
+```text
+$ pvesm list local --content iso
+Volid                                     Format  Type  Size
+local:iso/ubuntu-24.04.1-live-server-amd64.iso iso     iso   <SIZE>
+...
+```
 
 VM の確認:
 
-- VM 一覧: `qm list`
-- 状態確認: `qm status <VMID>`
+```bash
+qm list
+qm status <VMID>
+```
+
+出力例（抜粋）:
+
+```text
+$ qm list
+ VMID NAME        STATUS     MEM(MB) BOOTDISK(GB) PID
+  100 vm-ubuntu01 running    2048    20.00        12345
+
+$ qm status 100
+status: running
+```
+
+見るポイント（最低限）:
+
+- `pvesm list ... --content iso`: アップロードした ISO が表示される
+- `qm list`: 期待した名前の VM が表示される（`VMID` は以降の操作で使います）
+- `qm status <VMID>`: `running` / `stopped` が表示される
 
 ## スナップショットとテンプレートの基礎
 

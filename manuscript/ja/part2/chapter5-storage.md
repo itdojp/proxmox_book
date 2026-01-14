@@ -54,15 +54,41 @@ Datacenter -> Storage 一覧の例:
 
 スクリーンショットが無い段階でも、次の CLI を使うと「今どのストレージが使える状態か」「どこに何があるか」を最低限確認できます。
 
-- ストレージ一覧（容量/状態）: `pvesm status`
-- ストレージ内の一覧（例: `local`）: `pvesm list local`
-- ISO の一覧（例: `local`）: `pvesm list local --content iso`
-- バックアップの一覧（例: `local`）: `pvesm list local --content backup`
+```bash
+pvesm status
+pvesm list local --content iso
+pvesm list local --content backup
+```
+
+出力例（抜粋）:
+
+```text
+$ pvesm status
+Name      Type     Status  Total     Used    Available  %
+local     dir      active  100.00G   5.00G   95.00G     5.00%
+local-lvm lvmthin  active   80.00G  20.00G   60.00G    25.00%
+
+$ pvesm list local --content iso
+Volid                                     Format  Type  Size
+local:iso/ubuntu-24.04.1-live-server-amd64.iso iso     iso   <SIZE>
+
+$ pvesm list local --content backup
+Volid                                              Format   Type    Size
+local:backup/vzdump-qemu-100-<YYYY_MM_DD-HH_MM_SS>.vma.zst vma.zst  backup  <SIZE>
+...
+```
+
+見るポイント（最低限）:
+
+- `pvesm status`: 対象ストレージが `active` で、空き容量がある
+- `pvesm list ...`: ISO やバックアップが「どのストレージにあるか」を把握できる
 
 ストレージ方式ごとの確認（使っている場合のみ）:
 
-- ZFS の状態: `zpool status`
-- LVM の状態: `lvs`
+```bash
+zpool status
+lvs
+```
 
 ## LVM ベースのローカルストレージ
 
