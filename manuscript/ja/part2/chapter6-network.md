@@ -83,6 +83,15 @@ Node -> Network 一覧の例:
 
 注意: ネットワーク設定を変更するとアクセス断のリスクがあります。**この章のスクリーンショットは「編集画面の例」であり、適用操作は行いません**。
 
+### 最小手順（Web UI）
+
+1. 左のツリー（Server View）で対象ノードをクリックする
+2. 左のナビで `System` → `Network` を開く
+3. 一覧で `vmbr0` があること、`CIDR`（IP/サブネット）などが想定どおりかを確認する
+4. `vmbr0` を選択して `Edit` を開き、設定値（Bridge ports / VLAN aware など）を確認する
+
+注意: `Apply Configuration` は押すと設定が反映され、アクセス断になる可能性があります。コンソールが確保できていない場合は、安易に実行しないでください。
+
 ## ネットワーク変更の反映と安全策（重要）
 
 ネットワーク設定を変更して適用すると、ノードにアクセスできなくなるリスクがあります。
@@ -231,6 +240,13 @@ ifreload -a
 
 ![Create: Linux Bond（例）](../../../images/part2/ch6/03-bond-settings.png)
 
+### 最小手順（Web UI: Bond 作成の入口）
+
+1. 左のツリーで対象ノードをクリックする
+2. 左のナビで `System` → `Network` を開く
+3. 上部の `Create` から `Linux Bond` を選ぶ
+4. ボンド名（例: `bond0`）とモード、束ねる物理 NIC（Slaves）を指定して作成する
+
 ## VLAN の基本と Proxmox VE での扱い
 
 VLAN を利用すると、1 本の物理リンク上で論理的にネットワークを分離できます。
@@ -252,9 +268,24 @@ VLAN 作成ダイアログの例（入口）:
 
 ![Create: Linux VLAN（例）](../../../images/part2/ch6/04-vlan-subif-settings.png)
 
+### 最小手順（Web UI: VLAN インターフェース作成の入口）
+
+1. 左のツリーで対象ノードをクリックする
+2. 左のナビで `System` → `Network` を開く
+3. 上部の `Create` から `Linux VLAN` を選ぶ
+4. 親（raw）デバイス（例: `vmbr0` や `bond0`）と VLAN ID を指定して作成する
+
 VM の仮想 NIC に VLAN タグを割り当てる例（Hardware → Network Device の編集）:
 
 ![VM NIC: VLAN Tag（例）](../../../images/part2/ch6/05-vm-nic-vlan-id.png)
+
+### 最小手順（Web UI: VM の VLAN Tag を設定する）
+
+1. 左のツリーで対象 VM をクリックする
+2. `Hardware` を開き、`Network Device`（例: `net0`）を選択して `Edit` を開く
+3. `VLAN Tag` に VLAN ID（例: `20`）を指定して保存する
+
+注意: VLAN を使う場合は、**スイッチ側がトランク設定になっていること**、およびノード側のブリッジ設定（VLAN-aware 等）と整合していることが前提です。
 
 ## 設計時の注意点
 

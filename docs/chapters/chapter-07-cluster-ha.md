@@ -75,6 +75,16 @@ Join Cluster ウィザードの例（入口）:
 
 ![Join Cluster（例）](../../images/part3/ch7/03-join-cluster-wizard.png)
 
+### 最小手順（Web UI: Create Cluster / Join Cluster の入口）
+
+1. 左のツリーで `Datacenter` をクリックする
+2. 左のナビで `Cluster` を開く
+3. 最初のノードでは `Create Cluster`、追加ノードでは `Join Cluster` を開く
+
+補足:
+- `Create Cluster` ではクラスタ名と “Cluster Network”（ノード間通信の経路）を選びます。
+- `Join Cluster` は「Join 情報（トークン/文字列）」とパスワードを入力する画面です。まずは “どの画面が入口か” を押さえてください。
+
 成功判定（最低限）:
 
 - Datacenter → Cluster に、想定したノードが表示されている
