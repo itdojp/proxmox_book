@@ -12,6 +12,7 @@
 - Related issues/PRs:
   - Issue #2（スクリーンショット取得タスクリスト）
   - Issue #73（UI 手順の最小補強）
+  - Issue #78（CLI 最小確認の見出し・導入を統一）
 
 
 
@@ -92,6 +93,7 @@ Files:
 - [2025-12-21] Added beginner framing/checklists to `chapter7-cluster-ha.md` and replaced the placeholder cluster/HA SVG with a minimal real diagram.
 - [2026-01-14] Added and embedded Web UI screenshots for Datacenter → Cluster entry points (cluster empty + create wizard + join wizard) (Issue #2).
 - [2026-01-14] Added minimal Web UI navigation steps (entry points) for Create/Join Cluster (Issue #73).
+- [2026-01-14] Refined the CLI “success criteria” section headings for consistency across chapters (Issue #78).
 
 
 

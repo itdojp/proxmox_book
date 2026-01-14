@@ -8,8 +8,10 @@
 - Title: JA Part IV / Chapter 9 – 運用・監視・トラブルシュート
 - Author: AuthorExecAgent (with human reviewer)
 - Date created: 2025-11-16
-- Last updated: 2026-01-11
-- Related issues/PRs: [TBD]
+- Last updated: 2026-01-14
+- Related issues/PRs:
+  - Issue #2（スクリーンショット取得タスクリスト）
+  - Issue #78（CLI 最小確認の見出し・導入を統一）
 
 
 
@@ -85,6 +87,7 @@ Files:
 - [2025-12-21] Updated plan for a beginner-focused revision pass aligned to Proxmox VE 9.1.
 - [2025-12-21] Added beginner framing/checklists to `chapter9-operations.md`, added `diagrams/part4/ch9/triage-flow.svg`, and referenced Issue #2 for future screenshots.
 - [2026-01-11] Added a minimal “updates + repositories” section to `chapter9-operations.md` and aligned the plan wording with the project convention (screenshots tracked in Issues; no TODO blocks in the manuscript).
+- [2026-01-14] Refined the CLI “minimum verification” section (what to check / what not to run) for consistency across chapters (Issue #78).
 
 
 
