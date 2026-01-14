@@ -160,10 +160,14 @@ async function apiGet({ baseUrl, ticket, path }) {
 function buildTextReplacements({ baseUrl, firstNode }) {
   let host = "";
   let hostWithPort = "";
+  let ipv4Prefix = "";
   try {
     const u = new URL(baseUrl);
     host = u.hostname;
     hostWithPort = u.host;
+    if (/^\d{1,3}(\.\d{1,3}){3}$/.test(host)) {
+      ipv4Prefix = `${host.split(".").slice(0, 3).join(".")}.`;
+    }
   } catch {
     // ignore
   }
@@ -171,6 +175,8 @@ function buildTextReplacements({ baseUrl, firstNode }) {
     // Replace “real” values with the canonical examples used in the manuscript/images README.
     [host, "192.168.10.11"],
     [hostWithPort, "192.168.10.11:8006"],
+    // Also rewrite the /24 prefix so gateways etc. are sanitized too (e.g., 192.168.220.1 -> 192.168.10.1).
+    [ipv4Prefix, "192.168.10."],
     [String(firstNode || ""), "pve1"]
   ];
   return replacements.filter(([from]) => from);
@@ -211,6 +217,50 @@ async function redactForScreenshot(page, replacements) {
     for (const n of nodes) {
       const v = n.nodeValue;
       if (v) n.nodeValue = replaceAll(v);
+    }
+
+    // Replace in input/textarea values (visible in forms).
+    const formEls = root.querySelectorAll("input, textarea");
+    for (const el of formEls) {
+      try {
+        if (typeof el.value === "string" && el.value) {
+          const next = replaceAll(el.value);
+          if (next !== el.value) el.value = next;
+          // Keep attribute in sync for screenshots/serialization edge cases.
+          try {
+            el.setAttribute("value", el.value);
+          } catch {
+            // ignore
+          }
+        }
+      } catch {
+        // ignore
+      }
+    }
+
+    // Best-effort: also sanitize common attributes that may be shown in UI tooltips.
+    const attrNames = [
+      "placeholder",
+      "title",
+      "aria-label",
+      "aria-describedby",
+      "data-qtip",
+      "data-qtitle",
+      "data-qclass",
+      "alt"
+    ];
+    const allEls = root.querySelectorAll("*");
+    for (const el of allEls) {
+      for (const name of attrNames) {
+        try {
+          const raw = el.getAttribute(name);
+          if (!raw) continue;
+          const next = replaceAll(raw);
+          if (next !== raw) el.setAttribute(name, next);
+        } catch {
+          // ignore
+        }
+      }
     }
   }, replacements);
 }
@@ -396,28 +446,73 @@ async function captureCreateVmWizard({ page, imagesRoot, replacements }) {
   }
 
   // Close wizard without creating a VM.
-  try {
-    await safeClickWithin(wizard, ['css=.x-btn-inner:has-text("Cancel")', "text=Cancel"]);
-  } catch {
-    // Some environments show a close icon only.
-    await safeClickWithin(wizard, ["css=.x-tool-close", "css=.x-window-header-close"]);
-  }
+  await safeClickWithin(wizard, [
+    // Some environments show a close icon only (no Cancel button).
+    "css=.x-tool-close",
+    "css=.x-window-header-close",
+    // Fallback: Cancel if present.
+    'css=.x-btn-inner:has-text("Cancel")',
+    "text=Cancel"
+  ]);
   await dismissMessageBoxes(page);
-}
-
-async function closeTopMostWindow(page) {
-  const win = page.locator("css=.x-window").filter({ has: page.locator("css=.x-tool-close") }).last();
   try {
-    await win.waitFor({ state: "visible", timeout: 1500 });
-  } catch {
-    return;
-  }
-  try {
-    await win.locator("css=.x-tool-close, css=.x-window-header-close").first().click({ timeout: 3000 });
+    await wizard.waitFor({ state: "hidden", timeout: 15000 });
   } catch {
     // ignore
   }
-  await dismissMessageBoxes(page);
+}
+
+async function closeTopMostWindow(page) {
+  for (let attempt = 0; attempt < 4; attempt++) {
+    await dismissMessageBoxes(page);
+
+    // ExtJS windows are appended late; "last" is usually top-most.
+    const win = page.locator("css=.x-window").last();
+    try {
+      await win.waitFor({ state: "visible", timeout: 800 });
+    } catch {
+      return;
+    }
+
+    const clickCandidates = [
+      // Prefer explicit buttons when available.
+      'css=.x-btn-inner:has-text("Cancel")',
+      'css=.x-btn-inner:has-text("Close")',
+      'css=.x-btn-inner:has-text("OK")',
+      // Fallback: close icon.
+      "css=.x-tool-close",
+      "css=.x-window-header-close"
+    ];
+
+    let clicked = false;
+    for (const selector of clickCandidates) {
+      try {
+        await win.locator(selector).first().click({ timeout: 1200 });
+        clicked = true;
+        break;
+      } catch {
+        // try next
+      }
+    }
+
+    if (!clicked) {
+      // Last resort: ESC often closes the focused modal.
+      try {
+        await page.keyboard.press("Escape");
+      } catch {
+        // ignore
+      }
+    }
+
+    await dismissMessageBoxes(page);
+
+    try {
+      await win.waitFor({ state: "hidden", timeout: 5000 });
+      return;
+    } catch {
+      // still open; try again
+    }
+  }
 }
 
 async function optionalStep({ page, imagesRoot, name, fn }) {
@@ -427,6 +522,17 @@ async function optionalStep({ page, imagesRoot, name, fn }) {
     const debugPath = path.join(imagesRoot, "_debug", `${name}.png`);
     try {
       await saveScreenshot({ page, outPath: debugPath });
+    } catch {
+      // ignore
+    }
+    // Best-effort cleanup so subsequent steps can continue (e.g., close mis-clicked modal wizards).
+    try {
+      await closeTopMostWindow(page);
+    } catch {
+      // ignore
+    }
+    try {
+      await dismissMessageBoxes(page);
     } catch {
       // ignore
     }
@@ -663,16 +769,19 @@ async function main() {
         imagesRoot,
         name: "extended-ch6-bond-dialog",
         fn: async () => {
+          // Guard against leftover modal dialogs from previous steps.
+          await closeTopMostWindow(page);
           await gotoNode(page, firstNode);
           await page.waitForTimeout(1200);
           await gotoSection(page, "Network");
           await page.locator("css=.x-grid-item").first().waitFor({ timeout: 30000 });
-          await safeClick(page, ['css=.x-btn-inner:has-text("Create")', "text=Create"]);
+          // Use exact match to avoid clicking "Create VM" in the global header.
+          await safeClick(page, ['text="Create"', 'css=.x-btn-inner:text-is("Create")']);
           await safeClick(page, [
-            'css=.x-menu-item-text:has-text("Bond")',
+            'css=.x-menu-item-text:text-is("Linux Bond")',
+            'css=.x-menu-item-text:text-is("Bond")',
             'css=.x-menu-item-text:has-text("Linux Bond")',
-            "text=Bond",
-            "text=Linux Bond"
+            'css=.x-menu-item-text:has-text("Bond")'
           ]);
           await page.waitForTimeout(800);
           await redactForScreenshot(page, replacements);
@@ -689,16 +798,19 @@ async function main() {
         imagesRoot,
         name: "extended-ch6-vlan-dialog",
         fn: async () => {
+          // Guard against leftover modal dialogs from previous steps.
+          await closeTopMostWindow(page);
           await gotoNode(page, firstNode);
           await page.waitForTimeout(1200);
           await gotoSection(page, "Network");
           await page.locator("css=.x-grid-item").first().waitFor({ timeout: 30000 });
-          await safeClick(page, ['css=.x-btn-inner:has-text("Create")', "text=Create"]);
+          // Use exact match to avoid clicking "Create VM" in the global header.
+          await safeClick(page, ['text="Create"', 'css=.x-btn-inner:text-is("Create")']);
           await safeClick(page, [
-            'css=.x-menu-item-text:has-text("VLAN")',
+            'css=.x-menu-item-text:text-is("Linux VLAN")',
+            'css=.x-menu-item-text:text-is("VLAN")',
             'css=.x-menu-item-text:has-text("Linux VLAN")',
-            "text=VLAN",
-            "text=Linux VLAN"
+            'css=.x-menu-item-text:has-text("VLAN")'
           ]);
           await page.waitForTimeout(800);
           await redactForScreenshot(page, replacements);
