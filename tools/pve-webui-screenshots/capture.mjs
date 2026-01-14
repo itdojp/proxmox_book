@@ -20,6 +20,9 @@ Optional env:
   PVE_INSECURE=1 allow self-signed cert (lab only)
   PVE_CAPTURE_CH4=1 capture Create VM wizard screenshots (Chapter 4)
   PVE_CAPTURE_EXTENDED=1 capture additional safe UI pages/dialogs/wizards (ch5/ch6/ch7/ch8)
+  PVE_CAPTURE_VM_ASSETS=1 capture VM/backup-related screenshots (creates a demo VM and runs a backup; lab only)
+  PVE_DEMO_VMID=100 demo VMID (optional)
+  PVE_DEMO_VM_NAME=vm-ubuntu01 demo VM name (optional)
 `;
   process.stderr.write(msg.trimStart());
   process.stderr.write("\n");
@@ -44,6 +47,10 @@ async function resolvePassword() {
 function repoRoot() {
   const here = path.dirname(fileURLToPath(import.meta.url));
   return path.resolve(here, "../..");
+}
+
+function escapeRegex(value) {
+  return String(value || "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 function resolveChromePath() {
@@ -144,8 +151,10 @@ async function getTicket({ baseUrl, username, password, otp }) {
     body: params.toString()
   });
   const ticket = json?.data?.ticket;
+  const csrf = json?.data?.CSRFPreventionToken;
   if (!ticket) throw new Error("No ticket in response from /access/ticket");
-  return ticket;
+  if (!csrf) throw new Error("No CSRFPreventionToken in response from /access/ticket");
+  return { ticket, csrf };
 }
 
 async function apiGet({ baseUrl, ticket, path }) {
@@ -155,6 +164,46 @@ async function apiGet({ baseUrl, ticket, path }) {
     headers: { cookie: `PVEAuthCookie=${ticket}` }
   });
   return json?.data;
+}
+
+async function apiPostForm({ baseUrl, ticket, csrf, path, params }) {
+  const url = new URL(`/api2/json${path}`, baseUrl);
+  const body = new URLSearchParams();
+  for (const [key, value] of Object.entries(params || {})) {
+    if (value === undefined || value === null) continue;
+    const v = String(value);
+    if (!v) continue;
+    body.set(key, v);
+  }
+  const json = await fetchJson({
+    url: url.toString(),
+    method: "POST",
+    headers: {
+      cookie: `PVEAuthCookie=${ticket}`,
+      CSRFPreventionToken: csrf,
+      "content-type": "application/x-www-form-urlencoded"
+    },
+    body: body.toString()
+  });
+  return json?.data;
+}
+
+async function waitForTaskDone({ baseUrl, ticket, node, upid, timeoutMs = 10 * 60 * 1000 }) {
+  const startedAt = Date.now();
+  const encodedUpid = encodeURIComponent(String(upid || ""));
+  if (!node || !encodedUpid) throw new Error("waitForTaskDone: node/upid required");
+
+  while (Date.now() - startedAt < timeoutMs) {
+    const status = await apiGet({
+      baseUrl,
+      ticket,
+      path: `/nodes/${encodeURIComponent(node)}/tasks/${encodedUpid}/status`
+    });
+    if (status?.status === "stopped") return status;
+    await new Promise((r) => setTimeout(r, 2500));
+  }
+
+  throw new Error(`Timeout waiting for task: ${upid}`);
 }
 
 function buildTextReplacements({ baseUrl, firstNode }) {
@@ -194,9 +243,9 @@ async function redactForScreenshot(page, replacements) {
       // Best-effort redaction for device identifiers that would otherwise leak lab-specific info.
       out = out
         // Interface names embedding MACs (e.g., enx00e05d105b64, wlx001122334455)
-        .replace(/\b(enx|wlx)[0-9a-f]{12}\b/g, "$1001122334455")
+        .replace(/\b(enx|wlx)[0-9a-f]{12}\b/gi, "$1001122334455")
         // Raw MAC addresses
-        .replace(/\b([0-9a-f]{2}:){5}[0-9a-f]{2}\b/g, "00:11:22:33:44:55");
+        .replace(/\b([0-9a-f]{2}:){5}[0-9a-f]{2}\b/gi, "00:11:22:33:44:55");
       return out;
     };
 
@@ -223,6 +272,8 @@ async function redactForScreenshot(page, replacements) {
     const formEls = root.querySelectorAll("input, textarea");
     for (const el of formEls) {
       try {
+        // Hidden inputs are not visible in screenshots, and mutating them can break actions (e.g., form submits).
+        if (String(el.type || "").toLowerCase() === "hidden") continue;
         if (typeof el.value === "string" && el.value) {
           const next = replaceAll(el.value);
           if (next !== el.value) el.value = next;
@@ -298,6 +349,18 @@ async function safeClickWithin(container, selectors) {
   throw new Error(`Click failed. Tried selectors: ${selectors.join(", ")}`);
 }
 
+async function expandTreeSelection(page, { attempts = 2 } = {}) {
+  // Best-effort: ExtJS tree nodes generally expand with ArrowRight when focused.
+  for (let i = 0; i < attempts; i++) {
+    try {
+      await page.keyboard.press("ArrowRight");
+    } catch {
+      // ignore
+    }
+    await page.waitForTimeout(150);
+  }
+}
+
 async function waitAnyText(page, texts) {
   for (const text of texts) {
     try {
@@ -323,9 +386,10 @@ async function gotoNode(page, nodeName) {
   // Try both to keep navigation working while still producing sanitized screenshots.
   const candidates = Array.from(new Set([nodeName, "pve1"].filter(Boolean)));
   await safeClick(page, [
-    ...candidates.map((n) => `text=${n}`),
     ...candidates.map((n) => `css=.x-tree-node-text:has-text("${n}")`),
-    ...candidates.map((n) => `css=.x-tree-node-anchor:has-text("${n}")`)
+    ...candidates.map((n) => `css=.x-tree-node-anchor:has-text("${n}")`),
+    // Fallback (less strict; may match outside the tree).
+    ...candidates.map((n) => `text=${n}`)
   ]);
 }
 
@@ -338,10 +402,267 @@ async function gotoSection(page, label) {
   ]);
 }
 
+async function gotoVm(page, { vmid, name }) {
+  const candidates = Array.from(new Set([String(vmid || ""), String(name || "")].filter(Boolean)));
+  if (candidates.length === 0) throw new Error("gotoVm: vmid or name required");
+  const vmidStr = vmid ? String(vmid) : "";
+  const nameStr = name ? String(name) : "";
+  // Match a full label like "100 (vm-ubuntu01)" without requiring exact formatting.
+  const fullLabel =
+    vmidStr && nameStr ? new RegExp(`\\b${vmidStr}\\b[\\s\\S]*\\b${escapeRegex(nameStr)}\\b`) : null;
+  const selectors = [
+    ...candidates.map((v) => `css=.x-tree-node-text:has-text("${v}")`),
+    ...candidates.map((v) => `css=.x-tree-node-anchor:has-text("${v}")`),
+    // Some views render tree rows as grid cells.
+    ...candidates.map((v) => `css=.x-grid-cell-inner:has-text("${v}")`),
+    ...(vmidStr ? [`css=.x-tree-node-text:has-text("${vmidStr}")`] : []),
+    ...(nameStr ? [`css=.x-tree-node-text:has-text("${nameStr}")`] : []),
+    ...candidates.map((v) => `text=${v}`)
+  ];
+
+  // Prefer the left navigation tree (Server View). This is more stable than generic tree views elsewhere.
+  const tree = page.locator("css=.x-tree-view").first();
+  try {
+    await tree.waitFor({ state: "visible", timeout: 15000 });
+    if (fullLabel) {
+      try {
+        await tree.locator(`css=.x-tree-node-text`).filter({ hasText: fullLabel }).first().click({
+          timeout: 6000
+        });
+        return;
+      } catch {
+        // fall back to selector-based clicking
+      }
+    }
+    await safeClickWithin(tree, selectors);
+  } catch {
+    // Fallback to page-wide search if the tree view locator differs across versions.
+    await safeClick(page, selectors);
+  }
+}
+
+async function waitForVmInTree(page, { vmid, timeoutMs = 30000 }) {
+  const label = String(vmid || "");
+  if (!label) throw new Error("waitForVmInTree: vmid required");
+  const tree = page.locator("css=.x-tree-view").first();
+  try {
+    await tree.waitFor({ state: "visible", timeout: Math.min(timeoutMs, 15000) });
+    await tree
+      .locator(`css=.x-tree-node-text:has-text("${label}")`)
+      .first()
+      .waitFor({ state: "visible", timeout: timeoutMs });
+  } catch {
+    await page
+      .locator(`css=.x-tree-node-text:has-text("${label}")`)
+      .first()
+      .waitFor({ state: "visible", timeout: timeoutMs });
+  }
+}
+
 function splitUserAndRealm(username) {
   const match = String(username || "").match(/^(?<user>[^@]+)@(?<realm>[^@]+)$/);
   if (match?.groups?.user && match?.groups?.realm) return match.groups;
   return { user: String(username || ""), realm: "" };
+}
+
+async function ensureDemoVm({
+  page,
+  baseUrl,
+  ticket,
+  imagesRoot,
+  replacements,
+  preferredVmid = "100",
+  demoName = "vm-ubuntu01"
+}) {
+  const resources = await apiGet({ baseUrl, ticket, path: "/cluster/resources?type=vm" });
+  const preferredResource = Array.isArray(resources)
+    ? resources.find((r) => String(r?.vmid ?? "") === String(preferredVmid))
+    : null;
+  const usedVmids = new Set(
+    Array.isArray(resources) ? resources.map((r) => String(r?.vmid ?? "")).filter(Boolean) : []
+  );
+
+  let vmid = String(preferredVmid || "100");
+  if (usedVmids.has(vmid) && String(preferredResource?.name || "") !== String(demoName || "")) {
+    // Pick the next free ID to avoid modifying an unknown existing VM.
+    const start = Number(vmid);
+    for (let i = 0; i < 100; i++) {
+      const candidate = String(start + i + 1);
+      if (!usedVmids.has(candidate)) {
+        vmid = candidate;
+        break;
+      }
+    }
+  }
+
+  const findVmResource = (rows) => {
+    if (!Array.isArray(rows)) return null;
+    return rows.find((r) => String(r?.vmid ?? "") === String(vmid));
+  };
+
+  const pollVmResource = async (timeoutMs = 60000) => {
+    const startedAt = Date.now();
+    while (Date.now() - startedAt < timeoutMs) {
+      const rows = await apiGet({ baseUrl, ticket, path: "/cluster/resources?type=vm" });
+      const found = findVmResource(rows);
+      if (found) return found;
+      await new Promise((r) => setTimeout(r, 2500));
+    }
+    return null;
+  };
+
+  if (!usedVmids.has(vmid)) {
+    const debugPrefix = path.join(imagesRoot, "_debug", "demo-vm");
+
+    try {
+      await gotoDatacenter(page);
+      await safeClick(page, [
+        'css=.x-btn-inner:has-text("Create VM")',
+        'css=.x-btn:has-text("Create VM")',
+        "text=Create VM"
+      ]);
+
+      const wizard = page
+        .locator("css=.x-window")
+        .filter({ hasText: "Create" })
+        .last();
+      await wizard.waitFor({ state: "visible", timeout: 20000 });
+
+      const tryFill = async (selectors, value) => {
+        for (const selector of selectors) {
+          try {
+            const input = wizard.locator(selector).first();
+            await input.waitFor({ state: "visible", timeout: 2000 });
+            await input.fill(String(value));
+            return true;
+          } catch {
+            // try next
+          }
+        }
+        return false;
+      };
+
+      await tryFill(['input[name="vmid"]', 'input[name="vmID"]'], vmid);
+      await tryFill(['input[name="name"]', 'input[name="vmname"]', 'input[name="hostname"]'], demoName);
+
+      const clickTab = async (label) => {
+        await safeClickWithin(wizard, [
+          `css=.x-tab-inner:has-text("${label}")`,
+          `css=.x-tab:has-text("${label}")`,
+          `text=${label}`
+        ]);
+      };
+
+      const selectNoMedia = async () => {
+        const selectors = [
+          'css=.x-form-cb-label:has-text("Do not use any media")',
+          'css=.x-form-radio-label:has-text("Do not use any media")',
+          "text=Do not use any media"
+        ];
+        for (const selector of selectors) {
+          try {
+            const el = wizard.locator(selector).first();
+            await el.waitFor({ state: "visible", timeout: 5000 });
+            await el.click({ timeout: 5000 });
+            return;
+          } catch {
+            // try next
+          }
+        }
+        throw new Error('Could not select "Do not use any media" on OS step.');
+      };
+
+      // Go to OS step and select "Do not use any media" to avoid ISO dependencies.
+      try {
+        await clickTab("OS");
+      } catch {
+        await safeClickWithin(wizard, ['css=.x-btn-inner:has-text("Next")', "text=Next"]);
+      }
+      await page.waitForTimeout(600);
+      await selectNoMedia();
+
+      // Jump to Confirm if possible (fallback to Next-based navigation).
+      try {
+        await clickTab("Confirm");
+      } catch {
+        for (let i = 0; i < 10; i++) {
+          try {
+            await safeClickWithin(wizard, ['css=.x-btn-inner:has-text("Next")', "text=Next"]);
+          } catch {
+            break;
+          }
+          await page.waitForTimeout(500);
+          try {
+            await clickTab("Confirm");
+            break;
+          } catch {
+            // keep trying
+          }
+        }
+      }
+
+      await page.waitForTimeout(600);
+
+      try {
+        await safeClickWithin(wizard, [
+          'css=.x-btn-inner:has-text("Finish")',
+          "text=Finish",
+          'css=.x-btn-inner:has-text("Create")',
+          "text=Create",
+          'css=.x-btn-inner:has-text("OK")',
+          "text=OK"
+        ]);
+      } catch (error) {
+        const debugPath = `${debugPrefix}-finish-click-failed.png`;
+        await saveScreenshot({ page, outPath: debugPath });
+        throw new Error(
+          `Failed to click Finish/Create on demo VM wizard (debug: ${debugPath})\n${String(
+            error?.message || error
+          )}`
+        );
+      }
+
+      await dismissMessageBoxes(page);
+      try {
+        await wizard.waitFor({ state: "hidden", timeout: 60000 });
+      } catch {
+        // If creation fails, keep a debug screenshot.
+        const debugPath = `${debugPrefix}-create-did-not-complete.png`;
+        await saveScreenshot({ page, outPath: debugPath });
+        throw new Error(`Demo VM creation did not complete (debug: ${debugPath})`);
+      }
+    } catch (error) {
+      const debugPath = `${debugPrefix}-exception.png`;
+      try {
+        await saveScreenshot({ page, outPath: debugPath });
+      } catch {
+        // ignore
+      }
+      // Best-effort cleanup (avoid leaving the wizard open for subsequent steps).
+      try {
+        await closeTopMostWindow(page);
+      } catch {
+        // ignore
+      }
+      throw error;
+    }
+  }
+
+  // Resolve actual name/node (for existing VMs and newly-created ones).
+  const vmResource = findVmResource(resources) || (await pollVmResource(60000));
+  const actualName = String(vmResource?.name || demoName);
+  const actualNode = String(vmResource?.node || "");
+
+  // Ensure the VM is visible in the server tree for later navigation.
+  await gotoDatacenter(page);
+  await expandTreeSelection(page);
+  if (actualNode) {
+    await gotoNode(page, actualNode);
+    await expandTreeSelection(page);
+  }
+  await waitForVmInTree(page, { vmid, timeoutMs: 60000 });
+
+  return { vmid, name: actualName, node: actualNode };
 }
 
 async function captureCreateVmWizard({ page, imagesRoot, replacements }) {
@@ -616,6 +937,9 @@ async function main() {
   const otp = process.env.PVE_OTP || "";
   const captureCh4 = process.env.PVE_CAPTURE_CH4 === "1";
   const captureExtended = process.env.PVE_CAPTURE_EXTENDED === "1";
+  const captureVmAssets = process.env.PVE_CAPTURE_VM_ASSETS === "1";
+  let preferredDemoVmid = process.env.PVE_DEMO_VMID || "100";
+  const demoVmName = process.env.PVE_DEMO_VM_NAME || "vm-ubuntu01";
 
   if (insecure) {
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
@@ -628,7 +952,37 @@ async function main() {
   const imagesRoot = path.join(root, "images");
 
   const chromePath = resolveChromePath();
-  const ticket = await getTicket({ baseUrl, username, password, otp });
+  const auth = await getTicket({ baseUrl, username, password, otp });
+  const ticket = auth.ticket;
+  const csrf = auth.csrf;
+
+  // Defensive cleanup: previous runs may have left multiple demo VMs behind.
+  // If multiple VMs share the same demo name, prefer reusing the highest VMID to avoid ambiguity in UI selection.
+  if (captureVmAssets && !process.env.PVE_DEMO_VMID) {
+    try {
+      const existingResources = await apiGet({
+        baseUrl,
+        ticket,
+        path: "/cluster/resources?type=vm"
+      });
+      const sameNameVmids = Array.isArray(existingResources)
+        ? existingResources
+            .filter((r) => String(r?.name || "") === String(demoVmName || ""))
+            .map((r) => Number(r?.vmid))
+            .filter((n) => Number.isFinite(n))
+            .sort((a, b) => b - a)
+        : [];
+      if (sameNameVmids.length >= 2) {
+        const chosen = String(sameNameVmids[0]);
+        preferredDemoVmid = chosen;
+        process.stderr.write(
+          `WARN: multiple demo VMs named "${demoVmName}" exist; auto-selecting VMID ${chosen}. Consider setting PVE_DEMO_VMID explicitly.\n`
+        );
+      }
+    } catch {
+      // ignore
+    }
+  }
   const nodes = await apiGet({ baseUrl, ticket, path: "/nodes" });
   const firstNode = Array.isArray(nodes) && nodes.length > 0 ? nodes[0].node : "";
   const replacements = buildTextReplacements({ baseUrl, firstNode });
@@ -859,6 +1213,25 @@ async function main() {
         }
       });
 
+      await optionalStep({
+        page,
+        imagesRoot,
+        name: "extended-ch7-join-cluster-wizard",
+        fn: async () => {
+          await gotoDatacenter(page);
+          await page.waitForTimeout(1200);
+          await gotoSection(page, "Cluster");
+          await safeClick(page, ['css=.x-btn-inner:has-text("Join Cluster")', "text=Join Cluster"]);
+          await page.waitForTimeout(800);
+          await redactForScreenshot(page, replacements);
+          await saveScreenshot({
+            page,
+            outPath: path.join(imagesRoot, "part3/ch7/03-join-cluster-wizard.png")
+          });
+          await closeTopMostWindow(page);
+        }
+      });
+
       // Chapter 8: Datacenter -> Backup jobs list + create wizard
       await optionalStep({
         page,
@@ -892,6 +1265,188 @@ async function main() {
           await saveScreenshot({
             page,
             outPath: path.join(imagesRoot, "part3/ch8/02-create-backup-job-wizard.png")
+          });
+          await closeTopMostWindow(page);
+        }
+      });
+    }
+
+    if (captureVmAssets) {
+      const demoVm = await ensureDemoVm({
+        page,
+        baseUrl,
+        ticket,
+        imagesRoot,
+        replacements,
+        preferredVmid: preferredDemoVmid,
+        demoName: demoVmName
+      });
+
+      // Chapter 4: VM console (with the Summary tab visible in the UI)
+      await optionalStep({
+        page,
+        imagesRoot,
+        name: "vm-ch4-summary-and-console",
+        fn: async () => {
+          if (demoVm.node) {
+            await gotoNode(page, demoVm.node);
+            await expandTreeSelection(page);
+          }
+          await gotoVm(page, demoVm);
+          await ensureWorkspaceReady({ page, imagesRoot, label: "Summary" });
+          // Start the VM so the console shows something (even a boot error is enough for UI illustration).
+          try {
+            await safeClick(page, ['css=.x-btn-inner:text-is("Start")', 'text="Start"']);
+          } catch {
+            // ignore (may already be running)
+          }
+          await page.waitForTimeout(1200);
+          await gotoSection(page, "Console");
+          await page.waitForTimeout(1500);
+          await redactForScreenshot(page, replacements);
+          await saveScreenshot({
+            page,
+            outPath: path.join(imagesRoot, "part1/ch4/08-vm-summary-and-console.png")
+          });
+        }
+      });
+
+      // Chapter 4: snapshots (dialog + list)
+      await optionalStep({
+        page,
+        imagesRoot,
+        name: "vm-ch4-snapshot-dialog",
+        fn: async () => {
+          if (demoVm.node) {
+            await gotoNode(page, demoVm.node);
+            await expandTreeSelection(page);
+          }
+          await gotoVm(page, demoVm);
+          await ensureWorkspaceReady({ page, imagesRoot, label: "Summary" });
+          await gotoSection(page, "Snapshots");
+          await page.waitForTimeout(1200);
+          await safeClick(page, ['css=.x-btn-inner:has-text("Take Snapshot")', "text=Take Snapshot"]);
+          await page.waitForTimeout(800);
+          await redactForScreenshot(page, replacements);
+          await saveScreenshot({
+            page,
+            outPath: path.join(imagesRoot, "part1/ch4/09-snapshot-dialog-and-list.png")
+          });
+          await closeTopMostWindow(page);
+        }
+      });
+
+      // Chapter 6: VM NIC VLAN ID (hardware dialog)
+      await optionalStep({
+        page,
+        imagesRoot,
+        name: "vm-ch6-vlan-tag",
+        fn: async () => {
+          if (demoVm.node) {
+            await gotoNode(page, demoVm.node);
+            await expandTreeSelection(page);
+          }
+          await gotoVm(page, demoVm);
+          await ensureWorkspaceReady({ page, imagesRoot, label: "Summary" });
+          await gotoSection(page, "Hardware");
+          await page.locator("css=.x-grid-item").first().waitFor({ timeout: 30000 });
+          await safeClick(page, ['css=.x-grid-item:has-text("net0")', 'css=.x-grid-cell:has-text("net0")']);
+          await safeClick(page, ['css=.x-btn-inner:text-is("Edit")', 'text="Edit"']);
+          const win = page.locator("css=.x-window").last();
+          await win.waitFor({ state: "visible", timeout: 20000 });
+          // Best-effort: fill VLAN tag field (do not save).
+          for (const selector of ['input[name="tag"]', 'input[name="vlan"]', 'input[name="vlan_tag"]']) {
+            try {
+              const input = win.locator(selector).first();
+              await input.waitFor({ state: "visible", timeout: 800 });
+              await input.fill("20");
+              break;
+            } catch {
+              // try next
+            }
+          }
+          await page.waitForTimeout(500);
+          await redactForScreenshot(page, replacements);
+          await saveScreenshot({
+            page,
+            outPath: path.join(imagesRoot, "part2/ch6/05-vm-nic-vlan-id.png")
+          });
+          await closeTopMostWindow(page);
+        }
+      });
+
+      // Chapter 8: run a manual backup via API, then capture task history and restore dialog.
+      await optionalStep({
+        page,
+        imagesRoot,
+        name: "vm-ch8-manual-backup-and-restore",
+        fn: async () => {
+          const upid = await apiPostForm({
+            baseUrl,
+            ticket,
+            csrf,
+            path: `/nodes/${encodeURIComponent(firstNode)}/vzdump`,
+            params: {
+              vmid: demoVm.vmid,
+              storage: "local",
+              // Use snapshot mode so the backup does not depend on guest OS shutdown.
+              mode: "snapshot",
+              compress: "zstd"
+            }
+          });
+
+          await waitForTaskDone({ baseUrl, ticket, node: firstNode, upid, timeoutMs: 10 * 60 * 1000 });
+
+          // Capture task history with a backup task visible.
+          await gotoDatacenter(page);
+          await page.waitForTimeout(1500);
+          await gotoSection(page, "Summary");
+          await waitAnyText(page, ["Search:", "Type"]);
+          try {
+            await safeClick(page, ['css=.x-tab-inner:has-text("Tasks")', "text=Tasks"]);
+          } catch {
+            // ignore
+          }
+          await page.waitForTimeout(1200);
+          await redactForScreenshot(page, replacements);
+          await saveScreenshot({
+            page,
+            outPath: path.join(imagesRoot, "part3/ch8/03-manual-backup-task-log.png")
+          });
+
+          // Open restore dialog from the storage's backup list.
+          await gotoNode(page, firstNode);
+          await expandTreeSelection(page);
+          // Select storage "local" in the server tree.
+          await safeClick(page, [
+            'css=.x-tree-node-text:text-is("local")',
+            'css=.x-tree-node-text:has-text("local (")',
+            'css=.x-tree-node-text:has-text("local")'
+          ]);
+          await page.waitForTimeout(1200);
+
+          // PVE 9.x exposes "Backups" as a section for storages. Prefer it; fall back to older "Content" tab if present.
+          try {
+            await gotoSection(page, "Backups");
+          } catch {
+            try {
+              await safeClick(page, ['css=.x-tab-inner:has-text("Backups")', "text=Backups"]);
+            } catch {
+              await safeClick(page, ['css=.x-tab-inner:has-text("Content")', "text=Content"]);
+            }
+          }
+          await page.locator("css=.x-grid-item").first().waitFor({ timeout: 30000 });
+          // Select the newest vzdump backup row (if present).
+          await safeClick(page, [
+            `css=.x-grid-item:has-text("vzdump-qemu-${demoVm.vmid}")`,
+            'css=.x-grid-item:has-text("vzdump-qemu-")'
+          ]);
+          await safeClick(page, ['css=.x-btn-inner:has-text("Restore")', "text=Restore"]);
+          await page.waitForTimeout(900);
+          await redactForScreenshot(page, replacements);
+          await saveScreenshot({
+            page,
+            outPath: path.join(imagesRoot, "part3/ch8/04-restore-dialog.png")
           });
           await closeTopMostWindow(page);
         }
