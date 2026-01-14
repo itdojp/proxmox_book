@@ -27,9 +27,11 @@ Node.js が必要です（このリポジトリの作業環境では Node 22 を
 - `PVE_BASE_URL` 例: `https://192.168.10.11:8006`
 - `PVE_USERNAME` 例: `root@pam`
 - `PVE_PASSWORD`（値はシェル履歴等に残さない運用を推奨）
+  - 代替: `PVE_PASSWORD_FILE`（パスワードだけ入ったファイルのパス）
 
 任意:
 - `PVE_INSECURE=1` 自己署名証明書を許容（学習環境向け）
+- `PVE_CAPTURE_CH4=1` 第4章の「Create VM wizard」スクショも取得する
 
 実行例:
 
@@ -37,6 +39,14 @@ Node.js が必要です（このリポジトリの作業環境では Node 22 を
     PVE_USERNAME="root@pam" \\
     PVE_PASSWORD="***" \\
     PVE_INSECURE=1 \\
+    node tools/pve-webui-screenshots/capture.mjs
+
+`PVE_PASSWORD_FILE` を使う例（シェル履歴にパスワードを残さない）:
+
+    export PVE_PASSWORD_FILE="$HOME/.config/proxmox_book/pve_password"
+    export PVE_BASE_URL="https://192.168.10.11:8006"
+    export PVE_USERNAME="root@pam"
+    export PVE_INSECURE=1
     node tools/pve-webui-screenshots/capture.mjs
 
 出力先:
@@ -48,4 +58,3 @@ Node.js が必要です（このリポジトリの作業環境では Node 22 を
   - まずブラウザで同じ URL にアクセスできるか確認してください。
 - ログイン後に画面が表示されない / クリックに失敗する:
   - UI 変更や環境差分でセレクタが合っていない可能性があります。該当ログを添えて相談してください。
-

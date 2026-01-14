@@ -175,6 +175,7 @@
 - [2026-01-11] Added `tools/pve-webui-screenshots/` (Playwright-based) to help capture Web UI screenshots from CLI (login/dashboard as a first pass).
 - [2026-01-12] Adjusted kernel-related notes to avoid over-specific patch-level claims and to prefer reader-facing verification (`pveversion -v`, `uname -r`) while keeping 9.1/9.x alignment intact.
 - [2026-01-12] Validated `tools/pve-webui-screenshots/capture.mjs` against a Proxmox VE 9.1.1 lab and hardened it (UI-based login, auto-dismiss “No valid subscription” modal, improved redaction for IP/host/interface identifiers). Captured sanitized Web UI screenshots for ch3/ch5/ch6/ch9 and updated Issue #2 and Issue #25 accordingly (screenshots for ch4/ch7/ch8 remain).
+- [2026-01-14] Extended `tools/pve-webui-screenshots/capture.mjs` to optionally capture Chapter 4 “Create VM wizard” screenshots (`PVE_CAPTURE_CH4=1`) and to support reading the password from a file (`PVE_PASSWORD_FILE`).
 
 
 
