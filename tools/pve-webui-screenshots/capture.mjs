@@ -20,6 +20,7 @@ Optional env:
   PVE_INSECURE=1 allow self-signed cert (lab only)
   PVE_CAPTURE_CH4=1 capture Create VM wizard screenshots (Chapter 4)
   PVE_CAPTURE_EXTENDED=1 capture additional safe UI pages/dialogs/wizards (ch5/ch6/ch7/ch8)
+  PVE_CAPTURE_ADVANCED=1 capture additional environment-dependent UI pages (ZFS/Ceph storage, cluster members, HA/replication)
   PVE_CAPTURE_VM_ASSETS=1 capture VM/backup-related screenshots (creates a demo VM and runs a backup; lab only)
   PVE_DEMO_VMID=100 demo VMID (optional)
   PVE_DEMO_VM_NAME=vm-ubuntu01 demo VM name (optional)
@@ -206,7 +207,7 @@ async function waitForTaskDone({ baseUrl, ticket, node, upid, timeoutMs = 10 * 6
   throw new Error(`Timeout waiting for task: ${upid}`);
 }
 
-function buildTextReplacements({ baseUrl, firstNode }) {
+function buildTextReplacements({ baseUrl, nodeNames }) {
   let host = "";
   let hostWithPort = "";
   let ipv4Prefix = "";
@@ -220,13 +221,23 @@ function buildTextReplacements({ baseUrl, firstNode }) {
   } catch {
     // ignore
   }
+  const nodes = Array.isArray(nodeNames)
+    ? Array.from(
+        new Set(
+          nodeNames
+            .map((n) => String(n || "").trim())
+            .filter((n) => n)
+        )
+      )
+    : [];
+  const nodeReplacements = nodes.map((name, idx) => [name, `pve${idx + 1}`]);
   const replacements = [
     // Replace “real” values with the canonical examples used in the manuscript/images README.
     [host, "192.168.10.11"],
     [hostWithPort, "192.168.10.11:8006"],
     // Also rewrite the /24 prefix so gateways etc. are sanitized too (e.g., 192.168.220.1 -> 192.168.10.1).
     [ipv4Prefix, "192.168.10."],
-    [String(firstNode || ""), "pve1"]
+    ...nodeReplacements
   ];
   return replacements.filter(([from]) => from);
 }
@@ -242,6 +253,11 @@ async function redactForScreenshot(page, replacements) {
       }
       // Best-effort redaction for device identifiers that would otherwise leak lab-specific info.
       out = out
+        // IPv4 addresses (best-effort; keep last octet so lists remain readable after redaction).
+        .replace(/\b(?:\d{1,3}\.){3}\d{1,3}\b/g, (ip) => {
+          const last = String(ip || "").split(".").pop() || "0";
+          return `192.168.10.${last}`;
+        })
         // Interface names embedding MACs (e.g., enx00e05d105b64, wlx001122334455)
         .replace(/\b(enx|wlx)[0-9a-f]{12}\b/gi, "$1001122334455")
         // Raw MAC addresses
@@ -937,6 +953,7 @@ async function main() {
   const otp = process.env.PVE_OTP || "";
   const captureCh4 = process.env.PVE_CAPTURE_CH4 === "1";
   const captureExtended = process.env.PVE_CAPTURE_EXTENDED === "1";
+  const captureAdvanced = process.env.PVE_CAPTURE_ADVANCED === "1";
   const captureVmAssets = process.env.PVE_CAPTURE_VM_ASSETS === "1";
   let preferredDemoVmid = process.env.PVE_DEMO_VMID || "100";
   const demoVmName = process.env.PVE_DEMO_VM_NAME || "vm-ubuntu01";
@@ -983,9 +1000,12 @@ async function main() {
       // ignore
     }
   }
-  const nodes = await apiGet({ baseUrl, ticket, path: "/nodes" });
-  const firstNode = Array.isArray(nodes) && nodes.length > 0 ? nodes[0].node : "";
-  const replacements = buildTextReplacements({ baseUrl, firstNode });
+	  const nodes = await apiGet({ baseUrl, ticket, path: "/nodes" });
+	  const nodeNames = Array.isArray(nodes)
+	    ? nodes.map((n) => n?.node).filter((n) => n)
+	    : [];
+	  const firstNode = nodeNames.length > 0 ? String(nodeNames[0]) : "";
+	  const replacements = buildTextReplacements({ baseUrl, nodeNames });
 
   const browser = await chromium.launch({
     headless: true,
@@ -1265,6 +1285,144 @@ async function main() {
           await saveScreenshot({
             page,
             outPath: path.join(imagesRoot, "part3/ch8/02-create-backup-job-wizard.png")
+          });
+          await closeTopMostWindow(page);
+        }
+      });
+    }
+
+	    if (captureAdvanced) {
+	      // Environment-dependent pages. Each step is optional and should not block the rest of the run.
+	      let storages = [];
+	      try {
+	        storages = await apiGet({ baseUrl, ticket, path: "/storage" });
+	      } catch (err) {
+	        process.stderr.write(
+	          `INFO: captureAdvanced: failed to fetch /storage (${String(err?.message || err)}); treating as no storages.\n`
+	        );
+	        storages = [];
+	      }
+	      const storageRows = Array.isArray(storages) ? storages : [];
+	      const storageIdFor = (predicate) => {
+        for (const row of storageRows) {
+          const type = String(row?.type || "");
+          const id = String(row?.storage || row?.id || "");
+          if (!id) continue;
+          if (predicate({ id, type, row })) return id;
+        }
+        return "";
+      };
+
+      const zfsStorageId = storageIdFor(({ type }) => /zfs/i.test(type));
+      const cephStorageId = storageIdFor(({ type }) => /ceph/i.test(type) || /rbd/i.test(type));
+
+      const captureStorageEditDialog = async ({ stepName, storageId, outRelPath }) => {
+        if (!storageId) {
+          process.stderr.write(`INFO: ${stepName}: no matching storage found; skipped.\n`);
+          return;
+        }
+        await optionalStep({
+          page,
+          imagesRoot,
+          name: stepName,
+          fn: async () => {
+            await gotoDatacenter(page);
+            await page.waitForTimeout(1200);
+            await gotoSection(page, "Storage");
+            await page.locator("css=.x-grid-item").first().waitFor({ timeout: 30000 });
+            await safeClick(page, [
+              `css=.x-grid-item:has-text("${storageId}")`,
+              `css=.x-grid-cell-inner:has-text("${storageId}")`
+            ]);
+            await safeClick(page, ['css=.x-btn-inner:has-text("Edit")', "text=Edit"]);
+            await page.waitForTimeout(800);
+            await redactForScreenshot(page, replacements);
+            await saveScreenshot({ page, outPath: path.join(imagesRoot, outRelPath) });
+            await closeTopMostWindow(page);
+          }
+        });
+      };
+
+      await captureStorageEditDialog({
+        stepName: "advanced-ch5-zfs-storage",
+        storageId: zfsStorageId,
+        outRelPath: "part2/ch5/03-zfs-storage.png"
+      });
+      await captureStorageEditDialog({
+        stepName: "advanced-ch5-ceph-storage",
+        storageId: cephStorageId,
+        outRelPath: "part2/ch5/04-ceph-storage.png"
+      });
+
+      // Chapter 7: cluster members list (requires a multi-node cluster).
+      if (Array.isArray(nodes) && nodes.length >= 3) {
+        await optionalStep({
+          page,
+          imagesRoot,
+          name: "advanced-ch7-cluster-members",
+          fn: async () => {
+            await gotoDatacenter(page);
+            await page.waitForTimeout(1200);
+            await gotoSection(page, "Cluster");
+            await waitAnyText(page, ["Cluster", "Nodes", "Join Cluster"]);
+            await page.waitForTimeout(1200);
+            await redactForScreenshot(page, replacements);
+            await saveScreenshot({
+              page,
+              outPath: path.join(imagesRoot, "part3/ch7/04-cluster-members-3nodes.png")
+            });
+          }
+        });
+      } else {
+        process.stderr.write("INFO: advanced-ch7-cluster-members: requires >= 3 nodes; skipped.\n");
+      }
+
+      // Chapter 7/8: HA / Replication dialogs (requires a cluster; may be disabled on single-node labs).
+      await optionalStep({
+        page,
+        imagesRoot,
+        name: "advanced-ch7-ha-add-vm-to-group",
+        fn: async () => {
+          await gotoDatacenter(page);
+          await page.waitForTimeout(1200);
+          await gotoSection(page, "HA");
+          // Prefer a Resources view if available (tab or treelist entry).
+          try {
+            await gotoSection(page, "Resources");
+          } catch {
+            try {
+              await safeClick(page, ['css=.x-tab-inner:has-text("Resources")', "text=Resources"]);
+            } catch {
+              // ignore; some layouts open resources by default
+            }
+          }
+          await page.waitForTimeout(800);
+          await safeClick(page, ['css=.x-btn-inner:has-text("Add")', "text=Add"]);
+          await page.waitForTimeout(800);
+          await redactForScreenshot(page, replacements);
+          await saveScreenshot({
+            page,
+            outPath: path.join(imagesRoot, "part3/ch7/05-ha-add-vm-to-group.png")
+          });
+          await closeTopMostWindow(page);
+        }
+      });
+
+      await optionalStep({
+        page,
+        imagesRoot,
+        name: "advanced-ch8-replication-job-settings",
+        fn: async () => {
+          await gotoDatacenter(page);
+          await page.waitForTimeout(1200);
+          await gotoSection(page, "Replication");
+          await waitAnyText(page, ["Replication", "Job"]);
+          await safeClick(page, ['css=.x-btn-inner:has-text("Add")', "text=Add"]);
+          await page.waitForTimeout(800);
+          await redactForScreenshot(page, replacements);
+          await saveScreenshot({
+            page,
+            outPath: path.join(imagesRoot, "part3/ch8/05-replication-job-settings.png")
           });
           await closeTopMostWindow(page);
         }
