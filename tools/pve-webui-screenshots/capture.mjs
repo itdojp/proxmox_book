@@ -207,7 +207,7 @@ async function waitForTaskDone({ baseUrl, ticket, node, upid, timeoutMs = 10 * 6
   throw new Error(`Timeout waiting for task: ${upid}`);
 }
 
-function buildTextReplacements({ baseUrl, firstNode }) {
+function buildTextReplacements({ baseUrl, nodeNames }) {
   let host = "";
   let hostWithPort = "";
   let ipv4Prefix = "";
@@ -221,13 +221,23 @@ function buildTextReplacements({ baseUrl, firstNode }) {
   } catch {
     // ignore
   }
+  const nodes = Array.isArray(nodeNames)
+    ? Array.from(
+        new Set(
+          nodeNames
+            .map((n) => String(n || "").trim())
+            .filter((n) => n)
+        )
+      )
+    : [];
+  const nodeReplacements = nodes.map((name, idx) => [name, `pve${idx + 1}`]);
   const replacements = [
     // Replace “real” values with the canonical examples used in the manuscript/images README.
     [host, "192.168.10.11"],
     [hostWithPort, "192.168.10.11:8006"],
     // Also rewrite the /24 prefix so gateways etc. are sanitized too (e.g., 192.168.220.1 -> 192.168.10.1).
     [ipv4Prefix, "192.168.10."],
-    [String(firstNode || ""), "pve1"]
+    ...nodeReplacements
   ];
   return replacements.filter(([from]) => from);
 }
@@ -243,6 +253,11 @@ async function redactForScreenshot(page, replacements) {
       }
       // Best-effort redaction for device identifiers that would otherwise leak lab-specific info.
       out = out
+        // IPv4 addresses (best-effort; keep last octet so lists remain readable after redaction).
+        .replace(/\b(?:\d{1,3}\.){3}\d{1,3}\b/g, (ip) => {
+          const last = String(ip || "").split(".").pop() || "0";
+          return `192.168.10.${last}`;
+        })
         // Interface names embedding MACs (e.g., enx00e05d105b64, wlx001122334455)
         .replace(/\b(enx|wlx)[0-9a-f]{12}\b/gi, "$1001122334455")
         // Raw MAC addresses
@@ -985,9 +1000,12 @@ async function main() {
       // ignore
     }
   }
-  const nodes = await apiGet({ baseUrl, ticket, path: "/nodes" });
-  const firstNode = Array.isArray(nodes) && nodes.length > 0 ? nodes[0].node : "";
-  const replacements = buildTextReplacements({ baseUrl, firstNode });
+	  const nodes = await apiGet({ baseUrl, ticket, path: "/nodes" });
+	  const nodeNames = Array.isArray(nodes)
+	    ? nodes.map((n) => n?.node).filter((n) => n)
+	    : [];
+	  const firstNode = nodeNames.length > 0 ? String(nodeNames[0]) : "";
+	  const replacements = buildTextReplacements({ baseUrl, nodeNames });
 
   const browser = await chromium.launch({
     headless: true,
@@ -1273,11 +1291,19 @@ async function main() {
       });
     }
 
-    if (captureAdvanced) {
-      // Environment-dependent pages. Each step is optional and should not block the rest of the run.
-      const storages = await apiGet({ baseUrl, ticket, path: "/storage" });
-      const storageRows = Array.isArray(storages) ? storages : [];
-      const storageIdFor = (predicate) => {
+	    if (captureAdvanced) {
+	      // Environment-dependent pages. Each step is optional and should not block the rest of the run.
+	      let storages = [];
+	      try {
+	        storages = await apiGet({ baseUrl, ticket, path: "/storage" });
+	      } catch (err) {
+	        process.stderr.write(
+	          `INFO: captureAdvanced: failed to fetch /storage (${String(err?.message || err)}); treating as no storages.\n`
+	        );
+	        storages = [];
+	      }
+	      const storageRows = Array.isArray(storages) ? storages : [];
+	      const storageIdFor = (predicate) => {
         for (const row of storageRows) {
           const type = String(row?.type || "");
           const id = String(row?.storage || row?.id || "");
