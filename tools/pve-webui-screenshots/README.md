@@ -36,7 +36,7 @@ Node.js が必要です（このリポジトリの作業環境では Node 22 を
 - `PVE_CAPTURE_VM_ASSETS=1` VM/バックアップ関連の追加スクショも取得する（**デモ VM 作成 + 手動バックアップ実行あり: ラボ専用**）
   - `PVE_DEMO_VMID`（既定: `100`）作成するデモ VM の VMID（任意）
   - `PVE_DEMO_VM_NAME`（既定: `vm-ubuntu01`）作成するデモ VM 名（任意）
-- `PVE_CAPTURE_ADVANCED=1` Issue #2 の未取得分の一部も取得する（ZFS/Ceph の Edit、クラスタメンバー一覧、HA/Replication の Add など）
+- `PVE_CAPTURE_ADVANCED=1` Issue #2 の未取得分の一部も取得する（ZFS/Ceph の Edit、クラスタメンバー一覧、HA/Replication の Add など、**ラボ専用 / 変更を適用しない**）
 
 実行例:
 

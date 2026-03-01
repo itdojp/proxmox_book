@@ -214,8 +214,31 @@ function buildNodeAliases(nodes) {
     ? nodes.map((n) => String(n?.node || "")).filter(Boolean)
     : [];
   const uniqueNames = Array.from(new Set(names));
-  return uniqueNames
-    .map((name, idx) => [name, `pve${idx + 1}`])
+
+  // Make redaction stable/deterministic across environments and runs.
+  // - Keep already-canonical node names (pve1/pve2/...) unchanged.
+  // - Allocate aliases for non-canonical names in sorted order, starting after any existing canonical numbers.
+  const canonicalPattern = /^pve(\d+)$/;
+  const canonicalNumbers = [];
+  const nonCanonicalNames = [];
+
+  for (const name of uniqueNames) {
+    const m = canonicalPattern.exec(name);
+    if (m) {
+      const num = Number(m[1]);
+      if (Number.isFinite(num) && num > 0) canonicalNumbers.push(num);
+      continue;
+    }
+    nonCanonicalNames.push(name);
+  }
+
+  nonCanonicalNames.sort((a, b) => a.localeCompare(b));
+
+  const startIndex =
+    canonicalNumbers.length > 0 ? Math.max(...canonicalNumbers) + 1 : 1;
+
+  return nonCanonicalNames
+    .map((name, idx) => [name, `pve${startIndex + idx}`])
     .filter(([from, to]) => from && to && from !== to);
 }
 
