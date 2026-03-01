@@ -14,6 +14,7 @@ JA_CHAPTERS := \
 	manuscript/ja/part4/chapter10-enterprise.md
 
 .PHONY: build-ja sync-docs-ja check-ja
+.PHONY: pve-webui-screenshots-install pve-webui-screenshots
 
 build-ja: $(JA_BUILD_DIR)/book.md
 	@echo "build-ja: combined manuscript is at $(JA_BUILD_DIR)/book.md"
@@ -36,3 +37,9 @@ $(JA_BUILD_DIR):
 
 $(JA_BUILD_DIR)/book.md: $(JA_CHAPTERS) | $(JA_BUILD_DIR)
 	cat $(JA_CHAPTERS) | sed -e 's|../../../images/|../../images/|g' -e 's|../../../diagrams/|../../diagrams/|g' > $(JA_BUILD_DIR)/book.md
+
+pve-webui-screenshots-install:
+	npm --prefix tools/pve-webui-screenshots install
+
+pve-webui-screenshots: pve-webui-screenshots-install
+	node tools/pve-webui-screenshots/capture.mjs
