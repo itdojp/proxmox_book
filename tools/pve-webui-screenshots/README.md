@@ -33,6 +33,7 @@ Node.js が必要です（このリポジトリの作業環境では Node 22 を
 - `PVE_INSECURE=1` 自己署名証明書を許容（学習環境向け）
 - `PVE_CAPTURE_CH4=1` 第4章の「Create VM wizard」スクショも取得する
 - `PVE_CAPTURE_EXTENDED=1` 追加の安全な画面（ch5/ch6/ch7/ch8）も取得する
+- `PVE_CAPTURE_ADVANCED=1` 追加の環境依存画面（ZFS/Ceph ストレージ、クラスタメンバー一覧、HA/Replication など）も取得する
 - `PVE_CAPTURE_VM_ASSETS=1` VM/バックアップ関連の追加スクショも取得する（**デモ VM 作成 + 手動バックアップ実行あり: ラボ専用**）
   - `PVE_DEMO_VMID`（既定: `100`）作成するデモ VM の VMID（任意）
   - `PVE_DEMO_VM_NAME`（既定: `vm-ubuntu01`）作成するデモ VM 名（任意）
@@ -93,6 +94,13 @@ Node.js が必要です（このリポジトリの作業環境では Node 22 を
 - `images/part2/ch6/05-vm-nic-vlan-id.png`
 - `images/part3/ch8/03-manual-backup-task-log.png`
 - `images/part3/ch8/04-restore-dialog.png`
+
+`PVE_CAPTURE_ADVANCED=1` の場合（環境依存。該当リソースが無い場合はスキップされる）:
+- `images/part2/ch5/03-zfs-storage.png`
+- `images/part2/ch5/04-ceph-storage.png`
+- `images/part3/ch7/04-cluster-members-3nodes.png`
+- `images/part3/ch7/05-ha-add-vm-to-group.png`
+- `images/part3/ch8/05-replication-job-settings.png`
 
 ## トラブルシュート
 
