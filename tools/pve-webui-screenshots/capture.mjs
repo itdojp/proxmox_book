@@ -20,6 +20,7 @@ Optional env:
   PVE_INSECURE=1 allow self-signed cert (lab only)
   PVE_CAPTURE_CH4=1 capture Create VM wizard screenshots (Chapter 4)
   PVE_CAPTURE_EXTENDED=1 capture additional safe UI pages/dialogs/wizards (ch5/ch6/ch7/ch8)
+  PVE_CAPTURE_ADVANCED=1 capture additional optional UI screenshots (ZFS/Ceph edit, cluster members, HA/Replication add; lab only)
   PVE_CAPTURE_VM_ASSETS=1 capture VM/backup-related screenshots (creates a demo VM and runs a backup; lab only)
   PVE_DEMO_VMID=100 demo VMID (optional)
   PVE_DEMO_VM_NAME=vm-ubuntu01 demo VM name (optional)
@@ -206,7 +207,46 @@ async function waitForTaskDone({ baseUrl, ticket, node, upid, timeoutMs = 10 * 6
   throw new Error(`Timeout waiting for task: ${upid}`);
 }
 
-function buildTextReplacements({ baseUrl, firstNode }) {
+let nodeNameAliases = new Map();
+
+function buildNodeAliases(nodes) {
+  const names = Array.isArray(nodes)
+    ? nodes.map((n) => String(n?.node || "")).filter(Boolean)
+    : [];
+  const uniqueNames = Array.from(new Set(names));
+
+  // Make redaction stable/deterministic across environments and runs.
+  // - Keep already-canonical node names (pve1/pve2/...) unchanged.
+  // - Allocate aliases for non-canonical names in sorted order, starting after any existing canonical numbers.
+  const canonicalPattern = /^pve(\d+)$/;
+  const canonicalNumbers = [];
+  const nonCanonicalNames = [];
+
+  for (const name of uniqueNames) {
+    const m = canonicalPattern.exec(name);
+    if (m) {
+      const num = Number(m[1]);
+      if (Number.isFinite(num) && num > 0) canonicalNumbers.push(num);
+      continue;
+    }
+    nonCanonicalNames.push(name);
+  }
+
+  nonCanonicalNames.sort((a, b) => a.localeCompare(b));
+
+  const startIndex =
+    canonicalNumbers.length > 0 ? Math.max(...canonicalNumbers) + 1 : 1;
+
+  return nonCanonicalNames
+    .map((name, idx) => [name, `pve${startIndex + idx}`])
+    .filter(([from, to]) => from && to && from !== to);
+}
+
+function setNodeNameAliases(pairs) {
+  nodeNameAliases = new Map(Array.isArray(pairs) ? pairs : []);
+}
+
+function buildTextReplacements({ baseUrl, nodeAliases = [] }) {
   let host = "";
   let hostWithPort = "";
   let ipv4Prefix = "";
@@ -226,7 +266,7 @@ function buildTextReplacements({ baseUrl, firstNode }) {
     [hostWithPort, "192.168.10.11:8006"],
     // Also rewrite the /24 prefix so gateways etc. are sanitized too (e.g., 192.168.220.1 -> 192.168.10.1).
     [ipv4Prefix, "192.168.10."],
-    [String(firstNode || ""), "pve1"]
+    ...nodeAliases
   ];
   return replacements.filter(([from]) => from);
 }
@@ -384,7 +424,8 @@ async function gotoNode(page, nodeName) {
   if (!nodeName) return;
   // NOTE: We may redact the real node name in the DOM (e.g., pve01 -> pve1).
   // Try both to keep navigation working while still producing sanitized screenshots.
-  const candidates = Array.from(new Set([nodeName, "pve1"].filter(Boolean)));
+  const alias = nodeNameAliases.get(String(nodeName)) || "";
+  const candidates = Array.from(new Set([nodeName, alias, "pve1"].filter(Boolean)));
   await safeClick(page, [
     ...candidates.map((n) => `css=.x-tree-node-text:has-text("${n}")`),
     ...candidates.map((n) => `css=.x-tree-node-anchor:has-text("${n}")`),
@@ -937,6 +978,7 @@ async function main() {
   const otp = process.env.PVE_OTP || "";
   const captureCh4 = process.env.PVE_CAPTURE_CH4 === "1";
   const captureExtended = process.env.PVE_CAPTURE_EXTENDED === "1";
+  const captureAdvanced = process.env.PVE_CAPTURE_ADVANCED === "1";
   const captureVmAssets = process.env.PVE_CAPTURE_VM_ASSETS === "1";
   let preferredDemoVmid = process.env.PVE_DEMO_VMID || "100";
   const demoVmName = process.env.PVE_DEMO_VM_NAME || "vm-ubuntu01";
@@ -984,8 +1026,11 @@ async function main() {
     }
   }
   const nodes = await apiGet({ baseUrl, ticket, path: "/nodes" });
+  const nodeAliases = buildNodeAliases(nodes);
+  setNodeNameAliases(nodeAliases);
+  const clusterNodeCount = Array.isArray(nodes) ? nodes.length : 0;
   const firstNode = Array.isArray(nodes) && nodes.length > 0 ? nodes[0].node : "";
-  const replacements = buildTextReplacements({ baseUrl, firstNode });
+  const replacements = buildTextReplacements({ baseUrl, nodeAliases });
 
   const browser = await chromium.launch({
     headless: true,
@@ -1265,6 +1310,144 @@ async function main() {
           await saveScreenshot({
             page,
             outPath: path.join(imagesRoot, "part3/ch8/02-create-backup-job-wizard.png")
+          });
+          await closeTopMostWindow(page);
+        }
+      });
+    }
+
+    if (captureAdvanced) {
+      // Chapter 5: ZFS/Ceph storage "Edit" dialogs (safe; do not apply)
+      await optionalStep({
+        page,
+        imagesRoot,
+        name: "advanced-ch5-zfs-storage-edit",
+        fn: async () => {
+          await closeTopMostWindow(page);
+          await gotoDatacenter(page);
+          await page.waitForTimeout(1200);
+          await gotoSection(page, "Storage");
+          await page.locator("css=.x-grid-item").first().waitFor({ timeout: 30000 });
+          await safeClick(page, [
+            'css=.x-grid-item:has-text("zfspool")',
+            'css=.x-grid-cell-inner:has-text("zfspool")',
+            'css=.x-grid-item:has-text("ZFS")',
+            'css=.x-grid-cell-inner:has-text("ZFS")'
+          ]);
+          await safeClick(page, ['css=.x-btn-inner:text-is("Edit")', 'text="Edit"']);
+          await page.waitForTimeout(800);
+          await redactForScreenshot(page, replacements);
+          await saveScreenshot({
+            page,
+            outPath: path.join(imagesRoot, "part2/ch5/03-zfs-storage.png")
+          });
+          await closeTopMostWindow(page);
+        }
+      });
+
+      await optionalStep({
+        page,
+        imagesRoot,
+        name: "advanced-ch5-ceph-storage-edit",
+        fn: async () => {
+          await closeTopMostWindow(page);
+          await gotoDatacenter(page);
+          await page.waitForTimeout(1200);
+          await gotoSection(page, "Storage");
+          await page.locator("css=.x-grid-item").first().waitFor({ timeout: 30000 });
+          await safeClick(page, [
+            'css=.x-grid-item:has-text("cephfs")',
+            'css=.x-grid-cell-inner:has-text("cephfs")',
+            'css=.x-grid-item:has-text("rbd")',
+            'css=.x-grid-cell-inner:has-text("rbd")',
+            'css=.x-grid-item:has-text("Ceph")',
+            'css=.x-grid-cell-inner:has-text("Ceph")'
+          ]);
+          await safeClick(page, ['css=.x-btn-inner:text-is("Edit")', 'text="Edit"']);
+          await page.waitForTimeout(800);
+          await redactForScreenshot(page, replacements);
+          await saveScreenshot({
+            page,
+            outPath: path.join(imagesRoot, "part2/ch5/04-ceph-storage.png")
+          });
+          await closeTopMostWindow(page);
+        }
+      });
+
+      // Chapter 7: cluster members list (3 nodes or more)
+      await optionalStep({
+        page,
+        imagesRoot,
+        name: "advanced-ch7-cluster-members-3nodes",
+        fn: async () => {
+          if (clusterNodeCount < 3) {
+            throw new Error(`Need >= 3 cluster nodes (current: ${clusterNodeCount})`);
+          }
+          await gotoDatacenter(page);
+          await page.waitForTimeout(1200);
+          await gotoSection(page, "Cluster");
+          await waitAnyText(page, ["Cluster", "Quorum", "Nodes"]);
+          await page.locator("css=.x-grid-item").first().waitFor({ timeout: 30000 });
+          await page.waitForTimeout(800);
+          await redactForScreenshot(page, replacements);
+          await saveScreenshot({
+            page,
+            outPath: path.join(imagesRoot, "part3/ch7/04-cluster-members-3nodes.png")
+          });
+        }
+      });
+
+      // Chapter 7: HA add resource dialog (safe; do not apply)
+      await optionalStep({
+        page,
+        imagesRoot,
+        name: "advanced-ch7-ha-add-vm-to-group",
+        fn: async () => {
+          if (clusterNodeCount < 2) {
+            throw new Error(`Cluster required for HA (current nodes: ${clusterNodeCount})`);
+          }
+          await closeTopMostWindow(page);
+          await gotoDatacenter(page);
+          await page.waitForTimeout(1200);
+          // Some UIs render HA as a group; try opening it first, then switch to Resources.
+          try {
+            await gotoSection(page, "HA");
+          } catch {
+            // ignore
+          }
+          await gotoSection(page, "Resources");
+          await waitAnyText(page, ["HA", "Resources", "Group", "Add"]);
+          await safeClick(page, ['css=.x-btn-inner:text-is("Add")', 'text="Add"']);
+          await page.waitForTimeout(800);
+          await redactForScreenshot(page, replacements);
+          await saveScreenshot({
+            page,
+            outPath: path.join(imagesRoot, "part3/ch7/05-ha-add-vm-to-group.png")
+          });
+          await closeTopMostWindow(page);
+        }
+      });
+
+      // Chapter 8: replication add dialog (safe; do not apply)
+      await optionalStep({
+        page,
+        imagesRoot,
+        name: "advanced-ch8-replication-job-settings",
+        fn: async () => {
+          if (clusterNodeCount < 2) {
+            throw new Error(`Cluster required for Replication (current nodes: ${clusterNodeCount})`);
+          }
+          await closeTopMostWindow(page);
+          await gotoDatacenter(page);
+          await page.waitForTimeout(1200);
+          await gotoSection(page, "Replication");
+          await waitAnyText(page, ["Replication", "Job", "Add"]);
+          await safeClick(page, ['css=.x-btn-inner:text-is("Add")', 'text="Add"']);
+          await page.waitForTimeout(800);
+          await redactForScreenshot(page, replacements);
+          await saveScreenshot({
+            page,
+            outPath: path.join(imagesRoot, "part3/ch8/05-replication-job-settings.png")
           });
           await closeTopMostWindow(page);
         }

@@ -36,13 +36,14 @@ Node.js が必要です（このリポジトリの作業環境では Node 22 を
 - `PVE_CAPTURE_VM_ASSETS=1` VM/バックアップ関連の追加スクショも取得する（**デモ VM 作成 + 手動バックアップ実行あり: ラボ専用**）
   - `PVE_DEMO_VMID`（既定: `100`）作成するデモ VM の VMID（任意）
   - `PVE_DEMO_VM_NAME`（既定: `vm-ubuntu01`）作成するデモ VM 名（任意）
+- `PVE_CAPTURE_ADVANCED=1` Issue #2 の未取得分の一部も取得する（ZFS/Ceph の Edit、クラスタメンバー一覧、HA/Replication の Add など、**ラボ専用 / 変更を適用しない**）
 
 実行例:
 
-    PVE_BASE_URL="https://192.168.10.11:8006" \\
-    PVE_USERNAME="root@pam" \\
-    PVE_PASSWORD="***" \\
-    PVE_INSECURE=1 \\
+    PVE_BASE_URL="https://192.168.10.11:8006" \
+    PVE_USERNAME="root@pam" \
+    PVE_PASSWORD="***" \
+    PVE_INSECURE=1 \
     node tools/pve-webui-screenshots/capture.mjs
 
 `PVE_PASSWORD_FILE` を使う例（シェル履歴にパスワードを残さない）:
@@ -52,6 +53,15 @@ Node.js が必要です（このリポジトリの作業環境では Node 22 を
     export PVE_USERNAME="root@pam"
     export PVE_INSECURE=1
     node tools/pve-webui-screenshots/capture.mjs
+
+Makefile 経由で実行する例（依存関係の導入も含む）:
+
+    PVE_BASE_URL="https://192.168.10.11:8006" \
+    PVE_USERNAME="root@pam" \
+    PVE_PASSWORD_FILE="$HOME/.config/proxmox_book/pve_password" \
+    PVE_INSECURE=1 \
+    PVE_CAPTURE_EXTENDED=1 \
+    make pve-webui-screenshots
 
 出力先:
 - `images/part*/ch*/`（Issue #2 のパス）
@@ -93,6 +103,13 @@ Node.js が必要です（このリポジトリの作業環境では Node 22 を
 - `images/part2/ch6/05-vm-nic-vlan-id.png`
 - `images/part3/ch8/03-manual-backup-task-log.png`
 - `images/part3/ch8/04-restore-dialog.png`
+
+`PVE_CAPTURE_ADVANCED=1` の場合（環境に該当対象があれば取得。無ければスキップ）:
+- `images/part2/ch5/03-zfs-storage.png`
+- `images/part2/ch5/04-ceph-storage.png`
+- `images/part3/ch7/04-cluster-members-3nodes.png`
+- `images/part3/ch7/05-ha-add-vm-to-group.png`
+- `images/part3/ch8/05-replication-job-settings.png`
 
 ## トラブルシュート
 

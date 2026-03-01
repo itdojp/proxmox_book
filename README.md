@@ -34,6 +34,7 @@ Proxmox VE は定期的にアップデートされるため、マイナーバー
 - 本文の結合（Markdown）: `make build-ja`（出力: `build/ja/book.md`）
 - `docs/` へ同期（章 + 図/スクショ）: `make sync-docs-ja`
 - CI 相当の確認: `make check-ja`（`build-ja` + `sync-docs-ja` 実行後に差分が無いこと）
+- Web UI スクリーンショット自動取得（ラボ環境用）: `make pve-webui-screenshots`（詳細: `tools/pve-webui-screenshots/README.md`）
 
 ## フィードバック（誤り指摘・改善提案）
 
