@@ -20,7 +20,7 @@ Optional env:
   PVE_INSECURE=1 allow self-signed cert (lab only)
   PVE_CAPTURE_CH4=1 capture Create VM wizard screenshots (Chapter 4)
   PVE_CAPTURE_EXTENDED=1 capture additional safe UI pages/dialogs/wizards (ch5/ch6/ch7/ch8)
-  PVE_CAPTURE_ADVANCED=1 capture additional optional UI screenshots (ZFS/Ceph edit, cluster members, HA/Replication add; lab only)
+  PVE_CAPTURE_ADVANCED=1 capture additional environment-dependent UI pages (ZFS/Ceph storage, cluster members, HA/replication; lab only)
   PVE_CAPTURE_VM_ASSETS=1 capture VM/backup-related screenshots (creates a demo VM and runs a backup; lab only)
   PVE_DEMO_VMID=100 demo VMID (optional)
   PVE_DEMO_VM_NAME=vm-ubuntu01 demo VM name (optional)
@@ -282,6 +282,11 @@ async function redactForScreenshot(page, replacements) {
       }
       // Best-effort redaction for device identifiers that would otherwise leak lab-specific info.
       out = out
+        // IPv4 addresses (best-effort; keep last octet so lists remain readable after redaction).
+        .replace(/\b(?:\d{1,3}\.){3}\d{1,3}\b/g, (ip) => {
+          const last = String(ip || "").split(".").pop() || "0";
+          return `192.168.10.${last}`;
+        })
         // Interface names embedding MACs (e.g., enx00e05d105b64, wlx001122334455)
         .replace(/\b(enx|wlx)[0-9a-f]{12}\b/gi, "$1001122334455")
         // Raw MAC addresses
@@ -1029,7 +1034,8 @@ async function main() {
   const nodeAliases = buildNodeAliases(nodes);
   setNodeNameAliases(nodeAliases);
   const clusterNodeCount = Array.isArray(nodes) ? nodes.length : 0;
-  const firstNode = Array.isArray(nodes) && nodes.length > 0 ? nodes[0].node : "";
+  const firstNode =
+    Array.isArray(nodes) && nodes.length > 0 ? String(nodes[0]?.node || "") : "";
   const replacements = buildTextReplacements({ baseUrl, nodeAliases });
 
   const browser = await chromium.launch({
@@ -1317,107 +1323,113 @@ async function main() {
     }
 
     if (captureAdvanced) {
-      // Chapter 5: ZFS/Ceph storage "Edit" dialogs (safe; do not apply)
-      await optionalStep({
-        page,
-        imagesRoot,
-        name: "advanced-ch5-zfs-storage-edit",
-        fn: async () => {
-          await closeTopMostWindow(page);
-          await gotoDatacenter(page);
-          await page.waitForTimeout(1200);
-          await gotoSection(page, "Storage");
-          await page.locator("css=.x-grid-item").first().waitFor({ timeout: 30000 });
-          await safeClick(page, [
-            'css=.x-grid-item:has-text("zfspool")',
-            'css=.x-grid-cell-inner:has-text("zfspool")',
-            'css=.x-grid-item:has-text("ZFS")',
-            'css=.x-grid-cell-inner:has-text("ZFS")'
-          ]);
-          await safeClick(page, ['css=.x-btn-inner:text-is("Edit")', 'text="Edit"']);
-          await page.waitForTimeout(800);
-          await redactForScreenshot(page, replacements);
-          await saveScreenshot({
-            page,
-            outPath: path.join(imagesRoot, "part2/ch5/03-zfs-storage.png")
-          });
-          await closeTopMostWindow(page);
-        }
-      });
+      // Environment-dependent pages. Each step is optional and should not block the rest of the run.
+      let storages = [];
+      try {
+        storages = await apiGet({ baseUrl, ticket, path: "/storage" });
+      } catch (err) {
+        process.stderr.write(
+          `INFO: captureAdvanced: failed to fetch /storage (${String(err?.message || err)}); treating as no storages.\n`
+        );
+        storages = [];
+      }
 
-      await optionalStep({
-        page,
-        imagesRoot,
-        name: "advanced-ch5-ceph-storage-edit",
-        fn: async () => {
-          await closeTopMostWindow(page);
-          await gotoDatacenter(page);
-          await page.waitForTimeout(1200);
-          await gotoSection(page, "Storage");
-          await page.locator("css=.x-grid-item").first().waitFor({ timeout: 30000 });
-          await safeClick(page, [
-            'css=.x-grid-item:has-text("cephfs")',
-            'css=.x-grid-cell-inner:has-text("cephfs")',
-            'css=.x-grid-item:has-text("rbd")',
-            'css=.x-grid-cell-inner:has-text("rbd")',
-            'css=.x-grid-item:has-text("Ceph")',
-            'css=.x-grid-cell-inner:has-text("Ceph")'
-          ]);
-          await safeClick(page, ['css=.x-btn-inner:text-is("Edit")', 'text="Edit"']);
-          await page.waitForTimeout(800);
-          await redactForScreenshot(page, replacements);
-          await saveScreenshot({
-            page,
-            outPath: path.join(imagesRoot, "part2/ch5/04-ceph-storage.png")
-          });
-          await closeTopMostWindow(page);
+      const storageRows = Array.isArray(storages) ? storages : [];
+      const storageIdFor = (predicate) => {
+        for (const row of storageRows) {
+          const type = String(row?.type || "");
+          const id = String(row?.storage || row?.id || "");
+          if (!id) continue;
+          if (predicate({ id, type, row })) return id;
         }
-      });
+        return "";
+      };
 
-      // Chapter 7: cluster members list (3 nodes or more)
-      await optionalStep({
-        page,
-        imagesRoot,
-        name: "advanced-ch7-cluster-members-3nodes",
-        fn: async () => {
-          if (clusterNodeCount < 3) {
-            throw new Error(`Need >= 3 cluster nodes (current: ${clusterNodeCount})`);
+      const zfsStorageId = storageIdFor(({ type }) => /zfs/i.test(type));
+      const cephStorageId = storageIdFor(({ type }) => /ceph/i.test(type) || /rbd/i.test(type));
+
+      const captureStorageEditDialog = async ({ stepName, storageId, outRelPath }) => {
+        if (!storageId) {
+          process.stderr.write(`INFO: ${stepName}: no matching storage found; skipped.\n`);
+          return;
+        }
+        await optionalStep({
+          page,
+          imagesRoot,
+          name: stepName,
+          fn: async () => {
+            await gotoDatacenter(page);
+            await page.waitForTimeout(1200);
+            await gotoSection(page, "Storage");
+            await page.locator("css=.x-grid-item").first().waitFor({ timeout: 30000 });
+            await safeClick(page, [
+              `css=.x-grid-item:has-text("${storageId}")`,
+              `css=.x-grid-cell-inner:has-text("${storageId}")`
+            ]);
+            await safeClick(page, ['css=.x-btn-inner:has-text("Edit")', "text=Edit"]);
+            await page.waitForTimeout(800);
+            await redactForScreenshot(page, replacements);
+            await saveScreenshot({ page, outPath: path.join(imagesRoot, outRelPath) });
+            await closeTopMostWindow(page);
           }
-          await gotoDatacenter(page);
-          await page.waitForTimeout(1200);
-          await gotoSection(page, "Cluster");
-          await waitAnyText(page, ["Cluster", "Quorum", "Nodes"]);
-          await page.locator("css=.x-grid-item").first().waitFor({ timeout: 30000 });
-          await page.waitForTimeout(800);
-          await redactForScreenshot(page, replacements);
-          await saveScreenshot({
-            page,
-            outPath: path.join(imagesRoot, "part3/ch7/04-cluster-members-3nodes.png")
-          });
-        }
+        });
+      };
+
+      await captureStorageEditDialog({
+        stepName: "advanced-ch5-zfs-storage",
+        storageId: zfsStorageId,
+        outRelPath: "part2/ch5/03-zfs-storage.png"
+      });
+      await captureStorageEditDialog({
+        stepName: "advanced-ch5-ceph-storage",
+        storageId: cephStorageId,
+        outRelPath: "part2/ch5/04-ceph-storage.png"
       });
 
-      // Chapter 7: HA add resource dialog (safe; do not apply)
+      // Chapter 7: cluster members list (requires a multi-node cluster).
+      if (Array.isArray(nodes) && nodes.length >= 3) {
+        await optionalStep({
+          page,
+          imagesRoot,
+          name: "advanced-ch7-cluster-members",
+          fn: async () => {
+            await gotoDatacenter(page);
+            await page.waitForTimeout(1200);
+            await gotoSection(page, "Cluster");
+            await waitAnyText(page, ["Cluster", "Nodes", "Join Cluster"]);
+            await page.waitForTimeout(1200);
+            await redactForScreenshot(page, replacements);
+            await saveScreenshot({
+              page,
+              outPath: path.join(imagesRoot, "part3/ch7/04-cluster-members-3nodes.png")
+            });
+          }
+        });
+      } else {
+        process.stderr.write("INFO: advanced-ch7-cluster-members: requires >= 3 nodes; skipped.\n");
+      }
+
+      // Chapter 7/8: HA / Replication dialogs (requires a cluster; may be disabled on single-node labs).
       await optionalStep({
         page,
         imagesRoot,
         name: "advanced-ch7-ha-add-vm-to-group",
         fn: async () => {
-          if (clusterNodeCount < 2) {
-            throw new Error(`Cluster required for HA (current nodes: ${clusterNodeCount})`);
-          }
-          await closeTopMostWindow(page);
           await gotoDatacenter(page);
           await page.waitForTimeout(1200);
-          // Some UIs render HA as a group; try opening it first, then switch to Resources.
+          await gotoSection(page, "HA");
+          // Prefer a Resources view if available (tab or treelist entry).
           try {
-            await gotoSection(page, "HA");
+            await gotoSection(page, "Resources");
           } catch {
-            // ignore
+            try {
+              await safeClick(page, ['css=.x-tab-inner:has-text("Resources")', "text=Resources"]);
+            } catch {
+              // ignore; some layouts open resources by default
+            }
           }
-          await gotoSection(page, "Resources");
-          await waitAnyText(page, ["HA", "Resources", "Group", "Add"]);
-          await safeClick(page, ['css=.x-btn-inner:text-is("Add")', 'text="Add"']);
+          await page.waitForTimeout(800);
+          await safeClick(page, ['css=.x-btn-inner:has-text("Add")', "text=Add"]);
           await page.waitForTimeout(800);
           await redactForScreenshot(page, replacements);
           await saveScreenshot({
@@ -1428,21 +1440,16 @@ async function main() {
         }
       });
 
-      // Chapter 8: replication add dialog (safe; do not apply)
       await optionalStep({
         page,
         imagesRoot,
         name: "advanced-ch8-replication-job-settings",
         fn: async () => {
-          if (clusterNodeCount < 2) {
-            throw new Error(`Cluster required for Replication (current nodes: ${clusterNodeCount})`);
-          }
-          await closeTopMostWindow(page);
           await gotoDatacenter(page);
           await page.waitForTimeout(1200);
           await gotoSection(page, "Replication");
-          await waitAnyText(page, ["Replication", "Job", "Add"]);
-          await safeClick(page, ['css=.x-btn-inner:text-is("Add")', 'text="Add"']);
+          await waitAnyText(page, ["Replication", "Job"]);
+          await safeClick(page, ['css=.x-btn-inner:has-text("Add")', "text=Add"]);
           await page.waitForTimeout(800);
           await redactForScreenshot(page, replacements);
           await saveScreenshot({
@@ -1453,7 +1460,6 @@ async function main() {
         }
       });
     }
-
     if (captureVmAssets) {
       const demoVm = await ensureDemoVm({
         page,
