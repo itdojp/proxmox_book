@@ -20,7 +20,7 @@ Optional env:
   PVE_INSECURE=1 allow self-signed cert (lab only)
   PVE_CAPTURE_CH4=1 capture Create VM wizard screenshots (Chapter 4)
   PVE_CAPTURE_EXTENDED=1 capture additional safe UI pages/dialogs/wizards (ch5/ch6/ch7/ch8)
-  PVE_CAPTURE_ADVANCED=1 capture additional environment-dependent UI pages (ZFS/Ceph storage, cluster members, HA/replication)
+  PVE_CAPTURE_ADVANCED=1 capture additional environment-dependent UI pages (ZFS/Ceph storage, cluster members, HA/replication; lab only)
   PVE_CAPTURE_VM_ASSETS=1 capture VM/backup-related screenshots (creates a demo VM and runs a backup; lab only)
   PVE_DEMO_VMID=100 demo VMID (optional)
   PVE_DEMO_VM_NAME=vm-ubuntu01 demo VM name (optional)
@@ -207,7 +207,46 @@ async function waitForTaskDone({ baseUrl, ticket, node, upid, timeoutMs = 10 * 6
   throw new Error(`Timeout waiting for task: ${upid}`);
 }
 
-function buildTextReplacements({ baseUrl, nodeNames }) {
+let nodeNameAliases = new Map();
+
+function buildNodeAliases(nodes) {
+  const names = Array.isArray(nodes)
+    ? nodes.map((n) => String(n?.node || "")).filter(Boolean)
+    : [];
+  const uniqueNames = Array.from(new Set(names));
+
+  // Make redaction stable/deterministic across environments and runs.
+  // - Keep already-canonical node names (pve1/pve2/...) unchanged.
+  // - Allocate aliases for non-canonical names in sorted order, starting after any existing canonical numbers.
+  const canonicalPattern = /^pve(\d+)$/;
+  const canonicalNumbers = [];
+  const nonCanonicalNames = [];
+
+  for (const name of uniqueNames) {
+    const m = canonicalPattern.exec(name);
+    if (m) {
+      const num = Number(m[1]);
+      if (Number.isFinite(num) && num > 0) canonicalNumbers.push(num);
+      continue;
+    }
+    nonCanonicalNames.push(name);
+  }
+
+  nonCanonicalNames.sort((a, b) => a.localeCompare(b));
+
+  const startIndex =
+    canonicalNumbers.length > 0 ? Math.max(...canonicalNumbers) + 1 : 1;
+
+  return nonCanonicalNames
+    .map((name, idx) => [name, `pve${startIndex + idx}`])
+    .filter(([from, to]) => from && to && from !== to);
+}
+
+function setNodeNameAliases(pairs) {
+  nodeNameAliases = new Map(Array.isArray(pairs) ? pairs : []);
+}
+
+function buildTextReplacements({ baseUrl, nodeAliases = [] }) {
   let host = "";
   let hostWithPort = "";
   let ipv4Prefix = "";
@@ -221,23 +260,13 @@ function buildTextReplacements({ baseUrl, nodeNames }) {
   } catch {
     // ignore
   }
-  const nodes = Array.isArray(nodeNames)
-    ? Array.from(
-        new Set(
-          nodeNames
-            .map((n) => String(n || "").trim())
-            .filter((n) => n)
-        )
-      )
-    : [];
-  const nodeReplacements = nodes.map((name, idx) => [name, `pve${idx + 1}`]);
   const replacements = [
     // Replace “real” values with the canonical examples used in the manuscript/images README.
     [host, "192.168.10.11"],
     [hostWithPort, "192.168.10.11:8006"],
     // Also rewrite the /24 prefix so gateways etc. are sanitized too (e.g., 192.168.220.1 -> 192.168.10.1).
     [ipv4Prefix, "192.168.10."],
-    ...nodeReplacements
+    ...nodeAliases
   ];
   return replacements.filter(([from]) => from);
 }
@@ -400,7 +429,8 @@ async function gotoNode(page, nodeName) {
   if (!nodeName) return;
   // NOTE: We may redact the real node name in the DOM (e.g., pve01 -> pve1).
   // Try both to keep navigation working while still producing sanitized screenshots.
-  const candidates = Array.from(new Set([nodeName, "pve1"].filter(Boolean)));
+  const alias = nodeNameAliases.get(String(nodeName)) || "";
+  const candidates = Array.from(new Set([nodeName, alias, "pve1"].filter(Boolean)));
   await safeClick(page, [
     ...candidates.map((n) => `css=.x-tree-node-text:has-text("${n}")`),
     ...candidates.map((n) => `css=.x-tree-node-anchor:has-text("${n}")`),
@@ -1000,12 +1030,13 @@ async function main() {
       // ignore
     }
   }
-	  const nodes = await apiGet({ baseUrl, ticket, path: "/nodes" });
-	  const nodeNames = Array.isArray(nodes)
-	    ? nodes.map((n) => n?.node).filter((n) => n)
-	    : [];
-	  const firstNode = nodeNames.length > 0 ? String(nodeNames[0]) : "";
-	  const replacements = buildTextReplacements({ baseUrl, nodeNames });
+  const nodes = await apiGet({ baseUrl, ticket, path: "/nodes" });
+  const nodeAliases = buildNodeAliases(nodes);
+  setNodeNameAliases(nodeAliases);
+  const clusterNodeCount = Array.isArray(nodes) ? nodes.length : 0;
+  const firstNode =
+    Array.isArray(nodes) && nodes.length > 0 ? String(nodes[0]?.node || "") : "";
+  const replacements = buildTextReplacements({ baseUrl, nodeAliases });
 
   const browser = await chromium.launch({
     headless: true,
@@ -1291,19 +1322,20 @@ async function main() {
       });
     }
 
-	    if (captureAdvanced) {
-	      // Environment-dependent pages. Each step is optional and should not block the rest of the run.
-	      let storages = [];
-	      try {
-	        storages = await apiGet({ baseUrl, ticket, path: "/storage" });
-	      } catch (err) {
-	        process.stderr.write(
-	          `INFO: captureAdvanced: failed to fetch /storage (${String(err?.message || err)}); treating as no storages.\n`
-	        );
-	        storages = [];
-	      }
-	      const storageRows = Array.isArray(storages) ? storages : [];
-	      const storageIdFor = (predicate) => {
+    if (captureAdvanced) {
+      // Environment-dependent pages. Each step is optional and should not block the rest of the run.
+      let storages = [];
+      try {
+        storages = await apiGet({ baseUrl, ticket, path: "/storage" });
+      } catch (err) {
+        process.stderr.write(
+          `INFO: captureAdvanced: failed to fetch /storage (${String(err?.message || err)}); treating as no storages.\n`
+        );
+        storages = [];
+      }
+
+      const storageRows = Array.isArray(storages) ? storages : [];
+      const storageIdFor = (predicate) => {
         for (const row of storageRows) {
           const type = String(row?.type || "");
           const id = String(row?.storage || row?.id || "");
@@ -1428,7 +1460,6 @@ async function main() {
         }
       });
     }
-
     if (captureVmAssets) {
       const demoVm = await ensureDemoVm({
         page,

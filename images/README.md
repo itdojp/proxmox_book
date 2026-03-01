@@ -24,8 +24,23 @@
     - `NN`: 2 桁（章内の並び順）
     - `slug`: 英小文字の kebab-case（例: `boot-menu`）
 
+## Web UI スクリーンショット（自動取得）
+
+Web UI 由来の一部スクリーンショットは、CLI から自動取得できます（要: Proxmox VE 9.1 の実機/lab 環境）。
+
+- ツール: `tools/pve-webui-screenshots/`
+- 実行例:
+
+      PVE_BASE_URL="https://192.168.10.11:8006" \
+      PVE_USERNAME="root@pam" \
+      PVE_PASSWORD_FILE="$HOME/.config/proxmox_book/pve_password" \
+      PVE_INSECURE=1 \
+      PVE_CAPTURE_EXTENDED=1 \
+      make pve-webui-screenshots
+
+取得対象（ファイル名/保存先パス）は Issue #2 と `tools/pve-webui-screenshots/README.md` を参照してください。
+
 ## 本文からの参照
 
 章ファイル（`manuscript/ja/part*/`）からは `../../../images/...` で参照します（GitHub 上のプレビューを優先）。
 `make build-ja` では `../../../images/` を `../../images/` に置換して、結合原稿（`build/ja/book.md`）側の参照が成立するようにします。
-
