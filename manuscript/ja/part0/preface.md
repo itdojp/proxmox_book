@@ -61,6 +61,23 @@ Proxmox VE は定期的にアップデートされるため、マイナーバー
 各章の詳細なタイトルや順番は、今後の改訂や構成変更に応じて `SUMMARY.md` とともに見直される可能性があります。
 その場合は、本章の記述も合わせて更新します。
 
+## 図版索引
+
+本書では、章の流れをつかみやすくするために主要な図版を用意しています。  
+まず図だけ確認したい場合は、以下を参照してください。
+
+- Part 0: ラボの全体像 - `../../../diagrams/part0/lab-topology.svg`
+- Part I: 概要 - `../../../diagrams/part1/ch1/overview.svg`
+- Part I: アーキテクチャ - `../../../diagrams/part1/ch2/architecture.svg`
+- Part I: インストール - `../../../diagrams/part1/ch3/install-flow.svg`
+- Part I: VM 作成 - `../../../diagrams/part1/ch4/vm-create-flow.svg`
+- Part II: ストレージ - `../../../diagrams/part2/ch5/storage-layout.svg`
+- Part II: ネットワーク - `../../../diagrams/part2/ch6/network-topology.svg`
+- Part III: クラスタ・HA - `../../../diagrams/part3/ch7/cluster-ha.svg`
+- Part III: バックアップ - `../../../diagrams/part3/ch8/backup-restore-flow.svg`
+- Part IV: トリアージ - `../../../diagrams/part4/ch9/triage-flow.svg`
+- Part IV: エンタープライズ連携 - `../../../diagrams/part4/ch10/integration-map.svg`
+
 ## 学習の進め方
 
 本書は、個人学習とチームでの学習のどちらにも利用できるように構成されています。
