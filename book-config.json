@@ -74,12 +74,12 @@
     "profile": "B",
     "modules": {
       "quickStart": false,
-      "readingGuide": false,
+      "readingGuide": true,
       "checklistPack": true,
       "troubleshootingFlow": true,
       "conceptMap": false,
       "figureIndex": true,
-      "legalNotice": false,
+      "legalNotice": true,
       "glossary": false
     }
   },
