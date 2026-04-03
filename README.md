@@ -2,9 +2,9 @@
 
 Proxmox VE をこれから本格的に活用したいインフラエンジニア／システムインテグレータ向けに、設計・運用の考え方を体系的に整理した技術書です。
 
-- 公開ページ（GitHub Pages）: https://itdojp.github.io/proxmox_book/
+- 公開ページ（GitHub Pages）: [proxmox_book](https://itdojp.github.io/proxmox_book/)
 - 目次（リポジトリ内）: `docs/index.md`
-- シリーズ: https://github.com/itdojp/it-engineer-knowledge-architecture
+- シリーズ: [it-engineer-knowledge-architecture](https://github.com/itdojp/it-engineer-knowledge-architecture)
 
 ## 対象読者
 
@@ -38,7 +38,7 @@ Proxmox VE は定期的にアップデートされるため、マイナーバー
 
 ## フィードバック（誤り指摘・改善提案）
 
-誤字脱字、技術的な誤り、改善提案は Issues / Pull Request で受け付けます。
+誤字脱字、技術的な誤り、改善提案は Issues / PR で受け付けます。
 
 ## ライセンス
 
