@@ -77,7 +77,7 @@ Proxmox VE をこれから本格的に活用したいインフラエンジニア
 
 - 公開ページ: [GitHub Pages](https://itdojp.github.io/proxmox_book/)
 - リポジトリ: [GitHub](https://github.com/itdojp/proxmox_book)
-- 更新確認先: [コミット履歴](https://github.com/itdojp/proxmox_book/commits/main/)、[Pull Requests](https://github.com/itdojp/proxmox_book/pulls)
+- 更新確認先: [コミット履歴](https://github.com/itdojp/proxmox_book/commits/main/)、[PR 一覧](https://github.com/itdojp/proxmox_book/pulls)
 - 操作手順を流用する前に、対象ノードの Proxmox VE 版と利用しているストレージ・ネットワーク構成を確認してください。
 
 ## ライセンス
