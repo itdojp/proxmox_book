@@ -273,6 +273,11 @@ Proxmox VE では、VM の仮想 NIC に VLAN タグを指定して使い分け�
 本書では、本章で最低限の設定ファイル例（`/etc/network/interfaces`）を示しつつ、設計の考え方とパターンに焦点を当てます。
 SDN/EVPN のような発展トピックや、環境依存が大きいチューニングは別パスで扱います。
 
+Proxmox VE 9.1 では SDN スタックの状態表示が強化されています。
+SDN/EVPN を使う環境では Web UI で接続ゲスト、学習済み MAC/IP、経路や隣接情報などを追いやすくなりますが、
+初学者はまず Linux ブリッジ/VLAN の責任範囲を理解し、SDN の詳細設計は別の検証計画として切り出してください。
+本章では「SDN の存在を知り、基本構成と混同しない」ことを到達点にします。
+
 VLAN 作成ダイアログの例（入口）:
 
 ![Create: Linux VLAN（例）](../../../images/part2/ch6/04-vlan-subif-settings.png)
