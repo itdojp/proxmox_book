@@ -12,6 +12,12 @@
 - [ ] Book QA（Unicode / textlint(PRH) / 内部リンク・アンカー / Jekyll build / built-site smoke）: PASS
   - 実行URL:
 
+## Review Completion Gate（必須）
+
+- [ ] GitHub Copilot review 本文・inline comment・suggestion を全件確認した
+- [ ] 必要な修正、または修正不要理由の返信を完了した
+- [ ] `unresolved_threads=0` / `generated_count_mismatches=0` / `missing_review_ids=0` を確認した
+
 ## Pages確認（原則必須）
 
 - 確認URL: https://itdojp.github.io/proxmox_book/
