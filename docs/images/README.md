@@ -38,7 +38,7 @@ Web UI 由来の一部スクリーンショットは、CLI から自動取得で
       PVE_CAPTURE_EXTENDED=1 \
       make pve-webui-screenshots
 
-取得対象（ファイル名/保存先パス）は Issue #2 と `tools/pve-webui-screenshots/README.md` を参照してください。
+取得対象（ファイル名/保存先パス）は Issue #2 と `tools/pve-webui-screenshots/README.md` を参照してください。Issue #25 の closure boundary と現在の配置・参照状況は `images/webui-screenshot-coverage.md` を正とします。
 
 ## 本文からの参照
 
