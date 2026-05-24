@@ -111,6 +111,11 @@ Makefile 経由で実行する例（依存関係の導入も含む）:
 - `images/part3/ch7/04-cluster-members-3nodes.png`
 - `images/part3/ch7/05-ha-add-vm-to-group.png`
 - `images/part3/ch8/05-replication-job-settings.png`
+
+## Issue #25 の完了境界
+
+Issue #25 では、default / CH4 / EXTENDED / VM asset 系の主要 Web UI スクリーンショットを、`images/part*/ch*/` に配置し、本文から参照できる状態を完了境界にします。現在の coverage と、Issue #2 へ残す advanced / non-Web UI 項目は `images/webui-screenshot-coverage.md` を参照してください。
+
 ## トラブルシュート
 
 - `PVE_INSECURE=1` を付けても TLS エラーになる場合:

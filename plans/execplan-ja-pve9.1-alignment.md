@@ -8,7 +8,7 @@
 - Title: JA – Proxmox VE 9.1 実機検証・スクリーンショット・本文反映
 - Author: AuthorExecAgent (with human reviewer)
 - Date created: 2025-12-20
-- Last updated: 2026-01-14
+- Last updated: 2026-05-24
 - Related issues/PRs:
   - Issue #2（スクリーンショット取得タスクリスト）
   - Issue #25（Web UI スクリーンショット取得手順）
@@ -105,7 +105,7 @@
 - [x] スクリーンショットの共通ルールを決める（例: 解像度、UI 言語、マスク方針、ファイル命名規則）
 - [x] Issue #2 のチェックリストを「章 → 画面 → 保存先パス」まで確定させる
 - [x] Web UI スクリーンショットの自動取得用ツールを追加（`tools/pve-webui-screenshots/`）
-- [ ] ツールを実機（単一ノード / クラスタ）で動作確認し、Issue #2 の Web UI スクショを取得してコミットする
+- [x] ツールを実機（単一ノード / クラスタ）で動作確認し、Issue #2 の Web UI スクショを取得してコミットする
 
 
 ### 6.2 第3章（インストール）
@@ -177,7 +177,8 @@
 - [2026-01-12] Validated `tools/pve-webui-screenshots/capture.mjs` against a Proxmox VE 9.1.1 lab and hardened it (UI-based login, auto-dismiss “No valid subscription” modal, improved redaction for IP/host/interface identifiers). Captured sanitized Web UI screenshots for ch3/ch5/ch6/ch9 and updated Issue #2 and Issue #25 accordingly (screenshots for ch4/ch7/ch8 remain).
 - [2026-01-14] Extended `tools/pve-webui-screenshots/capture.mjs` to optionally capture Chapter 4 “Create VM wizard” screenshots (`PVE_CAPTURE_CH4=1`) and to support reading the password from a file (`PVE_PASSWORD_FILE`).
 - [2026-01-14] Added `PVE_CAPTURE_EXTENDED=1` to capture additional safe UI pages (Node LVM-Thin, vmbr0 edit dialog, Datacenter Cluster/Backup lists).
-- [2026-01-14] Extended Web UI screenshot automation and captured sanitized screenshots for ch4/ch6/ch7/ch8 additions (Console/Snapshot, VM NIC VLAN tag, Join Cluster, Backup task log/Restore). Embedded them into the JA manuscript and updated Issue #2 accordingly (PR pending).
+- [2026-01-14] Extended Web UI screenshot automation and captured sanitized screenshots for ch4/ch6/ch7/ch8 additions (Console/Snapshot, VM NIC VLAN tag, Join Cluster, Backup task log/Restore). Embedded them into the JA manuscript and updated Issue #2 accordingly.
+- [2026-05-24] Added `images/webui-screenshot-coverage.md` to fix the Issue #25 closure boundary: 28 Web UI screenshots are present and referenced from both `manuscript/ja/` and `docs/`; advanced / non-Web UI remaining screenshots stay tracked in Issue #2.
 
 
 
@@ -215,12 +216,12 @@
 ## 11. Outcomes & retrospective
 
 
-- Status: assets-partial（Web UI の主要スクリーンショットを追加。残りは未完）
+- Status: webui-core-complete（Issue #25 の主要 Web UI スクリーンショットは配置・本文参照済み。advanced / non-Web UI 残項目は Issue #2 で継続）
 - Status: build-validated（`make check-ja` が成功）
 - スクリーンショットの共通ルール（UI 言語/テーマ/マスク/命名規則）を確定し、`images/` 配下の配置方針を固定した。
 - Issue #2 のチェックリストを「章 → 画面 → 保存先パス（ファイル名）」まで落とし込んだ。
 - Web UI スクリーンショット取得の自動化ツールを実機で安定動作させ、ch4〜ch8 の主要画面を本文に埋め込んだ（Issue #2 のチェックも更新）。
-- 次の作業は、未取得のスクリーンショット（インストール画面、VM 操作/スナップショット、クラスタ参加/HA、バックアップ実行/リストア等）を埋め、本文の UI 手順を必要に応じて “1クリックずつ” の粒度へ引き上げる。
+- 次の作業は、Issue #2 に残る advanced / non-Web UI スクリーンショット（インストール画面、ZFS / Ceph、3 ノードクラスタ、HA failover、replication など）を埋め、本文の UI 手順を必要に応じて “1クリックずつ” の粒度へ引き上げる。
 
 
 
