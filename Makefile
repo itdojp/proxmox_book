@@ -13,7 +13,7 @@ JA_CHAPTERS := \
 	manuscript/ja/part4/chapter9-operations.md \
 	manuscript/ja/part4/chapter10-enterprise.md
 
-.PHONY: build-ja sync-docs-ja check-ja
+.PHONY: build-ja sync-docs-ja check-metadata check-ja
 .PHONY: pve-webui-screenshots-install pve-webui-screenshots
 
 build-ja: $(JA_BUILD_DIR)/book.md
@@ -28,7 +28,10 @@ build-ja: $(JA_BUILD_DIR)/book.md
 sync-docs-ja:
 	python3 tools/sync_docs_ja.py
 
-check-ja: build-ja sync-docs-ja
+check-metadata:
+	python3 tools/check_metadata.py
+
+check-ja: build-ja sync-docs-ja check-metadata
 	@git diff --exit-code
 	@echo "check-ja: OK (no diff after build-ja + sync-docs-ja)"
 

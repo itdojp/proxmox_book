@@ -1,4 +1,13 @@
 node_modules/
+Gemfile.lock
+.bundle/
+vendor/bundle/
+_site/
+docs/_site/
+.jekyll-cache/
+docs/.jekyll-cache/
+.jekyll-metadata
+docs/.jekyll-metadata
 .DS_Store
 Thumbs.db
 *.log
