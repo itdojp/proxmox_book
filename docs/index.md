@@ -3,7 +3,7 @@ layout: book
 order: 1
 title: "Proxmox VE 実践ガイド"
 description: "Proxmox VE を実務で活用するための設計・運用の考え方を体系的に学ぶ技術書"
-author: "株式会社アイティードゥ"
+author: "ITDO Inc.（株式会社アイティードゥ）"
 version: "1.0.0"
 permalink: /
 ---

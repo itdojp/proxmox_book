@@ -86,5 +86,6 @@
   "shared": {
     "version": "3.2.2",
     "lastSync": "2026-02-04T23:01:15.013Z"
-  }
+  },
+  "homepage": "https://itdojp.github.io/proxmox_book/"
 }
