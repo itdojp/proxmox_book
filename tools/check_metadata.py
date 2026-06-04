@@ -103,23 +103,23 @@ def parse_navigation(rel: str) -> list[dict[str, str | int]]:
             continue
         indent = len(raw) - len(raw.lstrip(" "))
         stripped = raw.strip()
-        item = re.match(r"^-\s+(title|path):\s*(.+)$", stripped)
+        item = re.match(r"^-\s+(title|path):\s*(.*)$", stripped)
         if item:
-            if current and current.get("title") and current.get("path"):
+            if current is not None:
                 entries.append(current)
             current = {item.group(1): unquote(item.group(2)), f"{item.group(1)}_line": line_no}
             current_indent = indent
             continue
         if stripped.startswith("- "):
-            if current and current.get("title") and current.get("path"):
+            if current is not None:
                 entries.append(current)
             current = None
             continue
-        field = re.match(r"^(title|path):\s*(.+)$", stripped)
+        field = re.match(r"^(title|path):\s*(.*)$", stripped)
         if field and current is not None and indent > current_indent:
             current[field.group(1)] = unquote(field.group(2))
             current[f"{field.group(1)}_line"] = line_no
-    if current and current.get("title") and current.get("path"):
+    if current is not None:
         entries.append(current)
     return entries
 
@@ -130,15 +130,27 @@ def expect_equal(path: str, field: str, actual: Any, expected: Any) -> None:
 
 
 def safe_route(route: Any, context: str, source: str) -> str | None:
-    if not isinstance(route, str):
-        fail(source, f"{context} の path は文字列である必要があります")
+    if route is None:
+        fail(source, f"{context}.path を設定してください")
         return None
+    if not isinstance(route, str):
+        fail(source, f"{context}.path は文字列である必要があります")
+        return None
+    if route == "":
+        fail(source, f"{context}.path を設定してください")
+        return None
+    invalid = False
     if not route.startswith("/"):
-        fail(source, f"{context} の path は / から始めてください: {route}")
+        fail(source, f"{context}.path は / から始めてください: {route}")
+        invalid = True
     if ".." in route or "//" in route or re.search(r"[?#%\\]", route):
-        fail(source, f"{context} の path が不正です: {route}")
+        fail(source, f"{context}.path が不正です: {route}")
+        invalid = True
     if not route.endswith("/"):
-        fail(source, f"{context} の path は / で終えてください: {route}")
+        fail(source, f"{context}.path は / で終えてください: {route}")
+        invalid = True
+    if invalid:
+        return None
     return route
 
 

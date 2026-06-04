@@ -33,7 +33,7 @@ check-metadata:
 
 check-ja: build-ja sync-docs-ja check-metadata
 	@git diff --exit-code
-	@echo "check-ja: OK (no diff after build-ja + sync-docs-ja)"
+	@echo "check-ja: OK (metadata, build-ja, sync-docs-ja, and clean diff)"
 
 $(JA_BUILD_DIR):
 	mkdir -p $(JA_BUILD_DIR)
