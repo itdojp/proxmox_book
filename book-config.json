@@ -79,7 +79,7 @@
       "troubleshootingFlow": true,
       "conceptMap": false,
       "figureIndex": true,
-      "legalNotice": true,
+      "legalNotice": false,
       "glossary": false
     }
   },
