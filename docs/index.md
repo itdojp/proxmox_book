@@ -98,7 +98,7 @@ Proxmox VE 9.1 は LXC の OCI イメージ利用、vTPM 状態の扱い、ネ�
 本書は **Creative Commons BY-NC-SA 4.0** ライセンスで公開されています。  
 詳細は以下を参照してください。
 
-- シリーズ共通ライセンス: https://github.com/itdojp/it-engineer-knowledge-architecture/blob/main/LICENSE.md
-- 本リポジトリ内: https://github.com/itdojp/proxmox_book/blob/main/LICENSE.md
+- [シリーズ共通ライセンス](https://github.com/itdojp/it-engineer-knowledge-architecture/blob/main/LICENSE.md)
+- [本リポジトリのライセンス](https://github.com/itdojp/proxmox_book/blob/main/LICENSE.md)
 
 {% include page-navigation.html %}
